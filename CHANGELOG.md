@@ -1,3 +1,1 @@
-## 0.0.1
-
-* TODO: Describe initial release.
+## 6.0.0 - Gleap

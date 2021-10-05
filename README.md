@@ -1,15 +1,49 @@
-# gleap_sdk
+# Gleap SDK
 
-A new flutter plugin project.
+The Gleap SDK for Flutter is the easiest way to integrate Gleap into your apps!
 
-## Getting Started
+# Report and Fix Bugs the Easy Way
+Gleap helps developers build the best software faster. It is your affordable in-app bug reporting tool for apps, websites and industrial applications.
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+Checkout our [website](https://gleap.io) to learn more about gleap.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Docs & Examples
 
+Checkout our [documentation](https://docs.gleap.io/docs/flutter-sdk) for full reference. Include the following dependency in your pubspec.yml:
+
+```dart
+dependencies:
+  gleap: "^4.1.1"
+```
+
+**Android installation**
+
+Android is ready to go. If theres a version conflict pls add the following to your android manifest:
+```
+<manifest ... xmlns:tools="http://schemas.android.com/tools">
+ <uses-sdk  android:minSdkVersion="16"
+        tools:overrideLibrary="com.gleap.gleap"/>
+ <application .... tools:overrideLibrary="com.gleap.gleap">
+ ...
+```
+**iOS installation**
+
+Navigate to your iOS project folder within the terminal and update the cocoapods by typing
+
+```
+pod install
+```
+
+**Initialize Gleap SDK**
+
+Import the Gleap SDK by adding the following import inside one of your root components.
+
+```dart
+import 'package:gleap/gleap.dart';
+```
+
+```dart
+Gleap.initialize(token: 'YOUR_API_KEY')
+```
+
+Your API key can be found in the project settings within Gleap.
