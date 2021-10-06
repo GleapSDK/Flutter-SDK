@@ -13,7 +13,7 @@ Checkout our [documentation](https://docs.gleap.io/docs/flutter-sdk) for full re
 
 ```dart
 dependencies:
-  gleap: "^4.1.1"
+  gleap_sdk: "^6.0.0"
 ```
 
 **Android installation**
@@ -21,9 +21,9 @@ dependencies:
 Android is ready to go. If theres a version conflict pls add the following to your android manifest:
 ```
 <manifest ... xmlns:tools="http://schemas.android.com/tools">
- <uses-sdk  android:minSdkVersion="16"
-        tools:overrideLibrary="com.gleap.gleap"/>
- <application .... tools:overrideLibrary="com.gleap.gleap">
+ <uses-sdk  android:minSdkVersion="21"
+        tools:overrideLibrary="io.gleap.gleap_sdk"/>
+ <application .... tools:overrideLibrary="io.gleap.gleap_sdk">
  ...
 ```
 **iOS installation**
@@ -39,7 +39,7 @@ pod install
 Import the Gleap SDK by adding the following import inside one of your root components.
 
 ```dart
-import 'package:gleap/gleap.dart';
+import 'package:gleap_sdk/gleap_sdk.dart';
 ```
 
 ```dart

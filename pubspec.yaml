@@ -1,7 +1,7 @@
 name: gleap_sdk
 description: The Gleap SDK for Flutter is the easiest way to integrate Gleap into your apps!
-version: 0.0.1
-homepage:
+version: 6.0.0
+homepage: https://gleap.io
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
+  js: ^0.6.3
 
 dev_dependencies:
   flutter_test:

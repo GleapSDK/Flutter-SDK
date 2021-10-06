@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initPlatformState() async {
     await Gleap.initialize(
-      token: 'YOUR_SDK_KEY',
+      token: 'YOUR_API_KEY',
     );
   }
 

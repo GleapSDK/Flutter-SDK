@@ -93,17 +93,15 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS, Web
+  /// Android, iOS, (Web)
   static Future<void> initialize({
     required String token,
     GleapUserSession? gleapUserSession,
   }) async {
-    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint('initialize is not available for current operating system');
       return;
     }
-
-    print(gleapUserSession?.toJson());
 
     if (gleapUserSession != null) {
       await _channel.invokeMethod(
@@ -126,9 +124,9 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS, Web
+  /// Android, iOS, (Web)
   static Future<void> startFeedbackFlow() async {
-    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
           'startFeedbackFlow is not available for current operating system');
       return;
@@ -529,25 +527,23 @@ class Gleap {
     await _channel.invokeMethod('startNetworkRecording');
   }
 
-  /// ### startNetworkRecordingForSessionConfiguration
-  ///
-  /// Starts network recording with a session configuration.
-  ///
-  /// [configuration] The NSURLSessionConfiguration which should be logged
-  ///
-  /// **Available Platforms**
-  ///
-  /// iOS
-  static Future<void> startNetworkRecordingForSessionConfiguration() async {
-    if (!io.Platform.isIOS) {
-      debugPrint(
-        'startNetworkRecordingForSessionConfiguration is not available for current operating system',
-      );
-      return;
-    }
-
-    // TODO add NSURLSessionConfiguration as params
-  }
+  // /// ### startNetworkRecordingForSessionConfiguration
+  // ///
+  // /// Starts network recording with a session configuration.
+  // ///
+  // /// [configuration] The NSURLSessionConfiguration which should be logged
+  // ///
+  // /// **Available Platforms**
+  // ///
+  // /// iOS
+  // static Future<void> startNetworkRecordingForSessionConfiguration() async {
+  //   if (!io.Platform.isIOS) {
+  //     debugPrint(
+  //       'startNetworkRecordingForSessionConfiguration is not available for current operating system',
+  //     );
+  //     return;
+  //   }
+  // }
 
   /// ### stopNetworkRecording
   ///
@@ -670,9 +666,9 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Web
+  /// (Web)
   static Future<void> openWidget() async {
-    if (!kIsWeb) {
+    if (true) {
       debugPrint(
         'openWidget is not available for current operating system',
       );
@@ -688,9 +684,9 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Web
+  /// (Web)
   static Future<void> hideWidget() async {
-    if (!kIsWeb) {
+    if (true) {
       debugPrint(
         'hideWidget is not available for current operating system',
       );
