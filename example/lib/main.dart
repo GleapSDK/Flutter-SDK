@@ -22,7 +22,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initPlatformState() async {
-    await Gleap.initialize(token: 've2ANSRo6kNWRRBAaIGq7WevLx2QXgS8');
+    await Gleap.initialize(
+      token: 'YOUR_SDK_KEY',
+    );
   }
 
   @override
@@ -36,11 +38,7 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: GestureDetector(
             onTap: () async {
-              // await Gleap.startFeedbackFlow();
-              await Gleap.sendSilentBugReport(
-                description: 'Des isch 1 silent bug report',
-                severity: Severity.HIGH,
-              );
+              await Gleap.startFeedbackFlow();
             },
             child: Container(
               alignment: Alignment.center,

@@ -103,10 +103,19 @@ class Gleap {
       return;
     }
 
-    await _channel.invokeMethod(
-      'initialize',
-      {'token': token, 'gleapUserSession': gleapUserSession?.toJson()},
-    );
+    print(gleapUserSession?.toJson());
+
+    if (gleapUserSession != null) {
+      await _channel.invokeMethod(
+        'initialize',
+        {'token': token, 'gleapUserSession': gleapUserSession.toJson()},
+      );
+    } else {
+      await _channel.invokeMethod(
+        'initialize',
+        {'token': token},
+      );
+    }
   }
 
   /// ### startFeedbackFlow
@@ -448,33 +457,6 @@ class Gleap {
 
     _channel.setMethodCallHandler((MethodCall call) async {
       if (call.method == "setBugSendingFailedCallback") {
-        callbackHandler();
-      }
-    });
-  }
-
-  /// ### setBitmapCallback
-  ///
-  /// Customize the way, the Bitmap is generated. If this is overritten, only the custom way is used
-  ///
-  /// **Params**
-  ///
-  /// [getBitmapCallback] Get the Bitmap
-  ///
-  /// **Available Platforms**
-  ///
-  /// Android
-  static Future<void> setBitmapCallback({
-    required Function() callbackHandler,
-  }) async {
-    if (!io.Platform.isAndroid) {
-      debugPrint(
-          'setBitmapCallback is not available for current operating system');
-      return;
-    }
-
-    _channel.setMethodCallHandler((MethodCall call) async {
-      if (call.method == "setBitmapCallback") {
         callbackHandler();
       }
     });

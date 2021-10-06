@@ -64,15 +64,6 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
             }
         });
 
-        /*
-         * Gleap.getInstance().setBitmapCallback(new GetBitmapCallback() {
-         * 
-         * @Override public Bitmap getBitmap() {
-         * channel.invokeMethod("setBitmapCallback", null); return
-         * Bitmap.createBitmap('sdf'); } });
-         * 
-         */
-
         Gleap.getInstance().registerCustomAction(new CustomActionCallback() {
             @Override
             public void invoke(String message) {
@@ -82,22 +73,6 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 channel.invokeMethod("registerCustomAction", map);
             }
         });
-
-        /*
-         * Gleap.getInstance().registerCustomAction(new CustomActionCallback() {
-         * 
-         * @Override public void invoke(final String message) {
-         * 
-         * uiThreadHandler.post(new Runnable() {
-         * 
-         * @Override public void run() {
-         * 
-         * Map<String, String> map = new HashMap<>(); map.put("name", message);
-         * 
-         * System.out.println(map.get("name"));
-         * channel.invokeMethod("customActionCalled", map); } }); } });
-         * 
-         */
     }
 
     @Override
@@ -105,25 +80,24 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
         switch (call.method) {
             case "initialize":
                 Gleap.getInstance().setApplicationType(APPLICATIONTYPE.FLUTTER);
-                GleapUserSession gleapUserSession = null;
                 if (call.argument("gleapUserSession") != null) {
                     try {
-                        gleapUserSession = new GleapUserSession(
-                                ((JSONObject) call.argument("gleapUserSession")).getString("userId"),
-                                ((JSONObject) call.argument("gleapUserSession")).getString("userHash"),
-                                ((JSONObject) call.argument("gleapUserSession")).getString("name"),
-                                ((JSONObject) call.argument("gleapUserSession")).getString("email"));
+                        JSONObject gleapUserData = new JSONObject((Map) call.argument("gleapUserSession"));
+
+                        GleapUserSession gleapUserSession = new GleapUserSession(gleapUserData.getString("userId"),
+                                gleapUserData.getString("userHash"), gleapUserData.getString("name"),
+                                gleapUserData.getString("email"));
+                        Gleap.initialize((String) call.argument("token"), gleapUserSession, application);
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }
-
-                if (gleapUserSession != null) {
-                    Gleap.initialize((String) call.argument("token"), gleapUserSession, application);
                 } else {
                     Gleap.initialize((String) call.argument("token"), application);
                 }
+
                 initCustomAction();
+                result.success(null);
                 break;
 
             case "startFeedbackFlow":
@@ -132,6 +106,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 } catch (GleapNotInitialisedException e) {
                     e.printStackTrace();
                 }
+                result.success(null);
                 break;
 
             case "sendSilentBugReport":
@@ -145,74 +120,119 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 }
 
                 Gleap.getInstance().sendSilentBugReport("", (String) call.argument("description"), severity);
+                result.success(null);
                 break;
 
             case "identifyUserWith":
                 GleapUserSession gleapUser = null;
                 if (call.argument("gleapUserSession") != null) {
                     try {
-                        gleapUser = new GleapUserSession(
-                                ((JSONObject) call.argument("gleapUserSession")).getString("userId"),
-                                ((JSONObject) call.argument("gleapUserSession")).getString("userHash"),
-                                ((JSONObject) call.argument("gleapUserSession")).getString("name"),
-                                ((JSONObject) call.argument("gleapUserSession")).getString("email"));
+                        JSONObject gleapUserData = new JSONObject((Map) call.argument("gleapUserSession"));
+
+                        gleapUser = new GleapUserSession(gleapUserData.getString("userId"),
+                                gleapUserData.getString("userHash"), gleapUserData.getString("name"),
+                                gleapUserData.getString("email"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
 
                 Gleap.getInstance().identifyUser(gleapUser);
+                result.success(null);
                 break;
 
             case "clearIdentity":
                 Gleap.getInstance().clearIdentity();
+                result.success(null);
                 break;
 
             case "setApiUrl":
                 Gleap.getInstance().setApiUrl((String) call.argument("apiUrl"));
+                result.success(null);
                 break;
 
             case "setWidgetUrl":
                 Gleap.getInstance().setWidgetUrl((String) call.argument("widgetUrl"));
+                result.success(null);
                 break;
 
             case "setLanguage":
                 Gleap.getInstance().setLanguage((String) call.argument("language"));
+                result.success(null);
                 break;
 
             case "attachCustomData":
-                Gleap.getInstance().attachCustomData((JSONObject) call.argument("customData"));
+                JSONObject json = new JSONObject((Map) call.argument("customData"));
+
+                Gleap.getInstance().attachCustomData(json);
+                result.success(null);
                 break;
 
             case "setCustomData":
                 Gleap.getInstance().setCustomData((String) call.argument("key"), (String) call.argument("value"));
+                result.success(null);
                 break;
 
             case "removeCustomDataForKey":
                 Gleap.getInstance().removeCustomDataForKey((String) call.argument("key"));
+                result.success(null);
                 break;
 
             case "clearCustomData":
                 Gleap.getInstance().clearCustomData();
+                result.success(null);
                 break;
 
             case "logNetwork":
-                Gleap.getInstance().logNetwork((String) call.argument("urlConnection"),
-                        (RequestType) call.argument("requestType"), (int) call.argument("status"),
-                        (int) call.argument("duration"), (JSONObject) call.argument("request"),
-                        (JSONObject) call.argument("response"));
+                JSONObject request = new JSONObject((Map) call.argument("request"));
+                JSONObject response = new JSONObject((Map) call.argument("response"));
+
+                RequestType requestType;
+                switch (call.argument("requestType").toString()) {
+                    case "POST":
+                        requestType = RequestType.POST;
+                        break;
+
+                    case "GET":
+                        requestType = RequestType.GET;
+                        break;
+
+                    case "DELETE":
+                        requestType = RequestType.DELETE;
+                        break;
+
+                    case "PUT":
+                        requestType = RequestType.PUT;
+                        break;
+
+                    case "PATCH":
+                        requestType = RequestType.PATCH;
+                        break;
+
+                    default:
+                        requestType = RequestType.GET;
+                }
+
+                Gleap.getInstance().logNetwork((String) call.argument("urlConnection"), requestType,
+                        (int) call.argument("status"), (int) call.argument("duration"), request, response);
+                result.success(null);
                 break;
 
             case "logEvent":
-                Gleap.getInstance().logEvent((String) call.argument("logEvent"), (JSONObject) call.argument("data"));
+                JSONObject data = new JSONObject((Map) call.argument("data"));
+
+                Gleap.getInstance().logEvent((String) call.argument("logEvent"), data);
+                result.success(null);
                 break;
 
             case "addAttachment":
                 Gleap.getInstance().addAttachment((File) call.argument("file"));
+                result.success(null);
                 break;
 
             case "removeAllAttachments":
                 Gleap.getInstance().removeAllAttachments();
+                result.success(null);
                 break;
             default:
                 result.notImplemented();
