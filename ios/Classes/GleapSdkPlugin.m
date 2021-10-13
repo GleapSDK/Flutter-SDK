@@ -21,27 +21,27 @@
     [Gleap setApplicationType: FLUTTER];
 }
 
-- (void)bugWillBeSent {
+- (void)feedbackWillBeSent {
   if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod: @"setBugWillBeSentCallback" arguments: @{}];
+    [self.methodChannel invokeMethod: @"feedbackWillBeSentCallback" arguments: @{}];
   }
 }
 
-- (void)bugSent {
+- (void)feedbackSent {
   if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod: @"setBugSentCallback" arguments: @{}];
+    [self.methodChannel invokeMethod: @"feedbackSentCallback" arguments: @{}];
   }
 }
 
-- (void)bugSendingFailed {
+- (void)feedbackSendingFailed {
   if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod: @"setBugSendingFailedCallback" arguments: @{}];
+    [self.methodChannel invokeMethod: @"feedbackSendingFailedCallback" arguments: @{}];
   }
 }
 
 - (void)customActionCalled:(NSString *)customAction {
   if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod: @"registerCustomAction" arguments: @{
+    [self.methodChannel invokeMethod: @"customActionCallback" arguments: @{
       @"name": customAction
     }];
   }
@@ -49,19 +49,8 @@
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
   if([@"initialize" isEqualToString:call.method]) {
-    if(call.arguments[@"gleapUserSession"] != nil) {
-      GleapUserSession *userSession = [[GleapUserSession alloc] init];
 
-      NSDictionary *sessionData = call.arguments[@"gleapUserSession"];
-      userSession.userId = [sessionData objectForKey: @"userId"];
-      userSession.userHash = [sessionData objectForKey: @"userHash"];
-      userSession.name = [sessionData objectForKey: @"name"];
-      userSession.email = [sessionData objectForKey: @"email"];
-
-      [Gleap initializeWithToken: call.arguments[@"token"] andUserSession: userSession];
-    } else {
-      [Gleap initializeWithToken: call.arguments[@"token"]];
-    }
+    [Gleap initializeWithToken: call.arguments[@"token"]];
 
     [self initSDK];
     result(nil);
@@ -72,24 +61,26 @@
   }
   else if([@"sendSilentBugReport" isEqualToString: call.method]) {
     if([call.arguments[@"severity"] isEqualToString: @"LOW"]){
-      [Gleap sendSilentBugReportWith: call.arguments[@"description"] andPriority: LOW];
+      [Gleap sendSilentBugReportWith: call.arguments[@"description"] andSeverity: LOW];
     } else if([call.arguments[@"severity"] isEqualToString: @"MEDIUM"]){
-      [Gleap sendSilentBugReportWith: call.arguments[@"description"] andPriority: MEDIUM];
+      [Gleap sendSilentBugReportWith: call.arguments[@"description"] andSeverity: MEDIUM];
     } else if([call.arguments[@"severity"] isEqualToString: @"HIGH"]){
-      [Gleap sendSilentBugReportWith: call.arguments[@"description"] andPriority: HIGH];
+      [Gleap sendSilentBugReportWith: call.arguments[@"description"] andSeverity: HIGH];
     }
     result(nil);
   }
-  else if([@"identifyUserWith" isEqualToString: call.method]) {
-    GleapUserSession *userSession = [[GleapUserSession alloc] init];
+  else if([@"identify" isEqualToString: call.method]) {
+    GleapUserProperty *userProperty = [[GleapUserProperty alloc] init];
+    NSDictionary *propertyData = call.arguments[@"userProperties"];
 
-    NSDictionary *sessionData = call.arguments[@"gleapUserSession"];
-    userSession.userId = [sessionData objectForKey: @"userId"];
-    userSession.userHash = [sessionData objectForKey: @"userHash"];
-    userSession.name = [sessionData objectForKey: @"name"];
-    userSession.email = [sessionData objectForKey: @"email"];
+    if ([propertyData objectForKey: @"name"] != nil) {
+        userProperty.name = [propertyData objectForKey: @"name"];
+    }
+    if ([propertyData objectForKey: @"email"] != nil) {
+        userProperty.email = [propertyData objectForKey: @"email"];
+    }
 
-    [Gleap identifyUserWith: sessionData];
+    [Gleap identifyUserWith: call.arguments[@"userId"] andData: userProperty];
     result(nil);
   }
   else if([@"clearIdentity" isEqualToString: call.method]) {
@@ -124,21 +115,27 @@
     [Gleap clearCustomData];
     result(nil);
   }
-  else if([@"startNetworkRecording" isEqualToString: call.method]) {
-    [Gleap startNetworkRecording];
-    result(nil);
-  }
-  else if([@"startNetworkRecordingForSessionConfiguration" isEqualToString: call.method]) {
-    [Gleap startNetworkRecordingForSessionConfiguration: call.arguments[@"configuration"]];
-    result(nil);
-  }
-  else if([@"stopNetworkRecording" isEqualToString: call.method]) {
-    [Gleap stopNetworkRecording];
-    result(nil);
-  }
+  // else if([@"startNetworkLogging" isEqualToString: call.method]) {
+  //   [Gleap startNetworkLogging];
+  //   result(nil);
+  // }
+  // else if([@"stopNetworkLogging" isEqualToString: call.method]) {
+  //   [Gleap stopNetworkLogging];
+  //   result(nil);
+  // }
   else if([@"logEvent" isEqualToString: call.method]) {
     [Gleap logEvent: call.arguments[@"name"] withData: call.arguments[@"data"]];
     result(nil);
+  } 
+  else if([@"addAttachment" isEqualToString: call.method]) {
+    NSData *fileData = [[NSData alloc] initWithBase64EncodedString: call.arguments[@"base64file"] options:0];
+    if (fileData != nil) {
+        [Gleap addAttachmentWithData: fileData andName: call.arguments[@"fileName"]];
+        result(nil);
+
+    } else {
+        result(nil);
+    }
   }
   else {
     result(FlutterMethodNotImplemented);

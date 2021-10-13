@@ -2,17 +2,24 @@ package io.gleap.gleap_sdk;
 
 import android.app.Application;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
@@ -21,13 +28,13 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 import io.gleap.APPLICATIONTYPE;
-import io.gleap.BugWillBeSentCallback;
 import io.gleap.CustomActionCallback;
+import io.gleap.FeedbackSentCallback;
+import io.gleap.FeedbackWillBeSentCallback;
 import io.gleap.GetBitmapCallback;
 import io.gleap.Gleap;
 import io.gleap.GleapNotInitialisedException;
-import io.gleap.GleapSentCallback;
-import io.gleap.GleapUserSession;
+import io.gleap.GleapUserProperties;
 import io.gleap.RequestType;
 
 public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
@@ -50,17 +57,17 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
     }
 
     private void initCustomAction() {
-        Gleap.getInstance().setBugWillBeSentCallback(new BugWillBeSentCallback() {
+        Gleap.getInstance().setFeedbackWillBeSentCallback(new FeedbackWillBeSentCallback() {
             @Override
             public void flowInvoced() {
-                channel.invokeMethod("setBugWillBeSentCallback", null);
+                channel.invokeMethod("feedbackWillBeSentCallback", null);
             }
         });
 
-        Gleap.getInstance().setBugSentCallback(new GleapSentCallback() {
+        Gleap.getInstance().setFeedbackSentCallback(new FeedbackSentCallback() {
             @Override
             public void close() {
-                channel.invokeMethod("setBugSentCallback", null);
+                channel.invokeMethod("feedbackSentCallback", null);
             }
         });
 
@@ -70,31 +77,19 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 Map<String, String> map = new HashMap<>();
                 map.put("name", message);
 
-                channel.invokeMethod("registerCustomAction", map);
+                channel.invokeMethod("customActionCallback", map);
             }
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         switch (call.method) {
             case "initialize":
                 Gleap.getInstance().setApplicationType(APPLICATIONTYPE.FLUTTER);
-                if (call.argument("gleapUserSession") != null) {
-                    try {
-                        JSONObject gleapUserData = new JSONObject((Map) call.argument("gleapUserSession"));
 
-                        GleapUserSession gleapUserSession = new GleapUserSession(gleapUserData.getString("userId"),
-                                gleapUserData.getString("userHash"), gleapUserData.getString("name"),
-                                gleapUserData.getString("email"));
-                        Gleap.initialize((String) call.argument("token"), gleapUserSession, application);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Gleap.initialize((String) call.argument("token"), application);
-                }
+                Gleap.initialize((String) call.argument("token"), application);
 
                 initCustomAction();
                 result.success(null);
@@ -119,25 +114,27 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                     severity = Gleap.SEVERITY.HIGH;
                 }
 
-                Gleap.getInstance().sendSilentBugReport("", (String) call.argument("description"), severity);
+                Gleap.getInstance().sendSilentBugReport((String) call.argument("description"), severity);
                 result.success(null);
                 break;
 
-            case "identifyUserWith":
-                GleapUserSession gleapUser = null;
-                if (call.argument("gleapUserSession") != null) {
-                    try {
-                        JSONObject gleapUserData = new JSONObject((Map) call.argument("gleapUserSession"));
+            case "identify":
 
-                        gleapUser = new GleapUserSession(gleapUserData.getString("userId"),
-                                gleapUserData.getString("userHash"), gleapUserData.getString("name"),
-                                gleapUserData.getString("email"));
+                if (call.argument("userProperties") != null) {
+                    try {
+                        JSONObject gleapUserProperty = new JSONObject((Map) call.argument("userProperties"));
+
+                        GleapUserProperties gleapUserProperties = new GleapUserProperties(
+                                gleapUserProperty.getString("name"), gleapUserProperty.getString("email"));
+                        Gleap.getInstance().identifyUser(call.argument("userId"), gleapUserProperties);
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    Gleap.getInstance().identifyUser(call.argument("userId"));
                 }
 
-                Gleap.getInstance().identifyUser(gleapUser);
                 result.success(null);
                 break;
 
@@ -226,7 +223,46 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 break;
 
             case "addAttachment":
-                Gleap.getInstance().addAttachment((File) call.argument("file"));
+                try {
+                    String fileName = call.argument("fileName");
+                    String base64file = call.argument("base64file");
+                    if (checkAllowedEndings(fileName)) {
+                        String[] splittedBase64File = base64file.split(",");
+                        byte[] fileData;
+                        if (splittedBase64File.length == 2) {
+                            fileData = Base64.getDecoder().decode(splittedBase64File[1]);
+                        } else {
+                            fileData = Base64.getDecoder().decode(splittedBase64File[0]);
+                        }
+
+                        String mimetype = extractMimeType(base64file);
+                        String[] splitted = mimetype.split("/");
+                        String fileNameConcated = fileName;
+                        if (splitted.length == 2 && !fileName.contains(".")) {
+                            fileNameConcated += "." + splitted[1];
+                        }
+
+                        File file = new File(application.getCacheDir() + "/" + fileNameConcated);
+                        if (!file.exists()) {
+                            file.createNewFile();
+                        }
+                        try (OutputStream stream = new FileOutputStream(file)) {
+                            stream.write(fileData);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        if (file.exists()) {
+                            Gleap.getInstance().addAttachment(file);
+                        } else {
+                            System.err.println("Gleap: The file is not existing.");
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 result.success(null);
                 break;
 
@@ -242,5 +278,35 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         channel.setMethodCallHandler(null);
+    }
+
+    /**
+     * Extract the MIME type from a base64 string
+     *
+     * @param encoded Base64 string
+     * @return MIME type string
+     */
+    private String extractMimeType(final String encoded) {
+        final Pattern mime = Pattern.compile("^data:([a-zA-Z0-9]+/[a-zA-Z0-9]+).*,.*");
+        final Matcher matcher = mime.matcher(encoded);
+        if (!matcher.find())
+            return "";
+        return matcher.group(1).toLowerCase();
+    }
+
+    private boolean checkAllowedEndings(String fileName) {
+        String[] fileType = fileName.split("\\.");
+        String[] allowedTypes = { "jpeg", "svg", "png", "mp4", "webp", "xml", "plain", "xml", "json" };
+        if (fileType.length <= 1) {
+            return false;
+        }
+        boolean found = false;
+        for (String type : allowedTypes) {
+            if (type.equals(fileType[1])) {
+                found = true;
+            }
+        }
+
+        return found;
     }
 }

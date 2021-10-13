@@ -59,31 +59,42 @@ String _getRequestTypeValue(RequestType requestType) {
   }
 }
 
-class GleapUserSession {
-  String userId;
-  String userHash;
+class GleapUserProperty {
   String? name;
   String? email;
 
-  GleapUserSession({
-    required this.userId,
-    required this.userHash,
+  GleapUserProperty({
     this.name,
     this.email,
   });
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'userId': userId,
-        'userHash': userHash,
-        'name': name,
-        'email': email
-      };
+  Map<String, dynamic> toJson() =>
+      <String, dynamic>{'name': name, 'email': email};
+}
+
+class CallbackItem {
+  String callbackName;
+  Function callbackHandler;
+
+  CallbackItem({required this.callbackName, required this.callbackHandler});
 }
 
 class Gleap {
   static const MethodChannel _channel = MethodChannel('gleap_sdk');
+  static final List<CallbackItem> _callbackItems = <CallbackItem>[];
 
-  /// ### initializeWithToken
+  static _initCallbackHandler() async {
+    _channel.setMethodCallHandler((MethodCall call) async {
+      List<CallbackItem> callbackItem = _callbackItems
+          .where((CallbackItem element) => element.callbackName == call.method)
+          .toList();
+      if (callbackItem.isNotEmpty) {
+        callbackItem[0].callbackHandler();
+      }
+    });
+  }
+
+  /// ### initialize
   ///
   /// Auto-configures the Gleap SDK from the remote config.
   ///
@@ -96,24 +107,17 @@ class Gleap {
   /// Android, iOS, (Web)
   static Future<void> initialize({
     required String token,
-    GleapUserSession? gleapUserSession,
   }) async {
     if (!io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint('initialize is not available for current operating system');
       return;
     }
 
-    if (gleapUserSession != null) {
-      await _channel.invokeMethod(
-        'initialize',
-        {'token': token, 'gleapUserSession': gleapUserSession.toJson()},
-      );
-    } else {
-      await _channel.invokeMethod(
-        'initialize',
-        {'token': token},
-      );
-    }
+    await _channel.invokeMethod(
+      'initialize',
+      {'token': token},
+    );
+    _initCallbackHandler();
   }
 
   /// ### startFeedbackFlow
@@ -169,7 +173,7 @@ class Gleap {
     );
   }
 
-  /// ### identifyUserWith
+  /// ### identify
   ///
   /// Updates a session's user data.
   ///
@@ -180,21 +184,28 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Android, iOS
-  static Future<void> identifyUserWith({
-    required GleapUserSession gleapUserSession,
+  static Future<void> identify({
+    required String userId,
+    GleapUserProperty? userProperties,
   }) async {
     if (!io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
-        'identifyUserWith is not available for current operating system',
+        'identify is not available for current operating system',
       );
       return;
     }
-    await _channel.invokeMethod(
-      'identifyUserWith',
-      {
-        'gleapUserSession': gleapUserSession.toJson(),
-      },
-    );
+
+    if (userProperties != null) {
+      await _channel.invokeMethod(
+        'identify',
+        {
+          'userId': userId,
+          'userProperties': userProperties.toJson(),
+        },
+      );
+    } else {
+      await _channel.invokeMethod('identify', {'userId': userId});
+    }
   }
 
   /// ### clearIdentity
@@ -388,20 +399,21 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Android, iOS
-  static Future<void> setBugWillBeSentCallback({
+  static Future<void> setFeedbackWillBeSentCallback({
     required Function() callbackHandler,
   }) async {
     if (!io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
-          'setBugWillBeSentCallback is not available for current operating system');
+        'setFeedbackWillBeSentCallback is not available for current operating system',
+      );
       return;
     }
 
-    _channel.setMethodCallHandler((MethodCall call) async {
-      if (call.method == 'setBugWillBeSentCallback') {
-        callbackHandler();
-      }
-    });
+    _callbackItems.add(
+      CallbackItem(
+          callbackName: 'feedbackWillBeSentCallback',
+          callbackHandler: callbackHandler),
+    );
   }
 
   /// ### setBugSentCallback
@@ -415,21 +427,22 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Android, iOS
-  static Future<void> setBugSentCallback({
+  static Future<void> setFeedbackSentCallback({
     required Function() callbackHandler,
   }) async {
     if (!io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
-        'setBugSentCallback is not available for current operating system',
+        'setFeedbackSentCallback is not available for current operating system',
       );
       return;
     }
 
-    _channel.setMethodCallHandler((MethodCall call) async {
-      if (call.method == "setBugSentCallback") {
-        callbackHandler();
-      }
-    });
+    _callbackItems.add(
+      CallbackItem(
+        callbackName: 'feedbackSentCallback',
+        callbackHandler: callbackHandler,
+      ),
+    );
   }
 
   /// ### setBugSendingFailedCallback
@@ -443,124 +456,107 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// iOS
-  static Future<void> setBugSendingFailedCallback({
+  static Future<void> setFeedbackSendingFailedCallback({
     required Function() callbackHandler,
   }) async {
     if (!io.Platform.isIOS) {
       debugPrint(
-        'setBugSendingFailedCallback is not available for current operating system',
+        'setFeedbackSendingFailedCallback is not available for current operating system',
       );
       return;
     }
 
-    _channel.setMethodCallHandler((MethodCall call) async {
-      if (call.method == "setBugSendingFailedCallback") {
-        callbackHandler();
-      }
-    });
-  }
-
-  /// ### logNetwork
-  ///
-  /// Log network traffic by logging it manually.
-  ///
-  /// **Params**
-  ///
-  /// [urlConnection] URL where the request is sent to
-  ///
-  /// [requestType] GET, POST, PUT, DELETE
-  ///
-  /// [status] Status of the response (e.g. 200, 404)
-  ///
-  /// [duration] Duration of the request
-  ///
-  /// [request] Add the data you want. e.g the body sent in the request
-  ///
-  /// [response] Response of the call. You can add just the information you want and need.
-  ///
-  /// **Available Platforms**
-  ///
-  /// Android
-  static Future<void> logNetwork({
-    required String urlConnection,
-    required RequestType requestType,
-    required int status,
-    required int duration,
-    required Map<String, dynamic> request,
-    required Map<String, dynamic> response,
-  }) async {
-    if (!io.Platform.isAndroid) {
-      debugPrint('logNetwork is not available for current operating system');
-      return;
-    }
-
-    String requestTypeVal = _getRequestTypeValue(requestType);
-
-    await _channel.invokeMethod(
-      'logNetwork',
-      {
-        'urlConnection': urlConnection,
-        'requestType': requestTypeVal,
-        'status': status,
-        'duration': duration,
-        'request': request,
-        'response': response,
-      },
+    _callbackItems.add(
+      CallbackItem(
+        callbackName: 'feedbackSendingFailedCallback',
+        callbackHandler: callbackHandler,
+      ),
     );
   }
 
-  /// ### startNetworkRecording
-  ///
-  /// Starts network recording.
-  ///
-  /// **Available Platforms**
-  ///
-  /// iOS
-  static Future<void> startNetworkRecording() async {
-    if (!io.Platform.isIOS) {
-      debugPrint(
-        'startNetworkRecording is not available for current operating system',
-      );
-      return;
-    }
-
-    await _channel.invokeMethod('startNetworkRecording');
-  }
-
-  // /// ### startNetworkRecordingForSessionConfiguration
+  // /// ### logNetwork
   // ///
-  // /// Starts network recording with a session configuration.
+  // /// Log network traffic by logging it manually.
   // ///
-  // /// [configuration] The NSURLSessionConfiguration which should be logged
+  // /// **Params**
+  // ///
+  // /// [urlConnection] URL where the request is sent to
+  // ///
+  // /// [requestType] GET, POST, PUT, DELETE
+  // ///
+  // /// [status] Status of the response (e.g. 200, 404)
+  // ///
+  // /// [duration] Duration of the request
+  // ///
+  // /// [request] Add the data you want. e.g the body sent in the request
+  // ///
+  // /// [response] Response of the call. You can add just the information you want and need.
+  // ///
+  // /// **Available Platforms**
+  // ///
+  // /// Android
+  // static Future<void> logNetwork({
+  //   required String urlConnection,
+  //   required RequestType requestType,
+  //   required int status,
+  //   required int duration,
+  //   required Map<String, dynamic> request,
+  //   required Map<String, dynamic> response,
+  // }) async {
+  //   if (!io.Platform.isAndroid) {
+  //     debugPrint('logNetwork is not available for current operating system');
+  //     return;
+  //   }
+
+  //   String requestTypeVal = _getRequestTypeValue(requestType);
+
+  //   await _channel.invokeMethod(
+  //     'logNetwork',
+  //     {
+  //       'urlConnection': urlConnection,
+  //       'requestType': requestTypeVal,
+  //       'status': status,
+  //       'duration': duration,
+  //       'request': request,
+  //       'response': response,
+  //     },
+  //   );
+  // }
+
+  // /// ### startNetworkRecording
+  // ///
+  // /// Starts network recording.
   // ///
   // /// **Available Platforms**
   // ///
   // /// iOS
-  // static Future<void> startNetworkRecordingForSessionConfiguration() async {
+  // static Future<void> startNetworkLogging() async {
   //   if (!io.Platform.isIOS) {
   //     debugPrint(
-  //       'startNetworkRecordingForSessionConfiguration is not available for current operating system',
+  //       'startNetworkLogging is not available for current operating system',
   //     );
   //     return;
   //   }
+
+  //   await _channel.invokeMethod('startNetworkLogging');
   // }
 
-  /// ### stopNetworkRecording
-  ///
-  /// Stops network recording.
-  ///
-  /// **Available Platforms**
-  ///
-  /// iOS
-  static Future<void> stopNetworkRecording() async {
-    if (!io.Platform.isIOS) {
-      debugPrint(
-          'stopNetworkRecording is not available for current operating system');
-      return;
-    }
+  // /// ### stopNetworkRecording
+  // ///
+  // /// Stops network recording.
+  // ///
+  // /// **Available Platforms**
+  // ///
+  // /// iOS
+  // static Future<void> stopNetworkLogging() async {
+  //   if (!io.Platform.isIOS) {
+  //     debugPrint(
+  //         'stopNetworkLogging is not available for current operating system');
+  //     return;
+  //   }
 
-    await _channel.invokeMethod('stopNetworkRecording');
-  }
+  //   await _channel.invokeMethod('stopNetworkLogging');
+  // }
 
   /// ### registerCustomAction
   ///
@@ -583,11 +579,12 @@ class Gleap {
       return;
     }
 
-    _channel.setMethodCallHandler((MethodCall call) async {
-      if (call.method == "registerCustomAction") {
-        callbackHandler();
-      }
-    });
+    _callbackItems.add(
+      CallbackItem(
+        callbackName: 'customActionCallback',
+        callbackHandler: callbackHandler,
+      ),
+    );
   }
 
   /// ### logEvent
@@ -627,18 +624,22 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android
+  /// Android, iOS
   static Future<void> addAttachment({
-    required File file,
+    required String base64file,
+    required String fileName,
   }) async {
-    if (!io.Platform.isAndroid) {
-      debugPrint('enableReplays is not available for current operating system');
+    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint('addAttachment is not available for current operating system');
       return;
     }
 
     await _channel.invokeMethod(
       'addAttachment',
-      {'file': file},
+      {
+        'base64file': base64file,
+        'fileName': fileName,
+      },
     );
   }
 
@@ -660,39 +661,39 @@ class Gleap {
     await _channel.invokeMethod('removeAllAttachments');
   }
 
-  /// ### openWidget
-  ///
-  /// Opens feedback widget
-  ///
-  /// **Available Platforms**
-  ///
-  /// (Web)
-  static Future<void> openWidget() async {
-    if (true) {
-      debugPrint(
-        'openWidget is not available for current operating system',
-      );
-      return;
-    }
+  // /// ### openWidget
+  // ///
+  // /// Opens feedback widget
+  // ///
+  // /// **Available Platforms**
+  // ///
+  // /// (Web)
+  // static Future<void> openWidget() async {
+  //   if (true) {
+  //     debugPrint(
+  //       'openWidget is not available for current operating system',
+  //     );
+  //     return;
+  //   }
 
-    await _channel.invokeMethod('openWidget');
-  }
+  //   await _channel.invokeMethod('openWidget');
+  // }
 
-  /// ### hideWidget
-  ///
-  /// Hides feedback widget
-  ///
-  /// **Available Platforms**
-  ///
-  /// (Web)
-  static Future<void> hideWidget() async {
-    if (true) {
-      debugPrint(
-        'hideWidget is not available for current operating system',
-      );
-      return;
-    }
+  // /// ### hideWidget
+  // ///
+  // /// Hides feedback widget
+  // ///
+  // /// **Available Platforms**
+  // ///
+  // /// (Web)
+  // static Future<void> hideWidget() async {
+  //   if (true) {
+  //     debugPrint(
+  //       'hideWidget is not available for current operating system',
+  //     );
+  //     return;
+  //   }
 
-    await _channel.invokeMethod('hideWidget');
-  }
+  //   await _channel.invokeMethod('hideWidget');
+  // }
 }
