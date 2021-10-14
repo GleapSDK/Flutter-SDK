@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:io' as io;
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -89,7 +88,11 @@ class Gleap {
           .where((CallbackItem element) => element.callbackName == call.method)
           .toList();
       if (callbackItem.isNotEmpty) {
-        callbackItem[0].callbackHandler();
+        if (call.method == 'customActionCallback') {
+          callbackItem[0].callbackHandler(call.arguments['name']);
+        } else {
+          callbackItem[0].callbackHandler();
+        }
       }
     });
   }
@@ -568,11 +571,11 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android
+  /// Android, iOS
   static Future<void> registerCustomAction({
-    required Function() callbackHandler,
+    required Function(String actionName) callbackHandler,
   }) async {
-    if (!io.Platform.isAndroid) {
+    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'registerCustomAction is not available for current operating system',
       );
@@ -649,9 +652,9 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android
+  /// Android, iOS
   static Future<void> removeAllAttachments() async {
-    if (!io.Platform.isAndroid) {
+    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'removeAllAttachments is not available for current operating system',
       );

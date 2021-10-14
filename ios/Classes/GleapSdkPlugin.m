@@ -137,6 +137,9 @@
         result(nil);
     }
   }
+  else if([@"removeAllAttachments" isEqualToString: call.method]) {
+    [Gleap removeAllAttachments];
+  }
   else {
     result(FlutterMethodNotImplemented);
   }

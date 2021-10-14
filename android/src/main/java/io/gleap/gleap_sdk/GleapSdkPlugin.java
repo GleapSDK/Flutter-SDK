@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -54,6 +55,18 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 return flutterPluginBinding.getFlutterEngine().getRenderer().getBitmap();
             }
         });
+
+        Gleap.getInstance().registerCustomAction(new CustomActionCallback() {
+            @Override
+            public void invoke(String message) {
+                uiThreadHandler.post(() -> {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("name", message);
+                    channel.invokeMethod("customActionCallback", map);
+
+                });
+            }
+        });
     }
 
     private void initCustomAction() {
@@ -68,16 +81,6 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
             @Override
             public void close() {
                 channel.invokeMethod("feedbackSentCallback", null);
-            }
-        });
-
-        Gleap.getInstance().registerCustomAction(new CustomActionCallback() {
-            @Override
-            public void invoke(String message) {
-                Map<String, String> map = new HashMap<>();
-                map.put("name", message);
-
-                channel.invokeMethod("customActionCallback", map);
             }
         });
     }

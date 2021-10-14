@@ -30,16 +30,6 @@ class _MyAppState extends State<MyApp> {
     await Gleap.initialize(
       token: 'YOUR_API_KEY',
     );
-
-    // ByteData bytes = await rootBundle.load('assets/GleapLogo.png');
-    // var buffer = bytes.buffer;
-    // var m = base64.encode(Uint8List.view(buffer));
-    // await Gleap.addAttachment(base64file: m, fileName: 'test.png');
-
-    // await Gleap.logEvent(
-    //   name: 'added attachment',
-    //   data: <String, dynamic>{'log': 'event'},
-    // );
   }
 
   @override
