@@ -615,7 +615,7 @@ class Gleap {
     await _channel.invokeMethod('logEvent', {'name': name, 'data': data});
   }
 
-  /// ### addAttachmentWithName
+  /// ### addAttachment
   ///
   /// Attaches a file to the bug report
   ///
