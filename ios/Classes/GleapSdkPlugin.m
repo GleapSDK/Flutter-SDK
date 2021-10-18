@@ -87,14 +87,6 @@
     [Gleap clearIdentity];
     result(nil);
   }
-  else if([@"setApiUrl" isEqualToString: call.method]) {
-    [Gleap setApiUrl: call.arguments[@"apiUrl"]];
-    result(nil);
-  }
-  else if([@"setWidgetUrl" isEqualToString: call.method]) {
-    [Gleap setWidgetUrl: call.arguments[@"widgetUrl"]];
-    result(nil);
-  }
   else if([@"setLanguage" isEqualToString: call.method]) {
     [Gleap setLanguage: call.arguments[@"language"]];
     result(nil);

@@ -107,19 +107,22 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS, (Web)
+  /// Android, iOS, Web
   static Future<void> initialize({
     required String token,
   }) async {
-    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint('initialize is not available for current operating system');
       return;
     }
 
-    await _channel.invokeMethod(
-      'initialize',
-      {'token': token},
-    );
+    if (!kIsWeb) {
+      await _channel.invokeMethod(
+        'initialize',
+        {'token': token},
+      );
+    }
+
     _initCallbackHandler();
   }
 
@@ -131,9 +134,9 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS, (Web)
+  /// Android, iOS, Web
   static Future<void> startFeedbackFlow() async {
-    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
           'startFeedbackFlow is not available for current operating system');
       return;
@@ -154,12 +157,12 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS
+  /// Android, iOS, Web
   static Future<void> sendSilentBugReport({
     required String description,
     required Severity severity,
   }) async {
-    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
           'sendSilentBugReport is not available for current operating system');
       return;
@@ -186,12 +189,12 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS
+  /// Android, iOS, Web
   static Future<void> identify({
     required String userId,
     GleapUserProperty? userProperties,
   }) async {
-    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'identify is not available for current operating system',
       );
@@ -217,55 +220,14 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS
+  /// Android, iOS, Web
   static Future<void> clearIdentity() async {
-    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint('clearIdentity is not available for current operating system');
       return;
     }
 
     await _channel.invokeMethod('clearIdentity');
-  }
-
-  /// ### setApiUrl
-  ///
-  /// Sets the API url to your internal Gleap server. Please make sure that the server is reachable within the network
-  /// If you use a http url pls add android:usesCleartextTraffic="true" to your main activity to allow cleartext traffic
-  ///
-  /// **Params**
-  ///
-  /// [apiUrl] Url of the internal Gleap server
-  ///
-  /// **Available Platforms**
-  ///
-  /// Android, iOS
-  static Future<void> setApiUrl({required String apiUrl}) async {
-    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
-      debugPrint('setApiUrl is not available for current operating system');
-      return;
-    }
-
-    await _channel.invokeMethod('setApiUrl', {'apiUrl': apiUrl});
-  }
-
-  /// ### setWidgetUrl
-  ///
-  /// Sets a custom widget url.
-  ///
-  /// **Params**
-  ///
-  /// [widgetUrl] The custom widget url.
-  ///
-  /// **Available Platforms**
-  ///
-  /// Android, iOS
-  static Future<void> setWidgetUrl({required String widgetUrl}) async {
-    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
-      debugPrint('setWidgetUrl is not available for current operating system');
-      return;
-    }
-
-    await _channel.invokeMethod('setWidgetUrl', {'widgetUrl': widgetUrl});
   }
 
   /// ### setLanguage
@@ -279,9 +241,9 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS
+  /// Android, iOS, Web
   static Future<void> setLanguage({required LanguageCode language}) async {
-    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint('setLanguage is not available for current operating system');
       return;
     }
@@ -380,9 +342,9 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS
+  /// Android, iOS, Web
   static Future<void> clearCustomData() async {
-    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
           'clearCustomData is not available for current operating system');
       return;
@@ -401,11 +363,11 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS
+  /// Android, iOS, Web
   static Future<void> setFeedbackWillBeSentCallback({
     required Function() callbackHandler,
   }) async {
-    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'setFeedbackWillBeSentCallback is not available for current operating system',
       );
@@ -414,8 +376,9 @@ class Gleap {
 
     _callbackItems.add(
       CallbackItem(
-          callbackName: 'feedbackWillBeSentCallback',
-          callbackHandler: callbackHandler),
+        callbackName: 'feedbackWillBeSentCallback',
+        callbackHandler: callbackHandler,
+      ),
     );
   }
 
@@ -429,11 +392,11 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS
+  /// Android, iOS, Web
   static Future<void> setFeedbackSentCallback({
     required Function() callbackHandler,
   }) async {
-    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'setFeedbackSentCallback is not available for current operating system',
       );
@@ -458,11 +421,11 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// iOS
+  /// iOS, Web
   static Future<void> setFeedbackSendingFailedCallback({
     required Function() callbackHandler,
   }) async {
-    if (!io.Platform.isIOS) {
+    if (!kIsWeb && !io.Platform.isIOS) {
       debugPrint(
         'setFeedbackSendingFailedCallback is not available for current operating system',
       );
@@ -571,11 +534,11 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS
+  /// Android, iOS, Web
   static Future<void> registerCustomAction({
     required Function(String actionName) callbackHandler,
   }) async {
-    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'registerCustomAction is not available for current operating system',
       );
@@ -632,7 +595,7 @@ class Gleap {
     required String base64file,
     required String fileName,
   }) async {
-    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
+    if (kIsWeb || (!io.Platform.isAndroid && !io.Platform.isIOS)) {
       debugPrint('addAttachment is not available for current operating system');
       return;
     }
@@ -654,7 +617,7 @@ class Gleap {
   ///
   /// Android, iOS
   static Future<void> removeAllAttachments() async {
-    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
+    if (kIsWeb || (!io.Platform.isAndroid && !io.Platform.isIOS)) {
       debugPrint(
         'removeAllAttachments is not available for current operating system',
       );
@@ -664,39 +627,39 @@ class Gleap {
     await _channel.invokeMethod('removeAllAttachments');
   }
 
-  // /// ### openWidget
-  // ///
-  // /// Opens feedback widget
-  // ///
-  // /// **Available Platforms**
-  // ///
-  // /// (Web)
-  // static Future<void> openWidget() async {
-  //   if (true) {
-  //     debugPrint(
-  //       'openWidget is not available for current operating system',
-  //     );
-  //     return;
-  //   }
+  /// ### openWidget
+  ///
+  /// Opens feedback widget
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web
+  static Future<void> openWidget() async {
+    if (!kIsWeb) {
+      debugPrint(
+        'openWidget is not available for current operating system',
+      );
+      return;
+    }
 
-  //   await _channel.invokeMethod('openWidget');
-  // }
+    await _channel.invokeMethod('openWidget');
+  }
 
-  // /// ### hideWidget
-  // ///
-  // /// Hides feedback widget
-  // ///
-  // /// **Available Platforms**
-  // ///
-  // /// (Web)
-  // static Future<void> hideWidget() async {
-  //   if (true) {
-  //     debugPrint(
-  //       'hideWidget is not available for current operating system',
-  //     );
-  //     return;
-  //   }
+  /// ### hideWidget
+  ///
+  /// Hides feedback widget
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web
+  static Future<void> hideWidget() async {
+    if (!kIsWeb) {
+      debugPrint(
+        'hideWidget is not available for current operating system',
+      );
+      return;
+    }
 
-  //   await _channel.invokeMethod('hideWidget');
-  // }
+    await _channel.invokeMethod('hideWidget');
+  }
 }

@@ -1,9 +1,11 @@
 import 'dart:async';
-import 'dart:html';
+import 'dart:convert';
+import 'dart:js';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 // ignore: library_prefixes
 import 'package:gleap_sdk/helpers/gleap_js_sdk_helper.dart' as GleapJsSdkHelper;
+import 'package:js/js.dart';
 
 class GleapSdkWeb {
   static void registerWith(Registrar registrar) {
@@ -15,44 +17,89 @@ class GleapSdkWeb {
 
     final pluginInstance = GleapSdkWeb();
     channel.setMethodCallHandler(pluginInstance.handleMethodCall);
+
+    registerEvents(channel);
+  }
+
+  static void registerEvents(MethodChannel channel) {
+    void Function(dynamic data) open = allowInterop((dynamic data) {
+      // TODO
+    });
+    GleapJsSdkHelper.registerEvents('open', open);
+
+    void Function(dynamic data) close = allowInterop((dynamic data) {
+      // TODO
+    });
+    GleapJsSdkHelper.registerEvents('close', close);
+
+    void Function(dynamic data) feedbackSent = allowInterop((dynamic data) {
+      channel.invokeMethod('feedbackSentCallback');
+    });
+    GleapJsSdkHelper.registerEvents('feedback-sent', feedbackSent);
+
+    void Function(dynamic data) flowStartet = allowInterop((dynamic data) {
+      channel.invokeMethod('feedbackWillBeSentCallback');
+    });
+    GleapJsSdkHelper.registerEvents('flow-started', flowStartet);
+
+    void Function(dynamic data) errorWhileSending =
+        allowInterop((dynamic data) {
+      channel.invokeMethod('feedbackSendingFailedCallback');
+    });
+    GleapJsSdkHelper.registerEvents('error-while-sending', errorWhileSending);
+
+    void Function(dynamic data) customActionCalled =
+        allowInterop((dynamic data) {
+      channel.invokeMethod(
+        'customActionCallback',
+        <String, dynamic>{'name': data.name},
+      );
+    });
+    GleapJsSdkHelper.registerCustomAction(customActionCalled);
   }
 
   Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
-      case 'initialize':
-        return initialize(token: call.arguments['token']);
       case 'identify':
         return identify(
           userId: call.arguments['userId'],
-          userHash: call.arguments['userHash'],
-          name: call.arguments['name'],
-          email: call.arguments['email'],
+          userProperties: call.arguments['userProperties'],
         );
+      case 'clearIdentity':
+        return clearIdentity();
       case 'attachCustomData':
-        return attachCustomData(customData: call.arguments['attachCustomData']);
+        return attachCustomData(
+          customData: call.arguments['customData'],
+        );
       case 'setCustomData':
         return setCustomData(
           key: call.arguments['key'],
           value: call.arguments['value'],
         );
-      case 'removeCustomData':
+      case 'removeCustomDataForKey':
         return removeCustomData(key: call.arguments['key']);
-      case 'registerCustomAction': // TODO
-        return registerCustomAction();
+      case 'clearCustomData':
+        return clearCustomData();
       case 'logEvent':
         return logEvent(
-            name: call.arguments('name'), data: call.arguments['data']);
+          name: call.arguments['name'],
+          data: call.arguments['data'],
+        );
       case 'sendSilentBugReport':
         return sendSilentBugReport(
           description: call.arguments['description'],
           severity: call.arguments['severity'],
         );
+      case 'isOpened': // TODO in gleap_sdk.dart
+        return isOpened();
       case 'openWidget':
         return openWidget();
       case 'hideWidget':
         return hideWidget();
       case 'startFeedbackFlow':
         return startFeedbackFlow();
+      case 'setLanguage':
+        return setLanguage(language: call.arguments['language']);
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -61,28 +108,23 @@ class GleapSdkWeb {
     }
   }
 
-  Future<void> initialize({String? token}) async {
-    if (token == null) {
-      throw ('initialize - token null');
-    }
-
-    ScriptElement scriptElement = ScriptElement();
-    scriptElement.src = "https://widget.gleap.io/widget/$token";
-    document.body?.append(scriptElement);
-  }
-
   Future<void> identify({
     required String userId,
-    required String userHash,
-    String? name,
-    String? email,
+    dynamic userProperties,
   }) async {
-    await GleapJsSdkHelper.identify(userId, userHash, name, email);
+    String? stringifiedHashMap = jsonEncode(userProperties);
+
+    await GleapJsSdkHelper.identify(userId, stringifiedHashMap);
   }
 
-  Future<void> attachCustomData(
-      {required Map<String, dynamic> customData}) async {
-    await GleapJsSdkHelper.attachCustomData(customData);
+  Future<void> clearIdentity() async {
+    await GleapJsSdkHelper.clearIdentity();
+  }
+
+  Future<void> attachCustomData({required dynamic customData}) async {
+    String? stringifiedHashMap = jsonEncode(customData);
+
+    await GleapJsSdkHelper.attachCustomData(stringifiedHashMap);
   }
 
   Future<void> setCustomData({
@@ -100,17 +142,24 @@ class GleapSdkWeb {
     await GleapJsSdkHelper.clearCustomData();
   }
 
-  Future<void> registerCustomAction() async {}
+  Future<void> logEvent({
+    required String name,
+    dynamic data,
+  }) async {
+    String? stringifiedHashMap = jsonEncode(data);
 
-  Future<void> logEvent(
-      {required String name, Map<String, dynamic>? data}) async {
-    await GleapJsSdkHelper.logEvent(name);
-    // TODO data
+    await GleapJsSdkHelper.logEvent(name, stringifiedHashMap);
   }
 
-  Future<void> sendSilentBugReport(
-      {required String description, required String severity}) async {
-    // TODO severity
+  Future<void> sendSilentBugReport({
+    required String description,
+    required String severity,
+  }) async {
+    await GleapJsSdkHelper.sendSilentBugReport(description, severity);
+  }
+
+  Future<void> isOpened() async {
+    // TODO
   }
 
   Future<void> openWidget() async {
@@ -122,6 +171,10 @@ class GleapSdkWeb {
   }
 
   Future<void> startFeedbackFlow() async {
-    await GleapJsSdkHelper.startFeedbackFlow();
+    await GleapJsSdkHelper.open();
+  }
+
+  Future<void> setLanguage({required String language}) async {
+    await GleapJsSdkHelper.setLanguage(language);
   }
 }

@@ -146,16 +146,6 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 result.success(null);
                 break;
 
-            case "setApiUrl":
-                Gleap.getInstance().setApiUrl((String) call.argument("apiUrl"));
-                result.success(null);
-                break;
-
-            case "setWidgetUrl":
-                Gleap.getInstance().setWidgetUrl((String) call.argument("widgetUrl"));
-                result.success(null);
-                break;
-
             case "setLanguage":
                 Gleap.getInstance().setLanguage((String) call.argument("language"));
                 result.success(null);
