@@ -1,5 +1,7 @@
 # Gleap SDK
 
+![Gleap Flutter SDK Intro](https://raw.githubusercontent.com/GleapSDK/iOS-SDK/main/imgs/gleapheader.png)
+
 The Gleap SDK for Flutter is the easiest way to integrate Gleap into your apps!
 
 # Report and Fix Bugs the Easy Way
@@ -14,7 +16,7 @@ Checkout our [documentation](https://docs.gleap.io/docs/flutter-sdk) for full re
 
 ```dart
 dependencies:
-  gleap_sdk: "^6.0.3"
+  gleap_sdk: "^6.0.4"
 ```
 
 **Android installation**

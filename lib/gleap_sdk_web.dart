@@ -23,12 +23,12 @@ class GleapSdkWeb {
 
   static void registerEvents(MethodChannel channel) {
     void Function(dynamic data) open = allowInterop((dynamic data) {
-      // TODO
+      channel.invokeMethod('widgetOpenedCalledback');
     });
     GleapJsSdkHelper.registerEvents('open', open);
 
     void Function(dynamic data) close = allowInterop((dynamic data) {
-      // TODO
+      channel.invokeMethod('widgetClosedCalledback');
     });
     GleapJsSdkHelper.registerEvents('close', close);
 
@@ -90,8 +90,6 @@ class GleapSdkWeb {
           description: call.arguments['description'],
           severity: call.arguments['severity'],
         );
-      case 'isOpened': // TODO in gleap_sdk.dart
-        return isOpened();
       case 'openWidget':
         return openWidget();
       case 'hideWidget':
@@ -156,10 +154,6 @@ class GleapSdkWeb {
     required String severity,
   }) async {
     await GleapJsSdkHelper.sendSilentBugReport(description, severity);
-  }
-
-  Future<void> isOpened() async {
-    // TODO
   }
 
   Future<void> openWidget() async {

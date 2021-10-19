@@ -353,13 +353,69 @@ class Gleap {
     await _channel.invokeMethod('clearCustomData');
   }
 
+  /// ### setWidgetOpenedCalledback
+  ///
+  /// This is called, when the Gleap widget opened
+  ///
+  /// **Params**
+  ///
+  /// [callbackHandler] Is called when Gleap is opened
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web
+  static Future<void> setWidgetOpenedCalledback(
+      {required Function() callbackHandler}) async {
+    if (!kIsWeb) {
+      debugPrint(
+        'setWidgetOpenedCalledback is not available for current operating system',
+      );
+      return;
+    }
+
+    _callbackItems.add(
+      CallbackItem(
+        callbackName: 'widgetOpenedCalledback',
+        callbackHandler: callbackHandler,
+      ),
+    );
+  }
+
+  /// ### setWidgetClosedCalledback
+  ///
+  /// This is called, when the Gleap widget opened
+  ///
+  /// **Params**
+  ///
+  /// [callbackHandler] Is called when Gleap is opened
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web
+  static Future<void> setWidgetClosedCalledback(
+      {required Function() callbackHandler}) async {
+    if (!kIsWeb) {
+      debugPrint(
+        'setWidgetClosedCalledback is not available for current operating system',
+      );
+      return;
+    }
+
+    _callbackItems.add(
+      CallbackItem(
+        callbackName: 'widgetClosedCalledback',
+        callbackHandler: callbackHandler,
+      ),
+    );
+  }
+
   /// ### setBugWillBeSentCallback
   ///
   /// This is called, when the Gleap flow is started
   ///
   /// **Params**
   ///
-  /// [bugWillBeSentCallback] Is called when BB is opened
+  /// [callbackHandler] Is called when Gleap is opened
   ///
   /// **Available Platforms**
   ///
@@ -388,7 +444,7 @@ class Gleap {
   ///
   /// **Params**
   ///
-  /// [gleapSentCallback] This callback is called when the flow is called
+  /// [callbackHandler] This callback is called when the flow is called
   ///
   /// **Available Platforms**
   ///
@@ -417,7 +473,7 @@ class Gleap {
   ///
   /// **Params**
   ///
-  /// [gleapSentCallback] This callback is called when the flow is called
+  /// [callbackHandler] This callback is called when the flow is called
   ///
   /// **Available Platforms**
   ///
@@ -530,7 +586,7 @@ class Gleap {
   ///
   /// **Params**
   ///
-  /// [customAction] Implement the callback
+  /// [callbackHandler] Implement the callback
   ///
   /// **Available Platforms**
   ///
