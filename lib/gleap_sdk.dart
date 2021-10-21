@@ -22,25 +22,6 @@ String _getSeverityValue(Severity bugPriority) {
   }
 }
 
-enum LanguageCode { EN, DE, FR, IT, ES }
-
-String _getLanguageCodeValue(LanguageCode languageCode) {
-  switch (languageCode) {
-    case LanguageCode.EN:
-      return 'en';
-    case LanguageCode.DE:
-      return 'de';
-    case LanguageCode.FR:
-      return 'fr';
-    case LanguageCode.IT:
-      return 'it';
-    case LanguageCode.ES:
-      return 'es';
-    default:
-      return 'en';
-  }
-}
-
 enum RequestType { GET, POST, PUT, DELETE }
 
 String _getRequestTypeValue(RequestType requestType) {
@@ -242,15 +223,13 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Android, iOS, Web
-  static Future<void> setLanguage({required LanguageCode language}) async {
+  static Future<void> setLanguage({required String language}) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint('setLanguage is not available for current operating system');
       return;
     }
 
-    String languageCodeVal = _getLanguageCodeValue(language);
-
-    await _channel.invokeMethod('setLanguage', {'language': languageCodeVal});
+    await _channel.invokeMethod('setLanguage', {'language': language});
   }
 
   /// ### attachCustomData
