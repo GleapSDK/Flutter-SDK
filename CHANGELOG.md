@@ -1,3 +1,4 @@
+## 6.0.5 - Language code parameter as string
 ## 6.0.4 - Improved Web SDK
 ## 6.0.3 - Added Web SDK
 ## 6.0.2 - Updated Android SDK version
