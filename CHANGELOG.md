@@ -1,3 +1,4 @@
+## 6.1.0 - Required feedbackAction in startFeedbackFlow, added open widget method
 ## 6.0.5 - Language code parameter as string
 ## 6.0.4 - Improved Web SDK
 ## 6.0.3 - Added Web SDK

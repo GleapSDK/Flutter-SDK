@@ -116,14 +116,17 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Android, iOS, Web
-  static Future<void> startFeedbackFlow() async {
+  static Future<void> startFeedbackFlow({
+    required String feedbackAction,
+  }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
           'startFeedbackFlow is not available for current operating system');
       return;
     }
 
-    await _channel.invokeMethod('startFeedbackFlow');
+    await _channel
+        .invokeMethod('startFeedbackFlow', {'action': feedbackAction});
   }
 
   /// ### sendSilentBugReport
@@ -662,15 +665,15 @@ class Gleap {
     await _channel.invokeMethod('removeAllAttachments');
   }
 
-  /// ### openWidget
+  /// ### open
   ///
   /// Opens feedback widget
   ///
   /// **Available Platforms**
   ///
   /// Web
-  static Future<void> openWidget() async {
-    if (!kIsWeb) {
+  static Future<void> open() async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'openWidget is not available for current operating system',
       );
@@ -687,7 +690,7 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Web
-  static Future<void> hideWidget() async {
+  static Future<void> hide() async {
     if (!kIsWeb) {
       debugPrint(
         'hideWidget is not available for current operating system',
@@ -696,5 +699,23 @@ class Gleap {
     }
 
     await _channel.invokeMethod('hideWidget');
+  }
+
+  /// ### enableDebugConsoleLog
+  ///
+  /// Enables console logs in debug mode
+  ///
+  /// **Available Platforms**
+  ///
+  /// iOS
+  static Future<void> enableDebugConsoleLog() async {
+    if (!io.Platform.isIOS) {
+      debugPrint(
+        'hideWidget is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('enableDebugConsoleLog');
   }
 }

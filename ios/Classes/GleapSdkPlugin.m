@@ -56,7 +56,7 @@
     result(nil);
   }
   else if([@"startFeedbackFlow" isEqualToString:call.method]) {
-    [Gleap startFeedbackFlow];
+    [Gleap startFeedbackFlow: call.arguments[@"action"]];
     result(nil);
   }
   else if([@"sendSilentBugReport" isEqualToString: call.method]) {
@@ -131,6 +131,15 @@
   }
   else if([@"removeAllAttachments" isEqualToString: call.method]) {
     [Gleap removeAllAttachments];
+    result(nil);
+  }
+  else if([@"enableDebugConsoleLog" isEqualToString: call.method]) {
+    [Gleap enableDebugConsoleLog];
+    result(nil);
+  }
+  else if([@"openWidget" isEqualToString: call.method]) {
+    [Gleap open];
+    result(nil);
   }
   else {
     result(FlutterMethodNotImplemented);
