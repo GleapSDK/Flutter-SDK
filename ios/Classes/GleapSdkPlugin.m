@@ -107,14 +107,6 @@
     [Gleap clearCustomData];
     result(nil);
   }
-  // else if([@"startNetworkLogging" isEqualToString: call.method]) {
-  //   [Gleap startNetworkLogging];
-  //   result(nil);
-  // }
-  // else if([@"stopNetworkLogging" isEqualToString: call.method]) {
-  //   [Gleap stopNetworkLogging];
-  //   result(nil);
-  // }
   else if([@"logEvent" isEqualToString: call.method]) {
     [Gleap logEvent: call.arguments[@"name"] withData: call.arguments[@"data"]];
     result(nil);
@@ -128,6 +120,9 @@
     } else {
         result(nil);
     }
+  }
+  else if([@"attachNetworkLogs" isEqualToString: call.method]) {
+     [Gleap attachData: @{ @"networkLogs": call.arguments[@"networkLogs"] }];
   }
   else if([@"removeAllAttachments" isEqualToString: call.method]) {
     [Gleap removeAllAttachments];

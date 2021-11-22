@@ -6,6 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:gleap_sdk/models/callback_item_model/callback_item_model.dart';
+import 'package:gleap_sdk/models/gleap_network_log_models/gleap_network_log_model/gleap_network_log_model.dart';
+import 'package:gleap_sdk/models/gleap_user_property_model/gleap_user_property_model.dart';
 
 enum Severity { LOW, MEDIUM, HIGH }
 
@@ -20,43 +23,6 @@ String _getSeverityValue(Severity bugPriority) {
     default:
       return "MEDIUM";
   }
-}
-
-enum RequestType { GET, POST, PUT, DELETE }
-
-String _getRequestTypeValue(RequestType requestType) {
-  switch (requestType) {
-    case RequestType.GET:
-      return 'GET';
-    case RequestType.POST:
-      return 'POST';
-    case RequestType.PUT:
-      return 'PUT';
-    case RequestType.DELETE:
-      return 'DELETE';
-    default:
-      return 'GET';
-  }
-}
-
-class GleapUserProperty {
-  String? name;
-  String? email;
-
-  GleapUserProperty({
-    this.name,
-    this.email,
-  });
-
-  Map<String, dynamic> toJson() =>
-      <String, dynamic>{'name': name, 'email': email};
-}
-
-class CallbackItem {
-  String callbackName;
-  Function callbackHandler;
-
-  CallbackItem({required this.callbackName, required this.callbackHandler});
 }
 
 class Gleap {
@@ -478,89 +444,38 @@ class Gleap {
     );
   }
 
-  // /// ### logNetwork
-  // ///
-  // /// Log network traffic by logging it manually.
-  // ///
-  // /// **Params**
-  // ///
-  // /// [urlConnection] URL where the request is sent to
-  // ///
-  // /// [requestType] GET, POST, PUT, DELETE
-  // ///
-  // /// [status] Status of the response (e.g. 200, 404)
-  // ///
-  // /// [duration] Duration of the request
-  // ///
-  // /// [request] Add the data you want. e.g the body sent in the request
-  // ///
-  // /// [response] Response of the call. You can add just the information you want and need.
-  // ///
-  // /// **Available Platforms**
-  // ///
-  // /// Android
-  // static Future<void> logNetwork({
-  //   required String urlConnection,
-  //   required RequestType requestType,
-  //   required int status,
-  //   required int duration,
-  //   required Map<String, dynamic> request,
-  //   required Map<String, dynamic> response,
-  // }) async {
-  //   if (!io.Platform.isAndroid) {
-  //     debugPrint('logNetwork is not available for current operating system');
-  //     return;
-  //   }
+  /// ### logNetwork
+  ///
+  /// Log network traffic by logging it manually.
+  ///
+  /// **Params**
+  ///
+  /// [networkLogs] List of GleapNetworkLog
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS
+  static Future<void> attachNetworkLogs({
+    required List<GleapNetworkLog> networkLogs,
+  }) async {
+    if (!io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+          'attachNetworkLogs is not available for current operating system');
+      return;
+    }
 
-  //   String requestTypeVal = _getRequestTypeValue(requestType);
+    List<Map<String, dynamic>> jsonNetworkLogs = <Map<String, dynamic>>[];
+    for (int i = 0; i < networkLogs.length; i++) {
+      jsonNetworkLogs.add(networkLogs[i].toJson());
+    }
 
-  //   await _channel.invokeMethod(
-  //     'logNetwork',
-  //     {
-  //       'urlConnection': urlConnection,
-  //       'requestType': requestTypeVal,
-  //       'status': status,
-  //       'duration': duration,
-  //       'request': request,
-  //       'response': response,
-  //     },
-  //   );
-  // }
-
-  // /// ### startNetworkRecording
-  // ///
-  // /// Starts network recording.
-  // ///
-  // /// **Available Platforms**
-  // ///
-  // /// iOS
-  // static Future<void> startNetworkLogging() async {
-  //   if (!io.Platform.isIOS) {
-  //     debugPrint(
-  //       'startNetworkLogging is not available for current operating system',
-  //     );
-  //     return;
-  //   }
-
-  //   await _channel.invokeMethod('startNetworkLogging');
-  // }
-
-  // /// ### stopNetworkRecording
-  // ///
-  // /// Stops network recording.
-  // ///
-  // /// **Available Platforms**
-  // ///
-  // /// iOS
-  // static Future<void> stopNetworkLogging() async {
-  //   if (!io.Platform.isIOS) {
-  //     debugPrint(
-  //         'stopNetworkLogging is not available for current operating system');
-  //     return;
-  //   }
-
-  //   await _channel.invokeMethod('stopNetworkLogging');
-  // }
+    await _channel.invokeMethod(
+      'attachNetworkLogs',
+      {
+        'networkLogs': jsonNetworkLogs,
+      },
+    );
+  }
 
   /// ### registerCustomAction
   ///
