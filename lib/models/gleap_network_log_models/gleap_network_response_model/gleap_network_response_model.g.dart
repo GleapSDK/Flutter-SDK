@@ -19,5 +19,5 @@ Map<String, dynamic> _$GleapNetworkResponseToJson(
     <String, dynamic>{
       'status': instance.status,
       'statusText': instance.statusText,
-      'responseText': instance.responseText,
+      'responseText': _prepareResponse(instance.responseText),
     };

@@ -16,7 +16,7 @@ Checkout our [documentation](https://docs.gleap.io/docs/flutter-sdk) for full re
 
 ```dart
 dependencies:
-  gleap_sdk: "^6.2.1"
+  gleap_sdk: "^6.2.2"
 ```
 
 **Android installation**
@@ -60,3 +60,7 @@ Gleap.initialize(token: 'YOUR_API_KEY')
 ```
 
 Your API key can be found in the project settings within Gleap.
+
+**Network Logging**
+
+We support network logging for the packages [Http](https://pub.dev/packages/http) and [Dio](https://pub.dev/packages/dio). For details on how to enable network logging for these packages, check the [Gleap Http Interceptor](https://pub.dev/packages/gleap_http_interceptor) and the [Gleap Dio Interceptor](https://pub.dev/packages/gleap_dio_interceptor) packages.

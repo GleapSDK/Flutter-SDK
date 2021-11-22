@@ -15,6 +15,6 @@ GleapNetworkRequest _$GleapNetworkRequestFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$GleapNetworkRequestToJson(
         GleapNetworkRequest instance) =>
     <String, dynamic>{
-      'payload': instance.payload,
+      'payload': _preparePayload(instance.payload),
       'headers': instance.headers,
     };

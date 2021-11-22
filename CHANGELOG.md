@@ -1,3 +1,4 @@
+## 6.2.2 - Improved network logging
 ## 6.2.1 - Added network logs
 ## 6.2.0 - Added Surveys
 ## 6.1.0 - Required feedbackAction in startFeedbackFlow, added open widget method
