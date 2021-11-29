@@ -1,4 +1,4 @@
-## 6.2.2 - Improved native SDKs
+## 6.2.3 - Improved native SDKs
 ## 6.2.2 - Improved network logging
 ## 6.2.1 - Added network logs
 ## 6.2.0 - Added Surveys

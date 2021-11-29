@@ -9,6 +9,7 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -175,7 +176,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
         case "attachNetworkLogs":
             try {
-                JSONArray object = new JSONArray(call.argument("networkLogs"));
+                JSONArray object = new JSONArray((Object) call.argument("networkLogs"));
                 for (int i = 0; i < object.length(); i++) {
                     JSONObject currentRequest = (JSONObject) object.get(i);
                     JSONObject response = (JSONObject) currentRequest.get("response");
