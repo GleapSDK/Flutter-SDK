@@ -173,38 +173,25 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
             result.success(null);
             break;
 
-        case "logNetwork":
-            JSONObject request = new JSONObject((Map) call.argument("request"));
-            JSONObject response = new JSONObject((Map) call.argument("response"));
+        case "attachNetworkLogs":
+            try {
+                JSONArray object = new JSONArray(call.argument("networkLogs"));
+                for (int i = 0; i < object.length(); i++) {
+                    JSONObject currentRequest = (JSONObject) object.get(i);
+                    JSONObject response = (JSONObject) currentRequest.get("response");
+                    JSONObject request = new JSONObject();
+                    if (currentRequest.has("request")) {
+                        request = (JSONObject) currentRequest.get("request");
+                    }
+                    Gleap.getInstance().logNetwork(currentRequest.getString("url"),
+                            RequestType.valueOf(currentRequest.getString("type")), response.getInt("status"),
+                            currentRequest.getInt("duration"), request, response);
+                }
 
-            RequestType requestType;
-            switch (call.argument("requestType").toString()) {
-            case "POST":
-                requestType = RequestType.POST;
-                break;
-
-            case "GET":
-                requestType = RequestType.GET;
-                break;
-
-            case "DELETE":
-                requestType = RequestType.DELETE;
-                break;
-
-            case "PUT":
-                requestType = RequestType.PUT;
-                break;
-
-            case "PATCH":
-                requestType = RequestType.PATCH;
-                break;
-
-            default:
-                requestType = RequestType.GET;
+            } catch (Exception ex) {
+                System.out.println(ex);
             }
 
-            Gleap.getInstance().logNetwork((String) call.argument("urlConnection"), requestType,
-                    (int) call.argument("status"), (int) call.argument("duration"), request, response);
             result.success(null);
             break;
 

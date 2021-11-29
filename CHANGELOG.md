@@ -1,3 +1,7 @@
+## 6.2.2 - Improved native SDKs
+## 6.2.2 - Improved network logging
+## 6.2.1 - Added network logs
+## 6.2.0 - Added Surveys
 ## 6.1.0 - Required feedbackAction in startFeedbackFlow, added open widget method
 ## 6.0.5 - Language code parameter as string
 ## 6.0.4 - Improved Web SDK
