@@ -1,6 +1,6 @@
 # Gleap SDK
 
-![Gleap Flutter SDK Intro](https://raw.githubusercontent.com/GleapSDK/iOS-SDK/main/imgs/gleapheader.png)
+![Gleap Flutter SDK Intro](https://raw.githubusercontent.com/GleapSDK/Gleap-iOS-SDK/main/Resources/GleapHeaderImage.png)
 
 The Gleap SDK for Flutter is the easiest way to integrate Gleap into your apps!
 
