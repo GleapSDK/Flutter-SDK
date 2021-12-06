@@ -1,3 +1,4 @@
+## 6.3.1 - Fixed issue with network logs
 ## 6.3.0 - Updated native SDKs
 ## 6.2.3 - Improved native SDKs
 ## 6.2.2 - Improved network logging

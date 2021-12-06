@@ -7,7 +7,7 @@ part 'gleap_network_request_model.g.dart';
 @JsonSerializable()
 class GleapNetworkRequest {
   @JsonKey(name: 'payload', toJson: _preparePayload)
-  String? payload;
+  dynamic payload;
   Map<String, dynamic>? headers;
 
   GleapNetworkRequest({this.payload, this.headers});
@@ -18,9 +18,9 @@ class GleapNetworkRequest {
   Map<String, dynamic> toJson() => _$GleapNetworkRequestToJson(this);
 }
 
-String? _preparePayload(String? responseText) {
+String _preparePayload(dynamic responseText) {
   if (responseText == null) {
-    return null;
+    return "";
   }
 
   List<int> bytes = utf8.encode(responseText);
@@ -28,5 +28,5 @@ String? _preparePayload(String? responseText) {
     return '<payload_too_large>';
   }
 
-  return responseText;
+  return responseText.toString();
 }

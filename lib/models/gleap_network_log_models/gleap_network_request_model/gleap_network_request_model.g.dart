@@ -8,7 +8,7 @@ part of 'gleap_network_request_model.dart';
 
 GleapNetworkRequest _$GleapNetworkRequestFromJson(Map<String, dynamic> json) =>
     GleapNetworkRequest(
-      payload: json['payload'] as String?,
+      payload: json['payload'],
       headers: json['headers'] as Map<String, dynamic>?,
     );
 
