@@ -10,6 +10,7 @@ class GleapNetworkLog {
   String? url;
   DateTime? date;
   GleapNetworkRequest? request;
+  @JsonKey(name: 'duration', toJson: _prepareDuration)
   double? duration;
   bool? success;
   GleapNetworkResponse? response;
@@ -28,4 +29,12 @@ class GleapNetworkLog {
       _$GleapNetworkLogFromJson(json);
 
   Map<String, dynamic> toJson() => _$GleapNetworkLogToJson(this);
+}
+
+double _prepareDuration(double? duration) {
+  if (duration == null) {
+    return 0;
+  }
+
+  return duration;
 }

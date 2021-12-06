@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -176,7 +177,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
         case "attachNetworkLogs":
             try {
-                JSONArray object = new JSONArray((Object) call.argument("networkLogs"));
+                JSONArray object = new JSONArray((Collection) call.argument("networkLogs"));
                 for (int i = 0; i < object.length(); i++) {
                     JSONObject currentRequest = (JSONObject) object.get(i);
                     JSONObject response = (JSONObject) currentRequest.get("response");

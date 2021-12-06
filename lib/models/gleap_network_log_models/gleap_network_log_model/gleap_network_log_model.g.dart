@@ -30,7 +30,7 @@ Map<String, dynamic> _$GleapNetworkLogToJson(GleapNetworkLog instance) =>
       'url': instance.url,
       'date': instance.date?.toIso8601String(),
       'request': instance.request?.toJson(),
-      'duration': instance.duration,
+      'duration': _prepareDuration(instance.duration),
       'success': instance.success,
       'response': instance.response?.toJson(),
     };
