@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'gleap_sdk'
-  s.version          = '6.3.1'
+  s.version          = '6.3.2'
   s.summary          = 'Gleap SDK for Flutter'
   s.description      = 'The Gleap SDK for Flutter is the easiest way to integrate Gleap into your apps!'
   s.homepage         = 'https://gleap.io'

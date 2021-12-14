@@ -1,3 +1,4 @@
+## 6.3.2 - Updated Android SDK
 ## 6.3.1 - Fixed issue with network logs
 ## 6.3.0 - Updated native SDKs
 ## 6.2.3 - Improved native SDKs
