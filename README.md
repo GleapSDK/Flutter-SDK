@@ -16,7 +16,7 @@ Checkout our [documentation](https://docs.gleap.io/docs/flutter-sdk) for full re
 
 ```dart
 dependencies:
-  gleap_sdk: "^6.3.2"
+  gleap_sdk: "^6.3.3"
 ```
 
 **Android installation**
