@@ -35,6 +35,15 @@ class Gleap {
           .where((CallbackItem element) => element.callbackName == call.method)
           .toList();
       if (callbackItem.isNotEmpty) {
+        if (call.method == 'feedbackWillBeSentCallback') {
+          Gleap.setFeedbackWillBeSentCallback(callbackHandler: () {
+            WidgetsBinding.instance?.focusManager.primaryFocus?.unfocus();
+            WidgetsBinding.instance?.focusManager.rootScope.requestFocus(
+              FocusNode(),
+            );
+          });
+        }
+
         if (call.method == 'customActionCallback') {
           callbackItem[0].callbackHandler(call.arguments['name']);
         } else {
@@ -528,6 +537,8 @@ class Gleap {
       debugPrint('logEvent is not available for current operating system');
       return;
     }
+
+    data ??= <String, dynamic>{};
 
     await _channel.invokeMethod('logEvent', {'name': name, 'data': data});
   }
