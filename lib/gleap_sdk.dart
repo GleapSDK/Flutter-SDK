@@ -31,19 +31,17 @@ class Gleap {
 
   static _initCallbackHandler() async {
     _channel.setMethodCallHandler((MethodCall call) async {
+      if (call.method == 'feedbackWillBeSentCallback') {
+        WidgetsBinding.instance?.focusManager.primaryFocus?.unfocus();
+        WidgetsBinding.instance?.focusManager.rootScope.requestFocus(
+          FocusNode(),
+        );
+      }
+
       List<CallbackItem> callbackItem = _callbackItems
           .where((CallbackItem element) => element.callbackName == call.method)
           .toList();
       if (callbackItem.isNotEmpty) {
-        if (call.method == 'feedbackWillBeSentCallback') {
-          Gleap.setFeedbackWillBeSentCallback(callbackHandler: () {
-            WidgetsBinding.instance?.focusManager.primaryFocus?.unfocus();
-            WidgetsBinding.instance?.focusManager.rootScope.requestFocus(
-              FocusNode(),
-            );
-          });
-        }
-
         if (call.method == 'customActionCallback') {
           callbackItem[0].callbackHandler(call.arguments['name']);
         } else {
@@ -636,7 +634,7 @@ class Gleap {
   ///
   /// iOS
   static Future<void> enableDebugConsoleLog() async {
-    if (!io.Platform.isIOS) {
+    if (kIsWeb || !io.Platform.isIOS) {
       debugPrint(
         'hideWidget is not available for current operating system',
       );

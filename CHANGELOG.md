@@ -1,3 +1,4 @@
+## 6.3.4 - Updated Android SDK, fixed bug with web focus lock
 ## 6.3.3 - Updated iOS SDK
 ## 6.3.2 - Updated Android SDK
 ## 6.3.1 - Fixed issue with network logs
