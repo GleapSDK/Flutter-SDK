@@ -23,7 +23,7 @@ String _preparePayload(dynamic responseText) {
     return "";
   }
 
-  List<int> bytes = utf8.encode(responseText);
+  List<int> bytes = utf8.encode(responseText.toString());
   if (bytes.length > 1000000) {
     return '<payload_too_large>';
   }
