@@ -70,12 +70,10 @@ class Gleap {
       return;
     }
 
-    if (!kIsWeb) {
-      await _channel.invokeMethod(
-        'initialize',
-        {'token': token},
-      );
-    }
+    await _channel.invokeMethod(
+      'initialize',
+      {'token': token},
+    );
 
     _initCallbackHandler();
   }

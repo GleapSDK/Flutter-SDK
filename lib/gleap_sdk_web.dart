@@ -60,6 +60,8 @@ class GleapSdkWeb {
 
   Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
+      case 'initialize':
+        return initialize(token: call.arguments['token']);
       case 'identify':
         return identify(
           userId: call.arguments['userId'],
@@ -104,6 +106,10 @@ class GleapSdkWeb {
           details: 'gleap_sdk for web doesn\'t implement \'${call.method}\'',
         );
     }
+  }
+
+  Future<void> initialize({required String token}) async {
+    await GleapJsSdkHelper.initialize(token);
   }
 
   Future<void> identify({

@@ -3,6 +3,11 @@ library gleap;
 
 import 'package:js/js.dart';
 
+@JS('window.Gleap.initialize')
+external Future<void> initialize(
+  String token,
+);
+
 @JS('window.Gleap.identify')
 external Future<void> identify(
   String userId,
@@ -25,10 +30,12 @@ external Future<void> removeCustomData(String key);
 external Future<void> clearCustomData();
 
 @JS('Gleap.registerCustomAction')
-external void registerCustomAction(void Function(dynamic action) callbackHandler);
+external void registerCustomAction(
+    void Function(dynamic action) callbackHandler);
 
 @JS('window.Gleap.on')
-external void registerEvents(String name, void Function(dynamic data) callbackHandler);
+external void registerEvents(
+    String name, void Function(dynamic data) callbackHandler);
 
 @JS('window.Gleap.logEvent')
 external Future<void> logEvent(String event, String? data);

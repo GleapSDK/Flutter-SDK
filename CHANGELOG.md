@@ -1,3 +1,4 @@
+## 6.3.8 - Initialize web via dart
 ## 6.3.7 - Fixed Android bug with firebase_messaging package
 ## 6.3.6 - Updated Android SDK
 ## 6.3.5 - Fixed bug with network request toJson() function
