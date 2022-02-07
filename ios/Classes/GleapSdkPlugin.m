@@ -136,6 +136,12 @@
     [Gleap open];
     result(nil);
   }
+  else if([@"setApiUrl" isEqualToString: call.method]) {
+    [Gleap setApiUrl: call.arguments[@"url"]];
+  }
+  else if([@"setWidgetUrl" isEqualToString: call.method]) {
+    [Gleap setWidgetUrl: call.arguments[@"url"]];
+  }
   else {
     result(FlutterMethodNotImplemented);
   }

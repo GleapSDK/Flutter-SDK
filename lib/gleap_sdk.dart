@@ -641,4 +641,50 @@ class Gleap {
 
     await _channel.invokeMethod('enableDebugConsoleLog');
   }
+
+  /// ### setApiUrl
+  ///
+  /// Set a custom api url
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS
+  static Future<void> setApiUrl({required String url}) async {
+    if (kIsWeb || (!io.Platform.isAndroid && !io.Platform.isIOS)) {
+      debugPrint(
+        'setApiUrl is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'setApiUrl',
+      {
+        'url': url,
+      },
+    );
+  }
+
+  /// ### setWidgetUrl
+  ///
+  /// Set a custom widget url
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS
+  static Future<void> setWidgetUrl({required String url}) async {
+    if (kIsWeb || (!io.Platform.isAndroid && !io.Platform.isIOS)) {
+      debugPrint(
+        'setWidgetUrl is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'setWidgetUrl',
+      {
+        'url': url,
+      },
+    );
+  }
 }

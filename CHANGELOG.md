@@ -1,3 +1,4 @@
+## 6.3.10 - Updated native SDK's
 ## 6.3.9 - Fixed bug with network logs in web
 ## 6.3.8 - Initialize web via dart
 ## 6.3.7 - Fixed Android bug with firebase_messaging package
