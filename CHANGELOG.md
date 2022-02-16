@@ -1,3 +1,4 @@
+## 6.4.0 - Updated native SDK's
 ## 6.3.10 - Updated native SDK's
 ## 6.3.9 - Fixed bug with network logs in web
 ## 6.3.8 - Initialize web via dart

@@ -206,7 +206,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
             case "logEvent":
                 JSONObject data = new JSONObject((Map) call.argument("data"));
 
-                Gleap.getInstance().logEvent((String) call.argument("logEvent"), data);
+                Gleap.getInstance().logEvent((String) call.argument("name"), data);
                 result.success(null);
                 break;
 
@@ -245,6 +245,8 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                         } else {
                             System.err.println("Gleap: The file is not existing.");
                         }
+                    }else {
+                        throw new NotSupportedFileTypeException();
                     }
 
                 } catch (Exception e) {

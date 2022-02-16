@@ -634,7 +634,7 @@ class Gleap {
   static Future<void> enableDebugConsoleLog() async {
     if (kIsWeb || !io.Platform.isIOS) {
       debugPrint(
-        'hideWidget is not available for current operating system',
+        'enableDebugConsoleLog is not available for current operating system',
       );
       return;
     }
