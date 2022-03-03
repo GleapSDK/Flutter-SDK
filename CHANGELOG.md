@@ -1,3 +1,4 @@
+## 6.4.1 - Updated Android SDK
 ## 6.4.0 - Updated native SDK's
 ## 6.3.10 - Updated native SDK's
 ## 6.3.9 - Fixed bug with network logs in web
