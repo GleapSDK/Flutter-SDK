@@ -1,3 +1,4 @@
+## 6.4.2 - Improved GleapNetworkLog serialization
 ## 6.4.1 - Updated Android SDK
 ## 6.4.0 - Updated native SDK's
 ## 6.3.10 - Updated native SDK's

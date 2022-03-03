@@ -24,14 +24,18 @@ class GleapNetworkResponse {
 }
 
 String? _prepareResponse(String? responseText) {
-  if (responseText == null) {
-    return null;
-  }
+  try {
+    if (responseText == null) {
+      return null;
+    }
 
-  List<int> bytes = utf8.encode(responseText);
-  if (bytes.length > 1000000) {
-    return '<response_too_large>';
-  }
+    List<int> bytes = utf8.encode(responseText);
+    if (bytes.length > 1000000) {
+      return '<response_too_large>';
+    }
 
-  return responseText;
+    return responseText;
+  } catch (_) {
+    return '';
+  }
 }

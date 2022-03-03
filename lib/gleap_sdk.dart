@@ -472,7 +472,9 @@ class Gleap {
 
     List<Map<String, dynamic>> jsonNetworkLogs = <Map<String, dynamic>>[];
     for (int i = 0; i < networkLogs.length; i++) {
-      jsonNetworkLogs.add(networkLogs[i].toJson());
+      try {
+        jsonNetworkLogs.add(networkLogs[i].toJson());
+      } catch (_) {}
     }
 
     await _channel.invokeMethod(

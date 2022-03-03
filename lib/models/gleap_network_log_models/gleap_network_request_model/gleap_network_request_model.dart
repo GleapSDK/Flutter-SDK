@@ -19,14 +19,18 @@ class GleapNetworkRequest {
 }
 
 String _preparePayload(dynamic responseText) {
-  if (responseText == null) {
-    return "";
-  }
+  try {
+    if (responseText == null) {
+      return "";
+    }
 
-  List<int> bytes = utf8.encode(responseText.toString());
-  if (bytes.length > 1000000) {
-    return '<payload_too_large>';
-  }
+    List<int> bytes = utf8.encode(responseText.toString());
+    if (bytes.length > 1000000) {
+      return '<payload_too_large>';
+    }
 
-  return responseText.toString();
+    return responseText.toString();
+  } catch (_) {
+    return '';
+  }
 }
