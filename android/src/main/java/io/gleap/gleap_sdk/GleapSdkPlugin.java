@@ -188,10 +188,10 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                     ArrayList<String> activationMethods = call.argument("activationMethods");
                     ArrayList<GleapActivationMethod> internalActivationMethods = new ArrayList<>();
                     for (int i = 0; i < activationMethods.size(); i++) {
-                        if (activationMethods.getString(i).equalsIgnoreCase("SHAKE")) {
+                        if (activationMethods.get(i).equalsIgnoreCase("SHAKE")) {
                             internalActivationMethods.add(GleapActivationMethod.SHAKE);
                         }
-                        if (activationMethods.getString(i).equalsIgnoreCase("SCREENSHOT")) {
+                        if (activationMethods.get(i).equalsIgnoreCase("SCREENSHOT")) {
                             internalActivationMethods.add(GleapActivationMethod.SCREENSHOT);
                         }
                     }

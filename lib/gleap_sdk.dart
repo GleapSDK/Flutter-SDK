@@ -25,6 +25,19 @@ String _getSeverityValue(Severity bugPriority) {
   }
 }
 
+enum ActivationMethod { SHAKE, SCREENSHOT }
+
+String _getActivationMethodValue(ActivationMethod activationMethod) {
+  switch (activationMethod) {
+    case ActivationMethod.SHAKE:
+      return "SHAKE";
+    case ActivationMethod.SCREENSHOT:
+      return "SCREENSHOT";
+    default:
+      return "SHAKE";
+  }
+}
+
 class Gleap {
   static const MethodChannel _channel = MethodChannel('gleap_sdk');
   static final List<CallbackItem> _callbackItems = <CallbackItem>[];
@@ -218,16 +231,21 @@ class Gleap {
   ///
   /// Android, iOS
   static Future<void> setActivationMethods({
-    required List<String> activationMethods,
+    required List<ActivationMethod> activationMethods,
   }) async {
-    if (kIsWeb) {
+    if (kIsWeb || (!io.Platform.isAndroid && !io.Platform.isIOS)) {
       debugPrint('setActivationMethods is not available for the web');
       return;
     }
 
+    final List<String> activationMethodsVals = activationMethods
+        .map((ActivationMethod activationMethod) =>
+            _getActivationMethodValue(activationMethod))
+        .toList();
+
     await _channel.invokeMethod(
       'setActivationMethods',
-      {'activationMethods': activationMethods},
+      {'activationMethods': activationMethodsVals},
     );
   }
 
