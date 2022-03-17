@@ -110,7 +110,22 @@
   else if([@"logEvent" isEqualToString: call.method]) {
     [Gleap logEvent: call.arguments[@"name"] withData: call.arguments[@"data"]];
     result(nil);
-  } 
+  }
+  else if([@"setActivationMethods" isEqualToString: call.method]) {
+    NSArray *activationMethods = call.arguments[@"activationMethods"];
+    NSMutableArray *internalActivationMethods = [[NSMutableArray alloc] init];
+    for (int i = 0; i < activationMethods.count; i++) {
+        if ([[activationMethods objectAtIndex: i] isEqualToString: @"SHAKE"]) {
+            [internalActivationMethods addObject: @(SHAKE)];
+        }
+        if ([[activationMethods objectAtIndex: i] isEqualToString: @"SCREENSHOT"]) {
+            [internalActivationMethods addObject: @(SCREENSHOT)];
+        }
+    }
+    
+    [Gleap setActivationMethods: internalActivationMethods];
+    result(nil);
+  }
   else if([@"addAttachment" isEqualToString: call.method]) {
     NSData *fileData = [[NSData alloc] initWithBase64EncodedString: call.arguments[@"base64file"] options:0];
     if (fileData != nil) {

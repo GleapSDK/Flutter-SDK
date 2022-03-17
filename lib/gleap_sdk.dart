@@ -206,6 +206,31 @@ class Gleap {
     await _channel.invokeMethod('setLanguage', {'language': language});
   }
 
+  /// ### setActivationMethods
+  ///
+  /// Overwrite the activation methods on the fly.
+  ///
+  /// **Params**
+  ///
+  /// [activationMethods] An array of activation methods.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS
+  static Future<void> setActivationMethods({
+    required List<String> activationMethods,
+  }) async {
+    if (kIsWeb) {
+      debugPrint('setActivationMethods is not available for the web');
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'setActivationMethods',
+      {'activationMethods': activationMethods},
+    );
+  }
+
   /// ### attachCustomData
   ///
   /// Attaches custom data, which can be viewed in the Gleap dashboard. New data will be merged with existing custom data.

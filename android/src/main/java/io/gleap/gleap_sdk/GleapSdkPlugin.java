@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import io.gleap.FeedbackSentCallback;
 import io.gleap.FeedbackWillBeSentCallback;
 import io.gleap.GetBitmapCallback;
 import io.gleap.Gleap;
+import io.gleap.GleapActivationMethod;
 import io.gleap.GleapNotInitialisedException;
 import io.gleap.GleapUserProperties;
 import io.gleap.RequestType;
@@ -178,6 +180,26 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
             case "clearCustomData":
                 Gleap.getInstance().clearCustomData();
+                result.success(null);
+                break;
+
+            case "setActivationMethods":
+                try {
+                    ArrayList<String> activationMethods = call.argument("activationMethods");
+                    ArrayList<GleapActivationMethod> internalActivationMethods = new ArrayList<>();
+                    for (int i = 0; i < activationMethods.size(); i++) {
+                        if (activationMethods.getString(i).equalsIgnoreCase("SHAKE")) {
+                            internalActivationMethods.add(GleapActivationMethod.SHAKE);
+                        }
+                        if (activationMethods.getString(i).equalsIgnoreCase("SCREENSHOT")) {
+                            internalActivationMethods.add(GleapActivationMethod.SCREENSHOT);
+                        }
+                    }
+                    Gleap.getInstance().setActivationMethods(internalActivationMethods.toArray(new GleapActivationMethod[internalActivationMethods.size()]));
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                }
+                
                 result.success(null);
                 break;
 
