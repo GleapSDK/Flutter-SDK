@@ -32,8 +32,10 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 import io.gleap.APPLICATIONTYPE;
+import io.gleap.ConfigLoadedCallback;
 import io.gleap.CustomActionCallback;
 import io.gleap.FeedbackSentCallback;
+import io.gleap.FeedbackSentWithDataCallback;
 import io.gleap.FeedbackWillBeSentCallback;
 import io.gleap.GetBitmapCallback;
 import io.gleap.Gleap;
@@ -61,30 +63,30 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
         Gleap.getInstance().setFeedbackWillBeSentCallback(new FeedbackWillBeSentCallback() {
             @Override
             public void flowInvoced() {
-                channel.invokeMethod("feedbackWillBeSentCallback", null);
+                channel.invokeMethod("feedbackWillBeSent", null);
             }
         });
 
-        Gleap.getInstance().setFeedbackSentCallback(new FeedbackSentCallback() {
+        Gleap.getInstance().setFeedbackSentWithDataCallback(new FeedbackSentWithDataCallback() {
             @Override
-            public void close() {
-                channel.invokeMethod("feedbackSentCallback", null);
+            public void close(JSONObject jsonObject) {
+                channel.invokeMethod("feedbackSent", jsonObject.toString());
             }
         });
-    }
 
-    private void initialize() {
         Gleap.getInstance().registerCustomAction(new CustomActionCallback() {
             @Override
             public void invoke(String message) {
                 uiThreadHandler.post(() -> {
                     Map<String, String> map = new HashMap<>();
                     map.put("name", message);
-                    channel.invokeMethod("customActionCallback", map);
+                    channel.invokeMethod("customActionTriggered", map);
                 });
             }
         });
+    }
 
+    private void initialize() {
         Gleap.getInstance().setBitmapCallback(new GetBitmapCallback() {
             @Override
             public Bitmap getBitmap() {

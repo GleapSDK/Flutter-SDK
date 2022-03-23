@@ -23,25 +23,25 @@
 
 - (void)feedbackWillBeSent {
   if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod: @"feedbackWillBeSentCallback" arguments: @{}];
-  }
-}
-
-- (void)feedbackSent {
-  if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod: @"feedbackSentCallback" arguments: @{}];
+    [self.methodChannel invokeMethod: @"feedbackWillBeSent" arguments: @{}];
   }
 }
 
 - (void)feedbackSendingFailed {
   if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod: @"feedbackSendingFailedCallback" arguments: @{}];
+    [self.methodChannel invokeMethod: @"feedbackSendingFailed" arguments: @{}];
+  }
+}
+
+- (void)feedbackSent:(NSDictionary *)data {
+  if (self.methodChannel != nil) {
+    [self.methodChannel invokeMethod: @"feedbackSent" arguments: data];
   }
 }
 
 - (void)customActionCalled:(NSString *)customAction {
   if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod: @"customActionCallback" arguments: @{
+    [self.methodChannel invokeMethod: @"customActionTriggered" arguments: @{
       @"name": customAction
     }];
   }

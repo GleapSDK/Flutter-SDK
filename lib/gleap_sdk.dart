@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -54,12 +55,21 @@ class Gleap {
       List<CallbackItem> callbackItem = _callbackItems
           .where((CallbackItem element) => element.callbackName == call.method)
           .toList();
+
       if (callbackItem.isNotEmpty) {
-        if (call.method == 'customActionCallback') {
-          callbackItem[0].callbackHandler(call.arguments['name']);
-        } else {
-          callbackItem[0].callbackHandler();
+        dynamic callbackArgs = call.arguments;
+        if (!kIsWeb && io.Platform.isAndroid) {
+          try {
+            Map<String, dynamic> callbackArgsConverted = json.decode(
+              callbackArgs.toString(),
+            );
+
+            callbackArgs = callbackArgsConverted;
+          } catch (_) {}
         }
+
+        CallbackItem currentCallback = callbackItem.first;
+        currentCallback.callbackHandler(callbackArgs);
       }
     });
   }
@@ -342,11 +352,46 @@ class Gleap {
   static Future<void> clearCustomData() async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
-          'clearCustomData is not available for current operating system');
+        'clearCustomData is not available for current operating system',
+      );
       return;
     }
 
     await _channel.invokeMethod('clearCustomData');
+  }
+
+  /// ### registerListener
+  ///
+  /// Register a custom action
+  ///
+  /// **Params**
+  ///
+  /// [actionName] The action which is listened to
+  ///
+  /// [callbackHandler] Is called when [actionName] is triggered
+  ///
+  /// ** Available Platorms**
+  ///
+  /// Android, iOS, Web
+  static void registerListener({
+    required String actionName,
+    required Function(dynamic data) callbackHandler,
+  }) {
+    if (_callbackItems
+        .where((CallbackItem element) => element.callbackName == actionName)
+        .isNotEmpty) {
+      debugPrint(
+        '$actionName is already registered.',
+      );
+      return;
+    }
+
+    _callbackItems.add(
+      CallbackItem(
+        callbackName: actionName,
+        callbackHandler: callbackHandler,
+      ),
+    );
   }
 
   /// ### setWidgetOpenedCalledback
@@ -360,6 +405,7 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Web
+  @Deprecated('Use [registerListener]')
   static Future<void> setWidgetOpenedCalledback(
       {required Function() callbackHandler}) async {
     if (!kIsWeb) {
@@ -388,6 +434,7 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Web
+  @Deprecated('Use [registerListener]')
   static Future<void> setWidgetClosedCalledback(
       {required Function() callbackHandler}) async {
     if (!kIsWeb) {
@@ -416,6 +463,7 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Android, iOS, Web
+  @Deprecated('Use [registerListener]')
   static Future<void> setFeedbackWillBeSentCallback({
     required Function() callbackHandler,
   }) async {
@@ -445,6 +493,7 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Android, iOS, Web
+  @Deprecated('Use [registerListener]')
   static Future<void> setFeedbackSentCallback({
     required Function() callbackHandler,
   }) async {
@@ -474,6 +523,7 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// iOS, Web
+  @Deprecated('Use [registerListener]')
   static Future<void> setFeedbackSendingFailedCallback({
     required Function() callbackHandler,
   }) async {
@@ -539,6 +589,7 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Android, iOS, Web
+  @Deprecated('Use [registerListener]')
   static Future<void> registerCustomAction({
     required Function(String actionName) callbackHandler,
   }) async {
