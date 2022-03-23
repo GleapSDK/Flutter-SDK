@@ -12,7 +12,7 @@ Checkout our [website](https://gleap.io) to learn more about gleap.
 
 ## Docs & Examples
 
-Checkout our [documentation](https://docs.gleap.io/docs/flutter-sdk) for full reference. Include the following dependency in your pubspec.yml:
+Checkout our [documentation](https://gleap.io/docs/flutter/) for full reference. Include the following dependency in your pubspec.yml:
 
 ```dart
 dependencies:
