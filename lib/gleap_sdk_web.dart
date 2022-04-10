@@ -173,7 +173,8 @@ class GleapSdkWeb {
     required String severity,
     required String type,
   }) async {
-    await GleapJsSdkHelper.sendSilentBugReport(description, severity, type);
+    await GleapJsSdkHelper.sendSilentBugReportWithType(
+        description, severity, type);
   }
 
   Future<void> openWidget() async {

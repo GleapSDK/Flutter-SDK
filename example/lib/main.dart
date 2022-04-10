@@ -38,7 +38,8 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: GestureDetector(
             onTap: () async {
-              await Gleap.open();
+              await Gleap.sendSilentBugReportWithType(
+                  description: "WOW?", severity: Severity.LOW, type: "CRASH");
             },
             child: Container(
               alignment: Alignment.center,
@@ -46,7 +47,7 @@ class _MyAppState extends State<MyApp> {
               width: 150,
               color: const Color(0xFF485BFF),
               child: const Text(
-                'Report Bug',
+                'Report a bug',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
