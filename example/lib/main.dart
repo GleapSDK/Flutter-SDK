@@ -38,12 +38,8 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: GestureDetector(
             onTap: () async {
-              print("I!???");
-              print("I!???");
-              print("I!???");
-              print("I!???");
               await Gleap.sendSilentBugReportWithType(
-                  description: "WOW?", severity: Severity.LOW, type: "CRASH");
+                  description: "WOW?", severity: Severity.LOW, type: "BUG");
             },
             child: Container(
               alignment: Alignment.center,
