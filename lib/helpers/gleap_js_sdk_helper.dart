@@ -43,6 +43,10 @@ external Future<void> logEvent(String event, String? data);
 @JS('window.Gleap.sendSilentBugReport')
 external Future<void> sendSilentBugReport(String description, String severity);
 
+@JS('window.Gleap.sendSilentBugReport')
+external Future<void> sendSilentBugReportWithType(
+    String description, String severity, String type);
+
 @JS('window.Gleap.open')
 external Future<void> open();
 

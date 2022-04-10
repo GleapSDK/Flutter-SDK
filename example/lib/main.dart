@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-
 import 'package:gleap_sdk/gleap_sdk.dart';
 
 void main() {
@@ -24,7 +23,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     await Gleap.enableDebugConsoleLog();
     await Gleap.initialize(
-      token: 'YOUR_API_KEY',
+      token: 'ogWhNhuiZcGWrva5nlDS8l7a78OfaLlV',
     );
   }
 

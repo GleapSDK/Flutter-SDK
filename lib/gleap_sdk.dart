@@ -157,6 +157,44 @@ class Gleap {
     );
   }
 
+  /// ### sendSilentBugReportWithType
+  ///
+  /// Send a silent bugreport in the background. Useful for automated ui tests.
+  ///
+  /// **Params**
+  ///
+  /// [description] Description of the bug
+  ///
+  /// [severity] Severity of the bug "LOW", "MIDDLE", "HIGH"
+  ///
+  /// [type] Type of the bug report
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static Future<void> sendSilentBugReportWithType({
+    required String description,
+    required Severity severity,
+    required String type,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+          'sendSilentBugReportWithType is not available for current operating system');
+      return;
+    }
+
+    String severityVal = _getSeverityValue(severity);
+
+    await _channel.invokeMethod(
+      'sendSilentBugReportWithType',
+      {
+        'description': description,
+        'severity': severityVal,
+        'type': type,
+      },
+    );
+  }
+
   /// ### identify
   ///
   /// Updates a session's user data.

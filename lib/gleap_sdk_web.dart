@@ -92,6 +92,12 @@ class GleapSdkWeb {
           description: call.arguments['description'],
           severity: call.arguments['severity'],
         );
+      case 'sendSilentBugReportWithType':
+        return sendSilentBugReportWithType(
+          description: call.arguments['description'],
+          severity: call.arguments['severity'],
+          type: call.arguments['type'],
+        );
       case 'openWidget':
         return openWidget();
       case 'hideWidget':
@@ -160,6 +166,14 @@ class GleapSdkWeb {
     required String severity,
   }) async {
     await GleapJsSdkHelper.sendSilentBugReport(description, severity);
+  }
+
+  Future<void> sendSilentBugReportWithType({
+    required String description,
+    required String severity,
+    required String type,
+  }) async {
+    await GleapJsSdkHelper.sendSilentBugReport(description, severity, type);
   }
 
   Future<void> openWidget() async {

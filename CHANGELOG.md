@@ -1,3 +1,4 @@
+## 6.4.6 - Added sendSilentBugReportWithType method
 ## 6.4.4 - Updated native SDK's, added registerListener function, added deprecated notice to old listener
 ## 6.4.3 - Added setActivationMethods function
 ## 6.4.2 - Improved GleapNetworkLog serialization

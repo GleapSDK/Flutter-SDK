@@ -69,6 +69,16 @@
     }
     result(nil);
   }
+  else if([@"sendSilentBugReportWithType" isEqualToString: call.method]) {
+    if([call.arguments[@"severity"] isEqualToString: @"LOW"]){
+      [Gleap sendSilentBugReportWith: call.arguments[@"description"] andSeverity: LOW andType: call.arguments[@"type"]];
+    } else if([call.arguments[@"severity"] isEqualToString: @"MEDIUM"]){
+      [Gleap sendSilentBugReportWith: call.arguments[@"description"] andSeverity: MEDIUM andType: call.arguments[@"type"]];
+    } else if([call.arguments[@"severity"] isEqualToString: @"HIGH"]){
+      [Gleap sendSilentBugReportWith: call.arguments[@"description"] andSeverity: HIGH andType: call.arguments[@"type"]];
+    }
+    result(nil);
+  }
   else if([@"identify" isEqualToString: call.method]) {
     GleapUserProperty *userProperty = [[GleapUserProperty alloc] init];
     NSDictionary *propertyData = call.arguments[@"userProperties"];
