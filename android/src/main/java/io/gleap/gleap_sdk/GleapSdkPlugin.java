@@ -134,16 +134,16 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 break;
 
             case "sendSilentBugReportWithType":
-                Gleap.SEVERITY severity = Gleap.SEVERITY.MEDIUM;
+                Gleap.SEVERITY severityType = Gleap.SEVERITY.MEDIUM;
                 if (call.argument("severity").equals("LOW")) {
-                    severity = Gleap.SEVERITY.LOW;
+                    severityType = Gleap.SEVERITY.LOW;
                 } else if (call.argument("severity").equals("MEDIUM")) {
-                    severity = Gleap.SEVERITY.MEDIUM;
+                    severityType = Gleap.SEVERITY.MEDIUM;
                 } else if (call.argument("severity").equals("HIGH")) {
-                    severity = Gleap.SEVERITY.HIGH;
+                    severityType = Gleap.SEVERITY.HIGH;
                 }
 
-                Gleap.getInstance().sendSilentBugReport((String) call.argument("description"), severity, (String) call.argument("type"));
+                Gleap.getInstance().sendSilentBugReport((String) call.argument("description"), severityType, (String) call.argument("type"));
                 result.success(null);
                 break;
 
