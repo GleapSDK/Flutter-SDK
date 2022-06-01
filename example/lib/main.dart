@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     await Gleap.enableDebugConsoleLog();
     await Gleap.initialize(
-      token: 'g4yw8blWFi0d50TubfV4iyN6HGG5Z2c1',
+      token: 'YOUR_API_KEY',
     );
   }
 
@@ -39,7 +39,10 @@ class _MyAppState extends State<MyApp> {
           child: GestureDetector(
             onTap: () async {
               await Gleap.sendSilentBugReportWithType(
-                  description: "WOW?", severity: Severity.LOW, type: "BUG");
+                description: "WOW?",
+                severity: Severity.LOW,
+                type: "BUG",
+              );
             },
             child: Container(
               alignment: Alignment.center,

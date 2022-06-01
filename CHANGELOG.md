@@ -1,3 +1,5 @@
+## 6.4.8 - Adjust minimum iOS version
+## 6.4.7 - Fixed null-safety warnings
 ## 6.4.6 - Added sendSilentBugReportWithType method
 ## 6.4.4 - Updated native SDK's, added registerListener function, added deprecated notice to old listener
 ## 6.4.3 - Added setActivationMethods function
