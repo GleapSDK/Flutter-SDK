@@ -12,6 +12,7 @@ external Future<void> initialize(
 external Future<void> identify(
   String userId,
   String? userData,
+  String? userHash,
 );
 
 @JS('window.Gleap.clearIdentity')
@@ -19,6 +20,9 @@ external Future<void> clearIdentity();
 
 @JS('window.Gleap.attachCustomData')
 external Future<void> attachCustomData(String customData);
+
+@JS('window.Gleap.preFillForm')
+external Future<void> preFillForm(String formData);
 
 @JS('window.Gleap.setCustomData')
 external Future<void> setCustomData(String key, String value);
@@ -40,18 +44,18 @@ external void registerEvents(
 @JS('window.Gleap.logEvent')
 external Future<void> logEvent(String event, String? data);
 
-@JS('window.Gleap.sendSilentBugReport')
-external Future<void> sendSilentBugReport(String description, String severity);
-
-@JS('window.Gleap.sendSilentBugReportWithType')
-external Future<void> sendSilentBugReportWithType(
-    String description, String severity, String type);
+@JS('window.Gleap.sendSilentCrashReport')
+external Future<void> sendSilentCrashReport(
+    String description, String severity, Map<String, dynamic>? excludeData);
 
 @JS('window.Gleap.open')
 external Future<void> open();
 
 @JS('window.Gleap.hide')
 external Future<void> hide();
+
+@JS('window.Gleap.hide')
+external Future<void> startFeedbackFlow(String flow, bool showBackButton);
 
 @JS('window.Gleap.setLanguage')
 external Future<void> setLanguage(String language);

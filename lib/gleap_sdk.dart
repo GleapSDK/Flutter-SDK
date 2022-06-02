@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -46,8 +47,8 @@ class Gleap {
   static _initCallbackHandler() async {
     _channel.setMethodCallHandler((MethodCall call) async {
       if (call.method == 'feedbackWillBeSentCallback') {
-        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
-        WidgetsBinding.instance.focusManager.rootScope.requestFocus(
+        WidgetsBinding.instance?.focusManager.primaryFocus?.unfocus();
+        WidgetsBinding.instance?.focusManager.rootScope.requestFocus(
           FocusNode(),
         );
       }
@@ -112,6 +113,7 @@ class Gleap {
   /// Android, iOS, Web
   static Future<void> startFeedbackFlow({
     required String feedbackAction,
+    bool showBackButton = false,
   }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
@@ -119,11 +121,11 @@ class Gleap {
       return;
     }
 
-    await _channel
-        .invokeMethod('startFeedbackFlow', {'action': feedbackAction});
+    await _channel.invokeMethod('startFeedbackFlow',
+        {'action': feedbackAction, 'showBackButton': showBackButton});
   }
 
-  /// ### sendSilentBugReport
+  /// ### sendSilentCrashReport
   ///
   /// Send a silent bugreport in the background. Useful for automated ui tests.
   ///
@@ -133,64 +135,30 @@ class Gleap {
   ///
   /// [severity] Severity of the bug "LOW", "MIDDLE", "HIGH"
   ///
+  /// [excludeData] Exclude data from the crash report
+  ///
   /// **Available Platforms**
   ///
   /// Android, iOS, Web
-  static Future<void> sendSilentBugReport({
+  static Future<void> sendSilentCrashReport({
     required String description,
     required Severity severity,
+    Map<String, dynamic> excludeData = const {},
   }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
-          'sendSilentBugReport is not available for current operating system');
+          'sendSilentCrashReport is not available for current operating system');
       return;
     }
 
     String severityVal = _getSeverityValue(severity);
 
     await _channel.invokeMethod(
-      'sendSilentBugReport',
+      'sendSilentCrashReport',
       {
         'description': description,
         'severity': severityVal,
-      },
-    );
-  }
-
-  /// ### sendSilentBugReportWithType
-  ///
-  /// Send a silent bugreport in the background. Useful for automated ui tests.
-  ///
-  /// **Params**
-  ///
-  /// [description] Description of the bug
-  ///
-  /// [severity] Severity of the bug "LOW", "MIDDLE", "HIGH"
-  ///
-  /// [type] Type of the bug report
-  ///
-  /// **Available Platforms**
-  ///
-  /// Android, iOS, Web
-  static Future<void> sendSilentBugReportWithType({
-    required String description,
-    required Severity severity,
-    required String type,
-  }) async {
-    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
-      debugPrint(
-          'sendSilentBugReportWithType is not available for current operating system');
-      return;
-    }
-
-    String severityVal = _getSeverityValue(severity);
-
-    await _channel.invokeMethod(
-      'sendSilentBugReportWithType',
-      {
-        'description': description,
-        'severity': severityVal,
-        'type': type,
+        'excludeData': excludeData,
       },
     );
   }
@@ -209,6 +177,7 @@ class Gleap {
   static Future<void> identify({
     required String userId,
     GleapUserProperty? userProperties,
+    String? userHash,
   }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
@@ -217,7 +186,16 @@ class Gleap {
       return;
     }
 
-    if (userProperties != null) {
+    if (userProperties != null && userHash != null) {
+      await _channel.invokeMethod(
+        'identify',
+        {
+          'userId': userId,
+          'userProperties': userProperties.toJson(),
+          'userHash': userHash,
+        },
+      );
+    } else if (userProperties != null) {
       await _channel.invokeMethod(
         'identify',
         {
@@ -320,6 +298,31 @@ class Gleap {
     await _channel.invokeMethod(
       'attachCustomData',
       {'customData': customData},
+    );
+  }
+
+  /// ### preFillForm
+  ///
+  /// Prefills a form with the given data.
+  ///
+  /// **Params**
+  ///
+  /// [formData] The data to prefill the form with.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static Future<void> preFillForm({
+    required Map<String, dynamic> formData,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint('preFillForm is not available for current operating system');
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'preFillForm',
+      {'formData': formData},
     );
   }
 
@@ -724,7 +727,7 @@ class Gleap {
 
   /// ### open
   ///
-  /// Opens feedback widget
+  /// Opens the feedback widget
   ///
   /// **Available Platforms**
   ///
@@ -738,6 +741,24 @@ class Gleap {
     }
 
     await _channel.invokeMethod('openWidget');
+  }
+
+  /// ### close
+  ///
+  /// Closes the feedback widget
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web
+  static Future<void> close() async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'closeWidget is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('closeWidget');
   }
 
   /// ### hideWidget
@@ -799,23 +820,23 @@ class Gleap {
     );
   }
 
-  /// ### setWidgetUrl
+  /// ### setFrameUrl
   ///
   /// Set a custom widget url
   ///
   /// **Available Platforms**
   ///
   /// Android, iOS
-  static Future<void> setWidgetUrl({required String url}) async {
+  static Future<void> setFrameUrl({required String url}) async {
     if (kIsWeb || (!io.Platform.isAndroid && !io.Platform.isIOS)) {
       debugPrint(
-        'setWidgetUrl is not available for current operating system',
+        'setFrameUrl is not available for current operating system',
       );
       return;
     }
 
     await _channel.invokeMethod(
-      'setWidgetUrl',
+      'setFrameUrl',
       {
         'url': url,
       },

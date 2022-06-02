@@ -1,3 +1,4 @@
+## 7.0.0 - Upgraded to widget v7
 ## 6.4.8 - Adjust minimum iOS version
 ## 6.4.7 - Fixed null-safety warnings
 ## 6.4.6 - Added sendSilentBugReportWithType method

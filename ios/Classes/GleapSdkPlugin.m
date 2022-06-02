@@ -56,33 +56,27 @@
     result(nil);
   }
   else if([@"startFeedbackFlow" isEqualToString:call.method]) {
-    [Gleap startFeedbackFlow: call.arguments[@"action"]];
+    [Gleap startFeedbackFlow: call.arguments[@"action"] showBackButton: call.arguments[@"showBackButton"]];
     result(nil);
   }
-  else if([@"sendSilentBugReport" isEqualToString: call.method]) {
+  else if([@"sendSilentCrashReport" isEqualToString: call.method]) {
+    GleapBugSeverity prio = MEDIUM;
+
     if([call.arguments[@"severity"] isEqualToString: @"LOW"]){
-      [Gleap sendSilentBugReportWith: call.arguments[@"description"] andSeverity: LOW];
+      prio = LOW;
     } else if([call.arguments[@"severity"] isEqualToString: @"MEDIUM"]){
-      [Gleap sendSilentBugReportWith: call.arguments[@"description"] andSeverity: MEDIUM];
+      prio = MEDIUM;
     } else if([call.arguments[@"severity"] isEqualToString: @"HIGH"]){
-      [Gleap sendSilentBugReportWith: call.arguments[@"description"] andSeverity: HIGH];
+      prio = HIGH;
     }
-    result(nil);
-  }
-  else if([@"sendSilentBugReportWithType" isEqualToString: call.method]) {
-    if([call.arguments[@"severity"] isEqualToString: @"LOW"]){
-      [Gleap sendSilentBugReportWith: call.arguments[@"description"] andSeverity: LOW andType: call.arguments[@"type"]];
-    } else if([call.arguments[@"severity"] isEqualToString: @"MEDIUM"]){
-      [Gleap sendSilentBugReportWith: call.arguments[@"description"] andSeverity: MEDIUM andType: call.arguments[@"type"]];
-    } else if([call.arguments[@"severity"] isEqualToString: @"HIGH"]){
-      [Gleap sendSilentBugReportWith: call.arguments[@"description"] andSeverity: HIGH andType: call.arguments[@"type"]];
-    }
+    
+    [Gleap sendSilentCrashReportWith: call.arguments[@"description"] andSeverity: prio andDataExclusion: call.arguments[@"excludeData"] andCompletion:^(bool success) {}];
+
     result(nil);
   }
   else if([@"identify" isEqualToString: call.method]) {
     GleapUserProperty *userProperty = [[GleapUserProperty alloc] init];
     NSDictionary *propertyData = call.arguments[@"userProperties"];
-
     if ([propertyData objectForKey: @"name"] != nil) {
         userProperty.name = [propertyData objectForKey: @"name"];
     }
@@ -90,7 +84,7 @@
         userProperty.email = [propertyData objectForKey: @"email"];
     }
 
-    [Gleap identifyUserWith: call.arguments[@"userId"] andData: userProperty];
+    [Gleap identifyUserWith: call.arguments[@"userId"] andData: userProperty andUserHash: call.arguments[@"userHash"]];
     result(nil);
   }
   else if([@"clearIdentity" isEqualToString: call.method]) {
@@ -103,6 +97,10 @@
   }
   else if([@"attachCustomData" isEqualToString: call.method]) {
     [Gleap attachCustomData: call.arguments[@"customData"]];
+    result(nil);
+  }
+  else if([@"preFillForm" isEqualToString: call.method]) {
+    [Gleap preFillForm: call.arguments[@"formData"]];
     result(nil);
   }
   else if([@"setCustomData" isEqualToString: call.method]) {
@@ -147,7 +145,7 @@
     }
   }
   else if([@"attachNetworkLogs" isEqualToString: call.method]) {
-     [Gleap attachData: @{ @"networkLogs": call.arguments[@"networkLogs"] }];
+     [Gleap attachExternalData: @{ @"networkLogs": call.arguments[@"networkLogs"] }];
   }
   else if([@"removeAllAttachments" isEqualToString: call.method]) {
     [Gleap removeAllAttachments];
@@ -161,11 +159,15 @@
     [Gleap open];
     result(nil);
   }
+  else if([@"closeWidget" isEqualToString: call.method]) {
+    [Gleap close];
+    result(nil);
+  }
   else if([@"setApiUrl" isEqualToString: call.method]) {
     [Gleap setApiUrl: call.arguments[@"url"]];
   }
-  else if([@"setWidgetUrl" isEqualToString: call.method]) {
-    [Gleap setWidgetUrl: call.arguments[@"url"]];
+  else if([@"setFrameUrl" isEqualToString: call.method]) {
+    [Gleap setFrameUrl: call.arguments[@"url"]];
   }
   else {
     result(FlutterMethodNotImplemented);

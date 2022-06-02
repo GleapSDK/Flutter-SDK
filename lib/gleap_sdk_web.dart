@@ -66,12 +66,17 @@ class GleapSdkWeb {
         return identify(
           userId: call.arguments['userId'],
           userProperties: call.arguments['userProperties'],
+          userHash: call.arguments['userHash'],
         );
       case 'clearIdentity':
         return clearIdentity();
       case 'attachCustomData':
         return attachCustomData(
           customData: call.arguments['customData'],
+        );
+      case 'preFillForm':
+        return preFillForm(
+          formData: call.arguments['formData'],
         );
       case 'setCustomData':
         return setCustomData(
@@ -87,23 +92,20 @@ class GleapSdkWeb {
           name: call.arguments['name'],
           data: call.arguments['data'],
         );
-      case 'sendSilentBugReport':
-        return sendSilentBugReport(
+      case 'sendSilentCrashReport':
+        return sendSilentCrashReport(
           description: call.arguments['description'],
           severity: call.arguments['severity'],
-        );
-      case 'sendSilentBugReportWithType':
-        return sendSilentBugReportWithType(
-          description: call.arguments['description'],
-          severity: call.arguments['severity'],
-          type: call.arguments['type'],
+          excludeData: call.arguments['excludeData'],
         );
       case 'openWidget':
         return openWidget();
       case 'hideWidget':
         return hideWidget();
       case 'startFeedbackFlow':
-        return startFeedbackFlow();
+        return startFeedbackFlow(
+            action: call.arguments['action'],
+            showBackButton: call.arguments['showBackButton']);
       case 'setLanguage':
         return setLanguage(language: call.arguments['language']);
       default:
@@ -121,14 +123,21 @@ class GleapSdkWeb {
   Future<void> identify({
     required String userId,
     dynamic userProperties,
+    String? userHash,
   }) async {
     String? stringifiedHashMap = jsonEncode(userProperties);
 
-    await GleapJsSdkHelper.identify(userId, stringifiedHashMap);
+    await GleapJsSdkHelper.identify(userId, stringifiedHashMap, userHash);
   }
 
   Future<void> clearIdentity() async {
     await GleapJsSdkHelper.clearIdentity();
+  }
+
+  Future<void> preFillForm({required dynamic formData}) async {
+    String? stringifiedHashMap = jsonEncode(formData);
+
+    await GleapJsSdkHelper.preFillForm(stringifiedHashMap);
   }
 
   Future<void> attachCustomData({required dynamic customData}) async {
@@ -161,20 +170,13 @@ class GleapSdkWeb {
     await GleapJsSdkHelper.logEvent(name, stringifiedHashMap);
   }
 
-  Future<void> sendSilentBugReport({
+  Future<void> sendSilentCrashReport({
     required String description,
     required String severity,
+    Map<String, dynamic> excludeData = const {},
   }) async {
-    await GleapJsSdkHelper.sendSilentBugReport(description, severity);
-  }
-
-  Future<void> sendSilentBugReportWithType({
-    required String description,
-    required String severity,
-    required String type,
-  }) async {
-    await GleapJsSdkHelper.sendSilentBugReportWithType(
-        description, severity, type);
+    await GleapJsSdkHelper.sendSilentCrashReport(
+        description, severity, excludeData);
   }
 
   Future<void> openWidget() async {
@@ -185,8 +187,11 @@ class GleapSdkWeb {
     await GleapJsSdkHelper.hide();
   }
 
-  Future<void> startFeedbackFlow() async {
-    await GleapJsSdkHelper.open();
+  Future<void> startFeedbackFlow({
+    required String action,
+    required bool showBackButton,
+  }) async {
+    await GleapJsSdkHelper.startFeedbackFlow(action, showBackButton);
   }
 
   Future<void> setLanguage({required String language}) async {
