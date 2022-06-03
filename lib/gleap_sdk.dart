@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -113,7 +112,7 @@ class Gleap {
   /// Android, iOS, Web
   static Future<void> startFeedbackFlow({
     required String feedbackAction,
-    bool showBackButton = false,
+    bool showBackButton = true,
   }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(

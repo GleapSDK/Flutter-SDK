@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:gleap_sdk/gleap_sdk.dart';
+import 'package:gleap_sdk/models/gleap_user_property_model/gleap_user_property_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,24 +37,72 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: const Color(0xFF485BFF),
         ),
         body: Center(
-          child: GestureDetector(
-            onTap: () async {
-              await Gleap.sendSilentCrashReport(
-                  description: "WOW?", severity: Severity.LOW);
-            },
-            child: Container(
-              alignment: Alignment.center,
-              height: 50,
-              width: 150,
-              color: const Color(0xFF485BFF),
-              child: const Text(
-                'Report a bug',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+          child: Column(
+            children: [
+              GestureDetector(
+                onTap: () async {
+                  await Gleap.identify(
+                      userId: "1234",
+                      userProperties: GleapUserProperty(
+                          name: 'Franz', email: 'franz@gleap.io'),
+                      userHash:
+                          "e12817b1f1fedb72381b249eb22ece0dc1c470bb15188b5485d441485347926f");
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 50,
+                  width: 150,
+                  color: const Color(0xFF485BFF),
+                  child: const Text(
+                    'Identify',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
-            ),
+              GestureDetector(
+                onTap: () async {
+                  await Gleap.clearIdentity();
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 50,
+                  width: 150,
+                  color: const Color(0xFF485BFF),
+                  child: const Text(
+                    'Clear identity',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () async {
+                  Gleap.registerCustomAction(
+                      callbackHandler: (String actionName) {
+                    // Do something with action
+                    debugPrint('movieTitle: $actionName');
+                  });
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 50,
+                  width: 150,
+                  color: const Color(0xFF485BFF),
+                  child: const Text(
+                    'Custom action',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
