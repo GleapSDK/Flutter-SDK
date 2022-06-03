@@ -32,17 +32,20 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 import io.gleap.APPLICATIONTYPE;
-import io.gleap.ConfigLoadedCallback;
-import io.gleap.CustomActionCallback;
-import io.gleap.FeedbackSentCallback;
-import io.gleap.FeedbackSentWithDataCallback;
-import io.gleap.FeedbackWillBeSentCallback;
-import io.gleap.GetBitmapCallback;
 import io.gleap.Gleap;
 import io.gleap.GleapActivationMethod;
 import io.gleap.GleapNotInitialisedException;
 import io.gleap.GleapUserProperties;
+import io.gleap.PrefillHelper;
 import io.gleap.RequestType;
+import io.gleap.callbacks.CustomActionCallback;
+import io.gleap.callbacks.FeedbackFlowStartedCallback;
+import io.gleap.callbacks.FeedbackSendingFailedCallback;
+import io.gleap.callbacks.FeedbackSentCallback;
+import io.gleap.callbacks.FeedbackWillBeSentCallback;
+import io.gleap.callbacks.GetBitmapCallback;
+import io.gleap.callbacks.WidgetClosedCallback;
+import io.gleap.callbacks.WidgetOpenedCallback;
 
 public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
     private MethodChannel channel;
@@ -60,19 +63,48 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
     }
 
     private void initCustomAction() {
+        Gleap.getInstance().setFeedbackFlowStartedCallback(new FeedbackFlowStartedCallback() {
+            @Override
+            public void invoke(String message) {
+                channel.invokeMethod("feedbackFlowStarted", null);
+            }
+        });
+
+        Gleap.getInstance().setWidgetOpenedCallback(new WidgetOpenedCallback() {
+            @Override
+            public void invoke() {
+                channel.invokeMethod("widgetOpened", null);
+            }
+        });
+
+        Gleap.getInstance().setWidgetClosedCallback(new WidgetClosedCallback() {
+            @Override
+            public void invoke() {
+                channel.invokeMethod("widgetClosed", null);
+            }
+        });
+
         Gleap.getInstance().setFeedbackWillBeSentCallback(new FeedbackWillBeSentCallback() {
             @Override
-            public void flowInvoced() {
+            public void invoke(String message) {
                 channel.invokeMethod("feedbackWillBeSent", null);
             }
         });
 
-        Gleap.getInstance().setFeedbackSentWithDataCallback(new FeedbackSentWithDataCallback() {
+        Gleap.getInstance().setFeedbackSentCallback(new FeedbackSentCallback() {
             @Override
-            public void close(JSONObject jsonObject) {
-                channel.invokeMethod("feedbackSent", jsonObject.toString());
+            public void invoke(String message) {
+                channel.invokeMethod("feedbackSent", null);
             }
         });
+
+        Gleap.getInstance().setFeedbackSendingFailedCallback(new FeedbackSendingFailedCallback() {
+            @Override
+            public void invoke(String message) {
+                channel.invokeMethod("feedbackSendingFailed", null);
+            }
+        });
+
 
         Gleap.getInstance().registerCustomAction(new CustomActionCallback() {
             @Override
@@ -111,15 +143,11 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 break;
 
             case "startFeedbackFlow":
-                try {
-                    Gleap.getInstance().startFeedbackFlow(call.argument("action"));
-                } catch (GleapNotInitialisedException e) {
-                    e.printStackTrace();
-                }
+                Gleap.getInstance().startFeedbackFlow(call.argument("action"), call.argument("showBackButton"));
                 result.success(null);
                 break;
 
-            case "sendSilentBugReport":
+            case "sendSilentCrashReport":
                 Gleap.SEVERITY severity = Gleap.SEVERITY.MEDIUM;
                 if (call.argument("severity").equals("LOW")) {
                     severity = Gleap.SEVERITY.LOW;
@@ -129,18 +157,26 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                     severity = Gleap.SEVERITY.HIGH;
                 }
 
-                Gleap.getInstance().sendSilentBugReport((String) call.argument("description"), severity);
+                try {
+                    if(call.argument("excludeData") != null) {
+                        JSONObject excludeData = new JSONObject((Map) call.argument("excludeData"));
+                        Gleap.getInstance().sendSilentCrashReport((String) call.argument("description"), severity, excludeData);
+                    }
+                }catch (Exception ex) {}
+
                 result.success(null);
                 break;
-                
-            case "identify":
 
+            case "identify":
                 if (call.argument("userProperties") != null) {
                     try {
                         JSONObject gleapUserProperty = new JSONObject((Map) call.argument("userProperties"));
 
                         GleapUserProperties gleapUserProperties = new GleapUserProperties(
                                 gleapUserProperty.getString("name"), gleapUserProperty.getString("email"));
+                        if(call.argument("userHash")) {
+                            gleapUserProperties.setHash(call.argument("userHash"));
+                        }
                         Gleap.getInstance().identifyUser(call.argument("userId"), gleapUserProperties);
 
                     } catch (JSONException e) {
@@ -201,7 +237,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 } catch (Exception ex) {
                     System.out.println(ex);
                 }
-                
+
                 result.success(null);
                 break;
 
@@ -269,7 +305,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                         } else {
                             System.err.println("Gleap: The file is not existing.");
                         }
-                    }else {
+                    } else {
                         throw new NotSupportedFileTypeException();
                     }
 
@@ -285,11 +321,11 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 result.success(null);
                 break;
             case "openWidget":
-                try {
-                    Gleap.getInstance().open();
-                } catch (GleapNotInitialisedException e) {
-                    e.printStackTrace();
-                }
+                Gleap.getInstance().open();
+                result.success(null);
+                break;
+            case "closeWidget":
+                Gleap.getInstance().close();
                 result.success(null);
                 break;
             case "setApiUrl":
@@ -297,8 +333,20 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 result.success(null);
                 break;
             case "setWidgetUrl":
-                Gleap.getInstance().setWidgetUrl((String) call.argument("url"));
+                Gleap.getInstance().setFrameUrl((String) call.argument("url"));
                 result.success(null);
+                break;
+            case "preFillForm":
+                try{
+                    if(call.argument("formData")!= null) {
+                        JSONObject prefill = new JSONObject((Map) call.argument("formData"));
+                        PrefillHelper.getInstancen().setPrefillData(prefill);
+                    }
+                }catch (Exception ex) {}
+                break;
+
+            case "isOpened":
+                result.success(Gleap.getInstance().isOpened());
                 break;
             default:
                 result.notImplemented();
@@ -326,7 +374,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
     private boolean checkAllowedEndings(String fileName) {
         String[] fileType = fileName.split("\\.");
-        String[] allowedTypes = { "jpeg", "svg", "png", "mp4", "webp", "xml", "plain", "xml", "json" };
+        String[] allowedTypes = {"jpeg", "svg", "png", "mp4", "webp", "xml", "plain", "xml", "json"};
         if (fileType.length <= 1) {
             return false;
         }
