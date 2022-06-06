@@ -44,16 +44,31 @@ class Gleap {
   static final List<CallbackItem> _callbackItems = <CallbackItem>[];
 
   static _initCallbackHandler() async {
+    print("_initCallbackHandler");
+
     _channel.setMethodCallHandler((MethodCall call) async {
+      print("hello from here");
+
       if (call.method == 'feedbackWillBeSentCallback') {
-        WidgetsBinding.instance?.focusManager.primaryFocus?.unfocus();
-        WidgetsBinding.instance?.focusManager.rootScope.requestFocus(
+        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+        WidgetsBinding.instance.focusManager.rootScope.requestFocus(
           FocusNode(),
         );
       }
 
+      print("method");
+      print(call.method);
+
+      print("element von [0]");
+      print(_callbackItems[0].callbackName);
+
       List<CallbackItem> callbackItem = _callbackItems
-          .where((CallbackItem element) => element.callbackName == call.method)
+          .where(
+            (CallbackItem element) =>
+                element.callbackName == call.method ||
+                (call.method == "customActionTriggered" &&
+                    call.arguments["name"] == element.callbackName),
+          )
           .toList();
 
       if (callbackItem.isNotEmpty) {
@@ -120,8 +135,10 @@ class Gleap {
       return;
     }
 
-    await _channel.invokeMethod('startFeedbackFlow',
-        {'action': feedbackAction, 'showBackButton': showBackButton});
+    await _channel.invokeMethod(
+      'startFeedbackFlow',
+      {'action': feedbackAction, 'showBackButton': showBackButton},
+    );
   }
 
   /// ### sendSilentCrashReport

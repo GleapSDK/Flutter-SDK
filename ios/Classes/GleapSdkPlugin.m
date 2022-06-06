@@ -21,15 +21,15 @@
     [Gleap setApplicationType: FLUTTER];
 }
 
-- (void)feedbackWillBeSent {
+- (void)feedbackFlowStarted {
   if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod: @"feedbackWillBeSent" arguments: @{}];
+    [self.methodChannel invokeMethod: @"feedbackFlowStarted" arguments: @{}];
   }
 }
 
-- (void)feedbackSendingFailed {
+- (void)feedbackWillBeSent {
   if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod: @"feedbackSendingFailed" arguments: @{}];
+    [self.methodChannel invokeMethod: @"feedbackWillBeSent" arguments: @{}];
   }
 }
 
@@ -39,11 +39,29 @@
   }
 }
 
+- (void)feedbackSendingFailed {
+  if (self.methodChannel != nil) {
+    [self.methodChannel invokeMethod: @"feedbackSendingFailed" arguments: @{}];
+  }
+}
+
 - (void)customActionCalled:(NSString *)customAction {
   if (self.methodChannel != nil) {
     [self.methodChannel invokeMethod: @"customActionTriggered" arguments: @{
       @"name": customAction
     }];
+  }
+}
+
+- (void)widgetOpened {
+  if (self.methodChannel != nil) {
+    [self.methodChannel invokeMethod: @"widgetOpened" arguments: @{}];
+  }
+}
+
+- (void)widgetClosed {
+  if (self.methodChannel != nil) {
+    [self.methodChannel invokeMethod: @"widgetClosed" arguments: @{}];
   }
 }
 

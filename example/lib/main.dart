@@ -24,7 +24,19 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     await Gleap.enableDebugConsoleLog();
     await Gleap.initialize(
-      token: 'g4yw8blWFi0d50TubfV4iyN6HGG5Z2c1',
+      token: '3uljsPCtwxrXsROjnETeY26WW2HOQYEs',
+    );
+
+    Gleap.preFillForm(formData: <String, dynamic>{
+      'bugdescription': 'blablalballaa',
+    });
+
+    Gleap.registerListener(
+      actionName: 'custom-action',
+      callbackHandler: (dynamic action) {
+        print("action called");
+        print(action);
+      },
     );
   }
 
@@ -42,11 +54,14 @@ class _MyAppState extends State<MyApp> {
               GestureDetector(
                 onTap: () async {
                   await Gleap.identify(
-                      userId: "1234",
-                      userProperties: GleapUserProperty(
-                          name: 'Franz', email: 'franz@gleap.io'),
-                      userHash:
-                          "e12817b1f1fedb72381b249eb22ece0dc1c470bb15188b5485d441485347926f");
+                    userId: "1234",
+                    userProperties: GleapUserProperty(
+                      name: 'Franz',
+                      email: 'franz@gleap.io',
+                    ),
+                    userHash:
+                        "e12817b1f1fedb72381b249eb22ece0dc1c470bb15188b5485d441485347926f",
+                  );
                 },
                 child: Container(
                   alignment: Alignment.center,
@@ -82,11 +97,25 @@ class _MyAppState extends State<MyApp> {
               ),
               GestureDetector(
                 onTap: () async {
-                  Gleap.registerCustomAction(
-                      callbackHandler: (String actionName) {
-                    // Do something with action
-                    debugPrint('movieTitle: $actionName');
+                  // Gleap.registerCustomAction(
+                  //     callbackHandler: (String actionName) {
+                  //   // Do something with action
+                  //   debugPrint('movieTitle: $actionName');
+                  // });
+                  // Gleap.sendSilentCrashReport(
+                  //   description: 'blablablub',
+                  //   severity: Severity.HIGH,
+                  // );
+
+                  Gleap.startFeedbackFlow(
+                      feedbackAction: 'bugreporting', showBackButton: false);
+
+                  Future.delayed(Duration(seconds: 2), () {
+                    print("is open?");
+                    Gleap.close();
                   });
+
+                  print("finisheddd");
                 },
                 child: Container(
                   alignment: Alignment.center,
