@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -34,7 +33,6 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.gleap.APPLICATIONTYPE;
 import io.gleap.Gleap;
 import io.gleap.GleapActivationMethod;
-import io.gleap.GleapNotInitialisedException;
 import io.gleap.GleapUserProperties;
 import io.gleap.PrefillHelper;
 import io.gleap.RequestType;
@@ -42,7 +40,6 @@ import io.gleap.callbacks.CustomActionCallback;
 import io.gleap.callbacks.FeedbackFlowStartedCallback;
 import io.gleap.callbacks.FeedbackSendingFailedCallback;
 import io.gleap.callbacks.FeedbackSentCallback;
-import io.gleap.callbacks.FeedbackWillBeSentCallback;
 import io.gleap.callbacks.GetBitmapCallback;
 import io.gleap.callbacks.WidgetClosedCallback;
 import io.gleap.callbacks.WidgetOpenedCallback;
@@ -66,7 +63,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
         Gleap.getInstance().setFeedbackFlowStartedCallback(new FeedbackFlowStartedCallback() {
             @Override
             public void invoke(String message) {
-                channel.invokeMethod("feedbackFlowStarted", null);
+                channel.invokeMethod("feedbackFlowStarted", message);
             }
         });
 
@@ -81,13 +78,6 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
             @Override
             public void invoke() {
                 channel.invokeMethod("widgetClosed", null);
-            }
-        });
-
-        Gleap.getInstance().setFeedbackWillBeSentCallback(new FeedbackWillBeSentCallback() {
-            @Override
-            public void invoke(String message) {
-                channel.invokeMethod("feedbackWillBeSent", null);
             }
         });
 
@@ -143,7 +133,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 break;
 
             case "startFeedbackFlow":
-                Gleap.getInstance().startFeedbackFlow(call.argument("action"), call.argument("showBackButton"));
+                Gleap.getInstance().startFeedbackFlow(call.argument("action"), ((Boolean) call.argument("showBackButton")));
                 result.success(null);
                 break;
 
@@ -161,6 +151,8 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                     if(call.argument("excludeData") != null) {
                         JSONObject excludeData = new JSONObject((Map) call.argument("excludeData"));
                         Gleap.getInstance().sendSilentCrashReport((String) call.argument("description"), severity, excludeData);
+                    } else {
+                        Gleap.getInstance().sendSilentCrashReport((String) call.argument("description"), severity);
                     }
                 }catch (Exception ex) {}
 
@@ -332,7 +324,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 Gleap.getInstance().setApiUrl((String) call.argument("url"));
                 result.success(null);
                 break;
-            case "setWidgetUrl":
+            case "setFrameUrl":
                 Gleap.getInstance().setFrameUrl((String) call.argument("url"));
                 result.success(null);
                 break;

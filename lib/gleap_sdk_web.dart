@@ -22,36 +22,42 @@ class GleapSdkWeb {
   }
 
   static void registerEvents(MethodChannel channel) {
+    // TODO: feedbackFlowStarted
     void Function(dynamic data) open = allowInterop((dynamic data) {
-      channel.invokeMethod('widgetOpenedCalledback');
+      channel.invokeMethod('widgetOpened');
     });
     GleapJsSdkHelper.registerEvents('open', open);
 
     void Function(dynamic data) close = allowInterop((dynamic data) {
-      channel.invokeMethod('widgetClosedCalledback');
+      channel.invokeMethod('widgetClosed');
     });
     GleapJsSdkHelper.registerEvents('close', close);
 
     void Function(dynamic data) feedbackSent = allowInterop((dynamic data) {
-      channel.invokeMethod('feedbackSentCallback');
+      channel.invokeMethod('feedbackSent');
     });
     GleapJsSdkHelper.registerEvents('feedback-sent', feedbackSent);
 
-    void Function(dynamic data) flowStartet = allowInterop((dynamic data) {
-      channel.invokeMethod('feedbackWillBeSentCallback');
-    });
-    GleapJsSdkHelper.registerEvents('flow-started', flowStartet);
-
     void Function(dynamic data) errorWhileSending =
         allowInterop((dynamic data) {
-      channel.invokeMethod('feedbackSendingFailedCallback');
+      channel.invokeMethod('feedbackSendingFailed');
     });
     GleapJsSdkHelper.registerEvents('error-while-sending', errorWhileSending);
+
+    void Function(dynamic data) feedbackFlowStarted =
+        allowInterop((dynamic data) {
+      // TODO: convert LegacyJavaScriptObject to Map
+      channel.invokeMethod(
+        'feedbackFlowStarted',
+        data,
+      );
+    });
+    GleapJsSdkHelper.registerEvents('flow-started', feedbackFlowStarted);
 
     void Function(dynamic data) customActionCalled =
         allowInterop((dynamic data) {
       channel.invokeMethod(
-        'customActionCallback',
+        'customActionTriggered',
         <String, dynamic>{'name': data.name},
       );
     });
@@ -100,14 +106,21 @@ class GleapSdkWeb {
         );
       case 'openWidget':
         return openWidget();
-      case 'hideWidget':
-        return hideWidget();
+      case 'closeWidget':
+        return closeWidget();
       case 'startFeedbackFlow':
         return startFeedbackFlow(
-            action: call.arguments['action'],
-            showBackButton: call.arguments['showBackButton']);
+          action: call.arguments['action'],
+          showBackButton: call.arguments['showBackButton'],
+        );
       case 'setLanguage':
         return setLanguage(language: call.arguments['language']);
+      case 'isOpened':
+        return isOpened();
+      case 'setFrameUrl':
+        return setFrameUrl(url: call.arguments['url']);
+      case 'setApiUrl':
+        return setApiUrl(url: call.arguments['url']);
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -173,18 +186,23 @@ class GleapSdkWeb {
   Future<void> sendSilentCrashReport({
     required String description,
     required String severity,
-    Map<String, dynamic> excludeData = const {},
+    dynamic excludeData = const {},
   }) async {
+    String? stringifiedHashMap = jsonEncode(excludeData);
+
     await GleapJsSdkHelper.sendSilentCrashReport(
-        description, severity, excludeData);
+      description,
+      severity,
+      stringifiedHashMap,
+    );
   }
 
   Future<void> openWidget() async {
     await GleapJsSdkHelper.open();
   }
 
-  Future<void> hideWidget() async {
-    await GleapJsSdkHelper.hide();
+  Future<void> closeWidget() async {
+    await GleapJsSdkHelper.close();
   }
 
   Future<void> startFeedbackFlow({
@@ -196,5 +214,17 @@ class GleapSdkWeb {
 
   Future<void> setLanguage({required String language}) async {
     await GleapJsSdkHelper.setLanguage(language);
+  }
+
+  Future<bool> isOpened() async {
+    return await GleapJsSdkHelper.isOpened();
+  }
+
+  Future<void> setFrameUrl({required String url}) async {
+    await GleapJsSdkHelper.setFrameUrl(url);
+  }
+
+  Future<void> setApiUrl({required String url}) async {
+    await GleapJsSdkHelper.setApiUrl(url);
   }
 }

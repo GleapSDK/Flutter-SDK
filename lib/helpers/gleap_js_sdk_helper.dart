@@ -46,16 +46,28 @@ external Future<void> logEvent(String event, String? data);
 
 @JS('window.Gleap.sendSilentCrashReport')
 external Future<void> sendSilentCrashReport(
-    String description, String severity, Map<String, dynamic> excludeData);
+  String description,
+  String severity,
+  String excludeData,
+);
 
 @JS('window.Gleap.open')
 external Future<void> open();
 
-@JS('window.Gleap.hide')
-external Future<void> hide();
+@JS('window.Gleap.close')
+external Future<void> close();
 
 @JS('window.Gleap.startFeedbackFlow')
 external Future<void> startFeedbackFlow(String flow, bool showBackButton);
 
 @JS('window.Gleap.setLanguage')
 external Future<void> setLanguage(String language);
+
+@JS('window.Gleap.isOpened')
+external Future<bool> isOpened();
+
+@JS('window.Gleap.setFrameUrl')
+external Future<void> setFrameUrl(String url);
+
+@JS('window.Gleap.setApiUrl')
+external Future<void> setApiUrl(String url);

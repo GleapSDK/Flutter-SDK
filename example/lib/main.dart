@@ -27,17 +27,55 @@ class _MyAppState extends State<MyApp> {
       token: '3uljsPCtwxrXsROjnETeY26WW2HOQYEs',
     );
 
-    Gleap.preFillForm(formData: <String, dynamic>{
-      'bugdescription': 'blablalballaa',
-    });
+    // Gleap.preFillForm(formData: <String, dynamic>{
+    //   'bugdescription': 'blablalballaa',
+    // });
+
+    Gleap.registerListener(
+      actionName: 'widgetOpened',
+      callbackHandler: (dynamic action) {
+        print("widgetOpened");
+        print(action);
+      },
+    );
+
+    Gleap.registerListener(
+      actionName: 'widgetClosed',
+      callbackHandler: (dynamic action) {
+        print("widgetClosed");
+        print(action);
+      },
+    );
+
+    Gleap.registerListener(
+      actionName: 'feedbackSent',
+      callbackHandler: (dynamic action) {
+        print("feedbackSent");
+        print(action);
+      },
+    );
+
+    Gleap.registerListener(
+      actionName: 'feedbackFlowStarted',
+      callbackHandler: (dynamic action) {
+        print("feedbackFlowStarted");
+        print(action);
+      },
+    );
 
     Gleap.registerListener(
       actionName: 'custom-action',
       callbackHandler: (dynamic action) {
-        print("action called");
+        print("custom-action");
         print(action);
       },
     );
+
+    Gleap.attachCustomData(customData: <String, dynamic>{
+      'customdata': 'blablalballaa',
+    });
+
+    Gleap.setCustomData(key: 'key', value: 'value');
   }
 
   @override
@@ -54,9 +92,9 @@ class _MyAppState extends State<MyApp> {
               GestureDetector(
                 onTap: () async {
                   await Gleap.identify(
-                    userId: "1234",
+                    userId: "123456",
                     userProperties: GleapUserProperty(
-                      name: 'Franz',
+                      name: 'Franz von Gleap',
                       email: 'franz@gleap.io',
                     ),
                     userHash:
@@ -103,19 +141,29 @@ class _MyAppState extends State<MyApp> {
                   //   debugPrint('movieTitle: $actionName');
                   // });
                   // Gleap.sendSilentCrashReport(
-                  //   description: 'blablablub',
+                  //   description: 'android silent crash report',
                   //   severity: Severity.HIGH,
                   // );
 
-                  Gleap.startFeedbackFlow(
-                      feedbackAction: 'bugreporting', showBackButton: false);
+                  // Gleap.startFeedbackFlow(
+                  //   feedbackAction: 'bugreporting',
+                  //   showBackButton: false,
+                  // );
 
-                  Future.delayed(Duration(seconds: 2), () {
-                    print("is open?");
+                  Gleap.open();
+
+                  Future.delayed(Duration(seconds: 5), () async {
+                    bool isOpened = await Gleap.isOpened();
+
+                    print("isOpened");
+                    print(isOpened);
+
+                    print("xlose widget");
+
                     Gleap.close();
                   });
 
-                  print("finisheddd");
+                  // print("finisheddd");
                 },
                 child: Container(
                   alignment: Alignment.center,
@@ -129,6 +177,12 @@ class _MyAppState extends State<MyApp> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                ),
+              ),
+              TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter a search term',
                 ),
               ),
             ],

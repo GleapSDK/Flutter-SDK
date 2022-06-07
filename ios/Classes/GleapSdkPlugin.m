@@ -21,15 +21,9 @@
     [Gleap setApplicationType: FLUTTER];
 }
 
-- (void)feedbackFlowStarted {
+- (void)feedbackFlowStarted:(NSDictionary *) feedbackAction {
   if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod: @"feedbackFlowStarted" arguments: @{}];
-  }
-}
-
-- (void)feedbackWillBeSent {
-  if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod: @"feedbackWillBeSent" arguments: @{}];
+    [self.methodChannel invokeMethod: @"feedbackFlowStarted" arguments: feedbackAction];
   }
 }
 
@@ -74,7 +68,7 @@
     result(nil);
   }
   else if([@"startFeedbackFlow" isEqualToString:call.method]) {
-    [Gleap startFeedbackFlow: call.arguments[@"action"] showBackButton: call.arguments[@"showBackButton"]];
+    [Gleap startFeedbackFlow: call.arguments[@"action"] showBackButton: [call.arguments[@"showBackButton"] boolValue]];
     result(nil);
   }
   else if([@"sendSilentCrashReport" isEqualToString: call.method]) {
@@ -183,9 +177,15 @@
   }
   else if([@"setApiUrl" isEqualToString: call.method]) {
     [Gleap setApiUrl: call.arguments[@"url"]];
+    result(nil);
   }
   else if([@"setFrameUrl" isEqualToString: call.method]) {
     [Gleap setFrameUrl: call.arguments[@"url"]];
+    result(nil);
+  }
+  else if([@"isOpened" isEqualToString: call.method]) {
+    BOOL isOpened = [Gleap isOpened];
+    result(@(isOpened));
   }
   else {
     result(FlutterMethodNotImplemented);

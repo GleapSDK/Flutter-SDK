@@ -44,23 +44,13 @@ class Gleap {
   static final List<CallbackItem> _callbackItems = <CallbackItem>[];
 
   static _initCallbackHandler() async {
-    print("_initCallbackHandler");
-
     _channel.setMethodCallHandler((MethodCall call) async {
-      print("hello from here");
-
       if (call.method == 'feedbackWillBeSentCallback') {
         WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
         WidgetsBinding.instance.focusManager.rootScope.requestFocus(
           FocusNode(),
         );
       }
-
-      print("method");
-      print(call.method);
-
-      print("element von [0]");
-      print(_callbackItems[0].callbackName);
 
       List<CallbackItem> callbackItem = _callbackItems
           .where(
@@ -451,154 +441,6 @@ class Gleap {
     );
   }
 
-  /// ### setWidgetOpenedCalledback
-  ///
-  /// This is called, when the Gleap widget opened
-  ///
-  /// **Params**
-  ///
-  /// [callbackHandler] Is called when Gleap is opened
-  ///
-  /// **Available Platforms**
-  ///
-  /// Web
-  @Deprecated('Use [registerListener]')
-  static Future<void> setWidgetOpenedCalledback(
-      {required Function() callbackHandler}) async {
-    if (!kIsWeb) {
-      debugPrint(
-        'setWidgetOpenedCalledback is not available for current operating system',
-      );
-      return;
-    }
-
-    _callbackItems.add(
-      CallbackItem(
-        callbackName: 'widgetOpenedCalledback',
-        callbackHandler: callbackHandler,
-      ),
-    );
-  }
-
-  /// ### setWidgetClosedCalledback
-  ///
-  /// This is called, when the Gleap widget opened
-  ///
-  /// **Params**
-  ///
-  /// [callbackHandler] Is called when Gleap is opened
-  ///
-  /// **Available Platforms**
-  ///
-  /// Web
-  @Deprecated('Use [registerListener]')
-  static Future<void> setWidgetClosedCalledback(
-      {required Function() callbackHandler}) async {
-    if (!kIsWeb) {
-      debugPrint(
-        'setWidgetClosedCalledback is not available for current operating system',
-      );
-      return;
-    }
-
-    _callbackItems.add(
-      CallbackItem(
-        callbackName: 'widgetClosedCalledback',
-        callbackHandler: callbackHandler,
-      ),
-    );
-  }
-
-  /// ### setBugWillBeSentCallback
-  ///
-  /// This is called, when the Gleap flow is started
-  ///
-  /// **Params**
-  ///
-  /// [callbackHandler] Is called when Gleap is opened
-  ///
-  /// **Available Platforms**
-  ///
-  /// Android, iOS, Web
-  @Deprecated('Use [registerListener]')
-  static Future<void> setFeedbackWillBeSentCallback({
-    required Function() callbackHandler,
-  }) async {
-    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
-      debugPrint(
-        'setFeedbackWillBeSentCallback is not available for current operating system',
-      );
-      return;
-    }
-
-    _callbackItems.add(
-      CallbackItem(
-        callbackName: 'feedbackWillBeSentCallback',
-        callbackHandler: callbackHandler,
-      ),
-    );
-  }
-
-  /// ### setBugSentCallback
-  ///
-  /// This method is triggered, when the Gleap flow is closed
-  ///
-  /// **Params**
-  ///
-  /// [callbackHandler] This callback is called when the flow is called
-  ///
-  /// **Available Platforms**
-  ///
-  /// Android, iOS, Web
-  @Deprecated('Use [registerListener]')
-  static Future<void> setFeedbackSentCallback({
-    required Function() callbackHandler,
-  }) async {
-    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
-      debugPrint(
-        'setFeedbackSentCallback is not available for current operating system',
-      );
-      return;
-    }
-
-    _callbackItems.add(
-      CallbackItem(
-        callbackName: 'feedbackSentCallback',
-        callbackHandler: callbackHandler,
-      ),
-    );
-  }
-
-  /// ### setBugSendingFailedCallback
-  ///
-  /// This method is triggered, when bug reporting failed
-  ///
-  /// **Params**
-  ///
-  /// [callbackHandler] This callback is called when the flow is called
-  ///
-  /// **Available Platforms**
-  ///
-  /// iOS, Web
-  @Deprecated('Use [registerListener]')
-  static Future<void> setFeedbackSendingFailedCallback({
-    required Function() callbackHandler,
-  }) async {
-    if (!kIsWeb && !io.Platform.isIOS) {
-      debugPrint(
-        'setFeedbackSendingFailedCallback is not available for current operating system',
-      );
-      return;
-    }
-
-    _callbackItems.add(
-      CallbackItem(
-        callbackName: 'feedbackSendingFailedCallback',
-        callbackHandler: callbackHandler,
-      ),
-    );
-  }
-
   /// ### logNetwork
   ///
   /// Log network traffic by logging it manually.
@@ -632,36 +474,6 @@ class Gleap {
       {
         'networkLogs': jsonNetworkLogs,
       },
-    );
-  }
-
-  /// ### registerCustomAction
-  ///
-  /// Register a custom function, which can be called from the bug report flow
-  ///
-  /// **Params**
-  ///
-  /// [callbackHandler] Implement the callback
-  ///
-  /// **Available Platforms**
-  ///
-  /// Android, iOS, Web
-  @Deprecated('Use [registerListener]')
-  static Future<void> registerCustomAction({
-    required Function(String actionName) callbackHandler,
-  }) async {
-    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
-      debugPrint(
-        'registerCustomAction is not available for current operating system',
-      );
-      return;
-    }
-
-    _callbackItems.add(
-      CallbackItem(
-        callbackName: 'customActionCallback',
-        callbackHandler: callbackHandler,
-      ),
     );
   }
 
@@ -747,7 +559,7 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Web
+  /// Web, Android, iOS
   static Future<void> open() async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
@@ -765,7 +577,7 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Web
+  /// Web, Android, iOS
   static Future<void> close() async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
@@ -775,24 +587,6 @@ class Gleap {
     }
 
     await _channel.invokeMethod('closeWidget');
-  }
-
-  /// ### hideWidget
-  ///
-  /// Hides feedback widget
-  ///
-  /// **Available Platforms**
-  ///
-  /// Web
-  static Future<void> hide() async {
-    if (!kIsWeb) {
-      debugPrint(
-        'hideWidget is not available for current operating system',
-      );
-      return;
-    }
-
-    await _channel.invokeMethod('hideWidget');
   }
 
   /// ### enableDebugConsoleLog
@@ -819,9 +613,9 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS
+  /// Web, Android, iOS
   static Future<void> setApiUrl({required String url}) async {
-    if (kIsWeb || (!io.Platform.isAndroid && !io.Platform.isIOS)) {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'setApiUrl is not available for current operating system',
       );
@@ -842,9 +636,9 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS
+  /// Web, Android, iOS
   static Future<void> setFrameUrl({required String url}) async {
-    if (kIsWeb || (!io.Platform.isAndroid && !io.Platform.isIOS)) {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'setFrameUrl is not available for current operating system',
       );
@@ -857,5 +651,21 @@ class Gleap {
         'url': url,
       },
     );
+  }
+
+  /// ### isOpened
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<bool> isOpened() async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'isOpened is not available for current operating system',
+      );
+      return false;
+    }
+
+    return await _channel.invokeMethod('isOpened');
   }
 }
