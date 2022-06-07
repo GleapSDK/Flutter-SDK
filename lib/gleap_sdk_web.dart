@@ -22,7 +22,6 @@ class GleapSdkWeb {
   }
 
   static void registerEvents(MethodChannel channel) {
-    // TODO: feedbackFlowStarted
     void Function(dynamic data) open = allowInterop((dynamic data) {
       channel.invokeMethod('widgetOpened');
     });
@@ -46,10 +45,11 @@ class GleapSdkWeb {
 
     void Function(dynamic data) feedbackFlowStarted =
         allowInterop((dynamic data) {
-      // TODO: convert LegacyJavaScriptObject to Map
+      final String strifiedData = GleapJsSdkHelper.stringify(data as Object);
+
       channel.invokeMethod(
         'feedbackFlowStarted',
-        data,
+        jsonDecode(strifiedData),
       );
     });
     GleapJsSdkHelper.registerEvents('flow-started', feedbackFlowStarted);

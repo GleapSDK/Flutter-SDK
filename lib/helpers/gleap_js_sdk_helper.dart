@@ -71,3 +71,6 @@ external Future<void> setFrameUrl(String url);
 
 @JS('window.Gleap.setApiUrl')
 external Future<void> setApiUrl(String url);
+
+@JS('JSON.stringify')
+external String stringify(Object obj);

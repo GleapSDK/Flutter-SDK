@@ -24,58 +24,19 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     await Gleap.enableDebugConsoleLog();
     await Gleap.initialize(
-      token: '3uljsPCtwxrXsROjnETeY26WW2HOQYEs',
+      token: 'API_KEY',
     );
 
-    // Gleap.preFillForm(formData: <String, dynamic>{
-    //   'bugdescription': 'blablalballaa',
-    // });
-
-    Gleap.registerListener(
-      actionName: 'widgetOpened',
-      callbackHandler: (dynamic action) {
-        print("widgetOpened");
-        print(action);
-      },
-    );
-
-    Gleap.registerListener(
-      actionName: 'widgetClosed',
-      callbackHandler: (dynamic action) {
-        print("widgetClosed");
-        print(action);
-      },
-    );
-
-    Gleap.registerListener(
-      actionName: 'feedbackSent',
-      callbackHandler: (dynamic action) {
-        print("feedbackSent");
-        print(action);
-      },
-    );
-
-    Gleap.registerListener(
-      actionName: 'feedbackFlowStarted',
-      callbackHandler: (dynamic action) {
-        print("feedbackFlowStarted");
-        print(action);
-      },
-    );
+    Gleap.preFillForm(formData: <String, dynamic>{
+      'bugdescription': 'While I was trying to do something, I found a bug.',
+    });
 
     Gleap.registerListener(
       actionName: 'custom-action',
       callbackHandler: (dynamic action) {
-        print("custom-action");
         print(action);
       },
     );
-
-    Gleap.attachCustomData(customData: <String, dynamic>{
-      'customdata': 'blablalballaa',
-    });
-
-    Gleap.setCustomData(key: 'key', value: 'value');
   }
 
   @override
@@ -88,17 +49,18 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GestureDetector(
                 onTap: () async {
                   await Gleap.identify(
                     userId: "123456",
                     userProperties: GleapUserProperty(
-                      name: 'Franz von Gleap',
+                      name: 'Franz',
                       email: 'franz@gleap.io',
                     ),
                     userHash:
-                        "e12817b1f1fedb72381b249eb22ece0dc1c470bb15188b5485d441485347926f",
+                        "e12817b1f1xedb72381b249eb22ecd0dc1c4s0bb15188b5485d441485347y26f",
                   );
                 },
                 child: Container(
@@ -114,6 +76,9 @@ class _MyAppState extends State<MyApp> {
                     ),
                   ),
                 ),
+              ),
+              const SizedBox(
+                height: 20.0,
               ),
               GestureDetector(
                 onTap: () async {
@@ -133,37 +98,15 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ),
               ),
+              const SizedBox(
+                height: 20.0,
+              ),
               GestureDetector(
                 onTap: () async {
-                  // Gleap.registerCustomAction(
-                  //     callbackHandler: (String actionName) {
-                  //   // Do something with action
-                  //   debugPrint('movieTitle: $actionName');
-                  // });
-                  // Gleap.sendSilentCrashReport(
-                  //   description: 'android silent crash report',
-                  //   severity: Severity.HIGH,
-                  // );
-
-                  // Gleap.startFeedbackFlow(
-                  //   feedbackAction: 'bugreporting',
-                  //   showBackButton: false,
-                  // );
-
-                  Gleap.open();
-
-                  Future.delayed(Duration(seconds: 5), () async {
-                    bool isOpened = await Gleap.isOpened();
-
-                    print("isOpened");
-                    print(isOpened);
-
-                    print("xlose widget");
-
-                    Gleap.close();
-                  });
-
-                  // print("finisheddd");
+                  Gleap.sendSilentCrashReport(
+                    description: 'Silent crash report',
+                    severity: Severity.HIGH,
+                  );
                 },
                 child: Container(
                   alignment: Alignment.center,
@@ -171,18 +114,12 @@ class _MyAppState extends State<MyApp> {
                   width: 150,
                   color: const Color(0xFF485BFF),
                   child: const Text(
-                    'Custom action',
+                    'Silent crash report',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-              ),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter a search term',
                 ),
               ),
             ],

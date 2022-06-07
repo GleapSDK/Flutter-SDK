@@ -166,7 +166,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
                         GleapUserProperties gleapUserProperties = new GleapUserProperties(
                                 gleapUserProperty.getString("name"), gleapUserProperty.getString("email"));
-                        if(call.argument("userHash")) {
+                        if(call.argument("userHash") != null) {
                             gleapUserProperties.setHash(call.argument("userHash"));
                         }
                         Gleap.getInstance().identifyUser(call.argument("userId"), gleapUserProperties);
