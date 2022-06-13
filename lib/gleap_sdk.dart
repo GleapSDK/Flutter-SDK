@@ -46,8 +46,8 @@ class Gleap {
   static _initCallbackHandler() async {
     _channel.setMethodCallHandler((MethodCall call) async {
       if (call.method == 'feedbackWillBeSentCallback') {
-        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
-        WidgetsBinding.instance.focusManager.rootScope.requestFocus(
+        WidgetsBinding.instance?.focusManager.primaryFocus?.unfocus();
+        WidgetsBinding.instance?.focusManager.rootScope.requestFocus(
           FocusNode(),
         );
       }

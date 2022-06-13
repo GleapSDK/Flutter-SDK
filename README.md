@@ -19,6 +19,18 @@ dependencies:
   gleap_sdk: "^7.0.0"
 ```
 
+**Flutter v2 Support**
+If you are using Flutter < v3, please import the gleap_sdk as shown below:
+
+```dart
+dependencies:
+  gleap_sdk:
+    git:
+      url: git://github.com/GleapSDK/Flutter-SDK.git
+      ref: flutter-v2
+
+```
+
 **Android installation**
 
 Android is ready to go. If theres a version conflict pls add the following to your android manifest:
