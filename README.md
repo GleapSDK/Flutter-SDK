@@ -26,7 +26,7 @@ If you are using Flutter < v3, please import the gleap_sdk as shown below:
 dependencies:
   gleap_sdk:
     git:
-      url: git://github.com/GleapSDK/Flutter-SDK.git
+      url: git@github.com:GleapSDK/Flutter-SDK.git
       ref: flutter-v2
 
 ```
