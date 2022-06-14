@@ -16,7 +16,20 @@ Checkout our [documentation](https://gleap.io/docs/flutter/) for full reference.
 
 ```dart
 dependencies:
-  gleap_sdk: "^7.0.0"
+  gleap_sdk: "^7.0.2"
+```
+
+**Flutter v2 Support**
+
+If you are using Flutter < v3, please import the gleap_sdk as shown below:
+
+```dart
+dependencies:
+  gleap_sdk:
+    git:
+      url: https://github.com/GleapSDK/Flutter-SDK.git
+      ref: flutter-v2
+
 ```
 
 **Flutter v2 Support**
