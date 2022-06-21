@@ -359,6 +359,11 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
                 result.success(true);
                 break;
+            case "disableConsoleLog":
+                Gleap.getInstance().disableConsoleLog();
+
+                result.success(true);
+                break;
             default:
                 result.notImplemented();
         }

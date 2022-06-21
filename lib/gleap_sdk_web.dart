@@ -121,6 +121,13 @@ class GleapSdkWeb {
         return setFrameUrl(url: call.arguments['url']);
       case 'setApiUrl':
         return setApiUrl(url: call.arguments['url']);
+      case 'log':
+        return log(
+          message: call.arguments['message'],
+          logLevel: call.arguments['logLevel'],
+        );
+      case 'disableConsoleLog':
+        return disableConsoleLog();
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -226,5 +233,13 @@ class GleapSdkWeb {
 
   Future<void> setApiUrl({required String url}) async {
     await GleapJsSdkHelper.setApiUrl(url);
+  }
+
+  Future<void> log({required String message, String? logLevel}) async {
+    await GleapJsSdkHelper.log(message, logLevel);
+  }
+
+  Future<void> disableConsoleLog() async {
+    await GleapJsSdkHelper.disableConsoleLog();
   }
 }
