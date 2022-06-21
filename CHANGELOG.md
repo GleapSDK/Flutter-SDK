@@ -1,3 +1,4 @@
+## 7.0.3 - Added custom logging
 ## 7.0.2 - Updated readme
 ## 7.0.1 - Added Flutter v2 support
 ## 7.0.0 - Upgraded to widget v7

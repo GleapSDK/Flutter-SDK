@@ -187,6 +187,20 @@
     BOOL isOpened = [Gleap isOpened];
     result(@(isOpened));
   }
+  else if([@"log" isEqualToString: call.method]) {
+    GleapLogLevel logLevel = INFO;
+
+    if([call.arguments[@"logLevel"] isEqualToString: @"INFO"]){
+      logLevel = INFO;
+    } else if([call.arguments[@"logLevel"] isEqualToString: @"WARNING"]){
+      logLevel = WARNING;
+    } else if([call.arguments[@"logLevel"] isEqualToString: @"ERROR"]){
+      logLevel = ERROR;
+    }
+
+    [Gleap log: call.arguments[@"message"] withLogLevel: logLevel];
+    result(nil);
+  }
   else {
     result(FlutterMethodNotImplemented);
   }

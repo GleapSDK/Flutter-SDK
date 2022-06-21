@@ -39,6 +39,21 @@ String _getActivationMethodValue(ActivationMethod activationMethod) {
   }
 }
 
+enum LogLevel { ERROR, WARNING, INFO }
+
+String _getLogSevernityValue(LogLevel logSevernity) {
+  switch (logSevernity) {
+    case LogLevel.ERROR:
+      return "ERROR";
+    case LogLevel.WARNING:
+      return "WARNING";
+    case LogLevel.INFO:
+      return "INFO";
+    default:
+      return "INFO";
+  }
+}
+
 class Gleap {
   static const MethodChannel _channel = MethodChannel('gleap_sdk');
   static final List<CallbackItem> _callbackItems = <CallbackItem>[];
@@ -667,5 +682,35 @@ class Gleap {
     }
 
     return await _channel.invokeMethod('isOpened');
+  }
+
+  /// ### log
+  ///
+  /// Custom logs allow you to create logs in the Gleap activity log.
+  /// There are three severnity types available for logs: ERROR, WARNING and INFO.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS
+  static Future<void> log({
+    required String message,
+    LogLevel logLevel = LogLevel.INFO,
+  }) async {
+    if (kIsWeb || (!io.Platform.isAndroid && !io.Platform.isIOS)) {
+      debugPrint(
+        'log is not available for current operating system',
+      );
+      return;
+    }
+
+    String preparedSevernity = _getLogSevernityValue(logLevel);
+
+    await _channel.invokeMethod(
+      'log',
+      {
+        'message': message,
+        'logLevel': preparedSevernity,
+      },
+    );
   }
 }
