@@ -33,6 +33,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.gleap.APPLICATIONTYPE;
 import io.gleap.Gleap;
 import io.gleap.GleapActivationMethod;
+import io.gleap.GleapLogLevel;
 import io.gleap.GleapUserProperties;
 import io.gleap.PrefillHelper;
 import io.gleap.RequestType;
@@ -339,6 +340,24 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
             case "isOpened":
                 result.success(Gleap.getInstance().isOpened());
+                break;
+            case "log":
+                if(call.argument("logLevel") != null) {
+                    GleapLogLevel logLevel = GleapLogLevel.INFO;
+                    if (call.argument("logLevel").equals("INFO")) {
+                        logLevel = GleapLogLevel.INFO;
+                    } else if (call.argument("logLevel").equals("WARNING")) {
+                        logLevel = GleapLogLevel.WARNING;
+                    } else if (call.argument("logLevel").equals("ERROR")) {
+                        logLevel = GleapLogLevel.ERROR;
+                    }
+
+                    Gleap.getInstance().log((String) call.argument("message"), logLevel);
+                } else {
+                    Gleap.getInstance().log((String) call.argument("message"));
+                }
+
+                result.success(true);
                 break;
             default:
                 result.notImplemented();
