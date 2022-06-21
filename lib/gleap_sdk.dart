@@ -691,12 +691,12 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS
+  /// Web, Android, iOS
   static Future<void> log({
     required String message,
     LogLevel logLevel = LogLevel.INFO,
   }) async {
-    if (kIsWeb || (!io.Platform.isAndroid && !io.Platform.isIOS)) {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'log is not available for current operating system',
       );
@@ -712,5 +712,23 @@ class Gleap {
         'logLevel': preparedSevernity,
       },
     );
+  }
+
+  /// ### setLogLevel
+  ///
+  /// It is possible to disable the default collection of console logs by calling the following method prior to the initialization of Gleap.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> disableConsoleLog() async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'disableConsoleLog is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('disableConsoleLog');
   }
 }

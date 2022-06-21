@@ -72,5 +72,11 @@ external Future<void> setFrameUrl(String url);
 @JS('window.Gleap.setApiUrl')
 external Future<void> setApiUrl(String url);
 
+@JS('window.Gleap.log')
+external Future<void> log(String message, String? logLevel);
+
+@JS('window.Gleap.disableConsoleLogOverwrite')
+external Future<void> disableConsoleLog();
+
 @JS('JSON.stringify')
 external String stringify(Object obj);

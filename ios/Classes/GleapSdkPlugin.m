@@ -201,6 +201,10 @@
     [Gleap log: call.arguments[@"message"] withLogLevel: logLevel];
     result(nil);
   }
+  else if([@"disableConsoleLog" isEqualToString: call.method]) {
+    [Gleap disableConsoleLog];
+    result(nil);
+  }
   else {
     result(FlutterMethodNotImplemented);
   }
