@@ -34,7 +34,6 @@ android {
     }
 
     dependencies {
-        implementation 'io.gleap:gleap-android-sdk:7.0.19'
-        implementation 'com.google.android.material:material:1.6.1'
+        implementation 'io.gleap:gleap-android-sdk:7.0.20'
     }
 }
