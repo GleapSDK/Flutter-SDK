@@ -1,3 +1,4 @@
+## 7.0.7 - Updated Android SDK
 ## 7.0.6 - Updated Android SDK
 ## 7.0.5 - Updated Android SDK
 ## 7.0.4 - Added custom logs for web, added disableConsoleLogs
