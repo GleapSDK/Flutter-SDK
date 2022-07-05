@@ -37,13 +37,13 @@ import io.gleap.GleapLogLevel;
 import io.gleap.GleapUserProperties;
 import io.gleap.PrefillHelper;
 import io.gleap.RequestType;
-import io.gleap.callbacks.CustomActionCallback;
-import io.gleap.callbacks.FeedbackFlowStartedCallback;
-import io.gleap.callbacks.FeedbackSendingFailedCallback;
-import io.gleap.callbacks.FeedbackSentCallback;
-import io.gleap.callbacks.GetBitmapCallback;
-import io.gleap.callbacks.WidgetClosedCallback;
-import io.gleap.callbacks.WidgetOpenedCallback;
+import io.gleap.CustomActionCallback;
+import io.gleap.FeedbackFlowStartedCallback;
+import io.gleap.FeedbackSendingFailedCallback;
+import io.gleap.FeedbackSentCallback;
+import io.gleap.GetBitmapCallback;
+import io.gleap.WidgetClosedCallback;
+import io.gleap.WidgetOpenedCallback;
 
 public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
     private MethodChannel channel;
