@@ -35,6 +35,7 @@ import io.gleap.Gleap;
 import io.gleap.GleapActivationMethod;
 import io.gleap.GleapLogLevel;
 import io.gleap.GleapUser;
+import io.gleap.Networklog;
 import io.gleap.GleapUserProperties;
 import io.gleap.PrefillHelper;
 import io.gleap.RequestType;
@@ -247,6 +248,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
             case "attachNetworkLogs":
                 try {
                     JSONArray object = new JSONArray((Collection) call.argument("networkLogs"));
+                    Networklog[] networklogs = new Networklog[object.length()];
                     for (int i = 0; i < object.length(); i++) {
                         JSONObject currentRequest = (JSONObject) object.get(i);
                         JSONObject response = (JSONObject) currentRequest.get("response");
@@ -254,11 +256,12 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                         if (currentRequest.has("request")) {
                             request = (JSONObject) currentRequest.get("request");
                         }
-                        Gleap.getInstance().logNetwork(currentRequest.getString("url"),
+                        networklogs[i] = new Networklog(currentRequest.getString("url"),
                                 RequestType.valueOf(currentRequest.getString("type")), response.getInt("status"),
                                 currentRequest.getInt("duration"), request, response);
                     }
 
+                    Gleap.getInstance().attachNetworkLogs(networklogs);
                 } catch (Exception ex) {
                     System.out.println(ex);
                 }
