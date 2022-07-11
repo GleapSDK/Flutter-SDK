@@ -6,10 +6,12 @@ part 'gleap_user_property_model.g.dart';
 class GleapUserProperty {
   String? name;
   String? email;
+  double? value;
 
   GleapUserProperty({
     this.name,
     this.email,
+    this.value,
   });
 
   factory GleapUserProperty.fromJson(Map<String, dynamic> json) =>

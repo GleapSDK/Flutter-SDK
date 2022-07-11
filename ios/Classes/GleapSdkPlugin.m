@@ -95,6 +95,9 @@
     if ([propertyData objectForKey: @"email"] != nil) {
         userProperty.email = [propertyData objectForKey: @"email"];
     }
+    if ([propertyData objectForKey: @"value"] != nil) {
+        userProperty.value = [propertyData objectForKey: @"value"];
+    }
 
     [Gleap identifyUserWith: call.arguments[@"userId"] andData: userProperty andUserHash: call.arguments[@"userHash"]];
     result(nil);
