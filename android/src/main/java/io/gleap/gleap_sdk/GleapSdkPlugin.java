@@ -34,6 +34,7 @@ import io.gleap.APPLICATIONTYPE;
 import io.gleap.Gleap;
 import io.gleap.GleapActivationMethod;
 import io.gleap.GleapLogLevel;
+import io.gleap.GleapUser;
 import io.gleap.GleapUserProperties;
 import io.gleap.PrefillHelper;
 import io.gleap.RequestType;
@@ -164,9 +165,18 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 if (call.argument("userProperties") != null) {
                     try {
                         JSONObject gleapUserProperty = new JSONObject((Map) call.argument("userProperties"));
+                        GleapUserProperties gleapUserProperties = new GleapUserProperties();
 
-                        GleapUserProperties gleapUserProperties = new GleapUserProperties(
-                                gleapUserProperty.getString("name"), gleapUserProperty.getString("email"));
+                        if(gleapUserProperty.has("email")) {
+                            gleapUserProperties.setEmail(gleapUserProperty.getString("email"));
+                        }
+                        if(gleapUserProperty.has("name")) {
+                            gleapUserProperties.setName(gleapUserProperty.getString("name"));
+                        }
+                        if(gleapUserProperty.has("value")) {
+                            gleapUserProperties.setValue(gleapUserProperty.getDouble("value"));
+                        }
+
                         if(call.argument("userHash") != null) {
                             gleapUserProperties.setHash(call.argument("userHash"));
                         }
