@@ -168,13 +168,13 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                         JSONObject gleapUserProperty = new JSONObject((Map) call.argument("userProperties"));
                         GleapUserProperties gleapUserProperties = new GleapUserProperties();
 
-                        if(gleapUserProperty.has("email")) {
+                        if(gleapUserProperty.has("email") && !gleapUserProperty.isNull("email")) {
                             gleapUserProperties.setEmail(gleapUserProperty.getString("email"));
                         }
-                        if(gleapUserProperty.has("name")) {
+                        if(gleapUserProperty.has("name") && !gleapUserProperty.isNull("name")) {
                             gleapUserProperties.setName(gleapUserProperty.getString("name"));
                         }
-                        if(gleapUserProperty.has("value")) {
+                        if(gleapUserProperty.has("value") && !gleapUserProperty.isNull("value")) {
                             gleapUserProperties.setValue(gleapUserProperty.getDouble("value"));
                         }
 
