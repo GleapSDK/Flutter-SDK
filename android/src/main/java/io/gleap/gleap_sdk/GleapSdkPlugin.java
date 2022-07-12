@@ -35,6 +35,7 @@ import io.gleap.Gleap;
 import io.gleap.GleapActivationMethod;
 import io.gleap.GleapLogLevel;
 import io.gleap.GleapUser;
+import io.gleap.Networklog;
 import io.gleap.GleapUserProperties;
 import io.gleap.PrefillHelper;
 import io.gleap.RequestType;
@@ -167,13 +168,13 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                         JSONObject gleapUserProperty = new JSONObject((Map) call.argument("userProperties"));
                         GleapUserProperties gleapUserProperties = new GleapUserProperties();
 
-                        if(gleapUserProperty.has("email")) {
+                        if(gleapUserProperty.has("email") && !gleapUserProperty.isNull("email")) {
                             gleapUserProperties.setEmail(gleapUserProperty.getString("email"));
                         }
-                        if(gleapUserProperty.has("name")) {
+                        if(gleapUserProperty.has("name") && !gleapUserProperty.isNull("name")) {
                             gleapUserProperties.setName(gleapUserProperty.getString("name"));
                         }
-                        if(gleapUserProperty.has("value")) {
+                        if(gleapUserProperty.has("value") && !gleapUserProperty.isNull("value")) {
                             gleapUserProperties.setValue(gleapUserProperty.getDouble("value"));
                         }
 
@@ -247,6 +248,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
             case "attachNetworkLogs":
                 try {
                     JSONArray object = new JSONArray((Collection) call.argument("networkLogs"));
+                    Networklog[] networklogs = new Networklog[object.length()];
                     for (int i = 0; i < object.length(); i++) {
                         JSONObject currentRequest = (JSONObject) object.get(i);
                         JSONObject response = (JSONObject) currentRequest.get("response");
@@ -254,11 +256,12 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                         if (currentRequest.has("request")) {
                             request = (JSONObject) currentRequest.get("request");
                         }
-                        Gleap.getInstance().logNetwork(currentRequest.getString("url"),
+                        networklogs[i] = new Networklog(currentRequest.getString("url"),
                                 RequestType.valueOf(currentRequest.getString("type")), response.getInt("status"),
                                 currentRequest.getInt("duration"), request, response);
                     }
 
+                    Gleap.getInstance().attachNetworkLogs(networklogs);
                 } catch (Exception ex) {
                     System.out.println(ex);
                 }
