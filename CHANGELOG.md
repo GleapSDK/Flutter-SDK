@@ -1,3 +1,5 @@
+## 7.0.10 - Updated Android SDK
+
 ## 7.0.9 - Fixed issue with null properties in identify
 
 ## 7.0.8 - Updated native SDK'S, Added value to user property
