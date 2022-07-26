@@ -174,6 +174,9 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                         if(gleapUserProperty.has("name") && !gleapUserProperty.isNull("name")) {
                             gleapUserProperties.setName(gleapUserProperty.getString("name"));
                         }
+                        if(gleapUserProperty.has("phone") && !gleapUserProperty.isNull("phone")) {
+                            gleapUserProperties.setPhoneNumber(gleapUserProperty.getString("phone"));
+                        }
                         if(gleapUserProperty.has("value") && !gleapUserProperty.isNull("value")) {
                             gleapUserProperties.setValue(gleapUserProperty.getDouble("value"));
                         }
