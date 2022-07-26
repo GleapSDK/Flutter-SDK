@@ -6,11 +6,13 @@ part 'gleap_user_property_model.g.dart';
 class GleapUserProperty {
   String? name;
   String? email;
+  String? phone;
   double? value;
 
   GleapUserProperty({
     this.name,
     this.email,
+    this.phone,
     this.value,
   });
 
