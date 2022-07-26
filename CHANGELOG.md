@@ -1,3 +1,5 @@
+## 7.0.11 - Added phone number to GleapUserProperty
+
 ## 7.0.10 - Updated Android SDK
 
 ## 7.0.9 - Fixed issue with null properties in identify

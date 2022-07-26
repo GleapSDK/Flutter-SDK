@@ -95,6 +95,9 @@
     if ([propertyData objectForKey: @"email"] != nil) {
         userProperty.email = [propertyData objectForKey: @"email"];
     }
+    if ([propertyData objectForKey: @"phone"] != nil) {
+        userProperty.phone = [propertyData objectForKey: @"phone"];
+    }
     if ([propertyData objectForKey: @"value"] != nil) {
         userProperty.value = [propertyData objectForKey: @"value"];
     }
