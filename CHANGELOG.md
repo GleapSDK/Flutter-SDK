@@ -1,3 +1,5 @@
+## 7.0.13 - Updated Android SDK
+
 ## 7.0.12 - Updated native SDK's
 
 ## 7.0.11 - Added phone number to GleapUserProperty
