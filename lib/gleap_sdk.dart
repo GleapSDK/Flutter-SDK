@@ -466,11 +466,11 @@ class Gleap {
   ///
   /// **Available Platforms**
   ///
-  /// Android, iOS
+  /// Android, iOS, Web
   static Future<void> attachNetworkLogs({
     required List<GleapNetworkLog> networkLogs,
   }) async {
-    if (kIsWeb || (!io.Platform.isAndroid && !io.Platform.isIOS)) {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'attachNetworkLogs is not available for current operating system',
       );

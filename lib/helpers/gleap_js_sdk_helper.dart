@@ -78,5 +78,8 @@ external Future<void> log(String message, String? logLevel);
 @JS('window.Gleap.disableConsoleLogOverwrite')
 external Future<void> disableConsoleLog();
 
+@JS('window.Gleap.attachNetworkLogs')
+external Future<void> attachNetworkLogs(String networkLogs);
+
 @JS('JSON.stringify')
 external String stringify(Object obj);
