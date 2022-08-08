@@ -1,3 +1,5 @@
+## 7.0.14 - Added web support for attachNetworkLogs
+
 ## 7.0.13 - Updated Android SDK
 
 ## 7.0.12 - Updated native SDK's

@@ -128,6 +128,9 @@ class GleapSdkWeb {
         );
       case 'disableConsoleLog':
         return disableConsoleLog();
+      case 'attachNetworkLogs':
+        return attachNetworkLogs(networkLogs: call.arguments['networkLogs']);
+
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -241,5 +244,13 @@ class GleapSdkWeb {
 
   Future<void> disableConsoleLog() async {
     await GleapJsSdkHelper.disableConsoleLog();
+  }
+
+  Future<void> attachNetworkLogs({
+    required List<dynamic> networkLogs,
+  }) async {
+    await GleapJsSdkHelper.attachNetworkLogs(
+      json.encode(networkLogs),
+    );
   }
 }
