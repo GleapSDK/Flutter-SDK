@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     await Gleap.enableDebugConsoleLog();
     await Gleap.initialize(
-      token: 'I1FtrI5wAm75kiMbFE0JiRtSD4vP1YqY',
+      token: 'API_KEY',
     );
 
     Gleap.preFillForm(formData: <String, dynamic>{
