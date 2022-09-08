@@ -1,3 +1,5 @@
+## 7.0.15 - Updated native SDK's, removed Android Oreo as minimum version
+
 ## 7.0.14 - Added web support for attachNetworkLogs
 
 ## 7.0.13 - Updated Android SDK

@@ -120,7 +120,6 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         switch (call.method) {
