@@ -1,3 +1,5 @@
+## 8.0.0 - 
+
 ## 7.0.16 - Made Gleap compatible with Android Nougat and below
 
 ## 7.0.15 - Updated native SDK's, removed Android Oreo as minimum version

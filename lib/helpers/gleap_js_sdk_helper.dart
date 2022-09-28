@@ -41,8 +41,8 @@ external void registerCustomAction(
 external void registerEvents(
     String name, void Function(dynamic data) callbackHandler);
 
-@JS('window.Gleap.logEvent')
-external Future<void> logEvent(String event, String? data);
+@JS('window.Gleap.trackEvent')
+external Future<void> trackEvent(String event, String? data);
 
 @JS('window.Gleap.sendSilentCrashReport')
 external Future<void> sendSilentCrashReport(
@@ -80,6 +80,9 @@ external Future<void> disableConsoleLog();
 
 @JS('window.Gleap.attachNetworkLogs')
 external Future<void> attachNetworkLogs(String networkLogs);
+
+@JS('window.Gleap.showFeedbackButton')
+external Future<void> showFeedbackButton(bool visible);
 
 @JS('JSON.stringify')
 external String stringify(Object obj);
