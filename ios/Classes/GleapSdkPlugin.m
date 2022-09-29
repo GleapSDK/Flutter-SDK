@@ -133,8 +133,8 @@
     [Gleap clearCustomData];
     result(nil);
   }
-  else if([@"logEvent" isEqualToString: call.method]) {
-    [Gleap logEvent: call.arguments[@"name"] withData: call.arguments[@"data"]];
+  else if([@"trackEvent" isEqualToString: call.method]) {
+    [Gleap trackEvent: call.arguments[@"name"] withData: call.arguments[@"data"]];
     result(nil);
   }
   else if([@"setActivationMethods" isEqualToString: call.method]) {
@@ -209,6 +209,10 @@
   }
   else if([@"disableConsoleLog" isEqualToString: call.method]) {
     [Gleap disableConsoleLog];
+    result(nil);
+  }
+  else if([@"showFeedbackButton" isEqualToString: call.method]) {
+    [Gleap showFeedbackButton: [call.arguments[@"visible"] boolValue]];
     result(nil);
   }
   else {

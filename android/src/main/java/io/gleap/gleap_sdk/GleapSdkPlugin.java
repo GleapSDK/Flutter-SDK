@@ -39,13 +39,13 @@ import io.gleap.Networklog;
 import io.gleap.GleapUserProperties;
 import io.gleap.PrefillHelper;
 import io.gleap.RequestType;
-import io.gleap.CustomActionCallback;
-import io.gleap.FeedbackFlowStartedCallback;
-import io.gleap.FeedbackSendingFailedCallback;
-import io.gleap.FeedbackSentCallback;
-import io.gleap.GetBitmapCallback;
-import io.gleap.WidgetClosedCallback;
-import io.gleap.WidgetOpenedCallback;
+import io.gleap.callbacks.CustomActionCallback;
+import io.gleap.callbacks.FeedbackFlowStartedCallback;
+import io.gleap.callbacks.FeedbackSendingFailedCallback;
+import io.gleap.callbacks.FeedbackSentCallback;
+import io.gleap.callbacks.GetBitmapCallback;
+import io.gleap.callbacks.WidgetClosedCallback;
+import io.gleap.callbacks.WidgetOpenedCallback;
 
 public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
     private MethodChannel channel;
@@ -271,10 +271,10 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 result.success(null);
                 break;
 
-            case "logEvent":
+            case "trackEvent":
                 JSONObject data = new JSONObject((Map) call.argument("data"));
 
-                Gleap.getInstance().logEvent((String) call.argument("name"), data);
+                Gleap.getInstance().trackEvent((String) call.argument("name"), data);
                 result.success(null);
                 break;
 
@@ -376,6 +376,12 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 break;
             case "disableConsoleLog":
                 Gleap.getInstance().disableConsoleLog();
+
+                result.success(true);
+                break;
+
+            case "showFeedbackButton":
+                Gleap.getInstance().showFeedbackButton(((Boolean) call.argument("visible")));
 
                 result.success(true);
                 break;
