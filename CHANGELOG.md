@@ -1,3 +1,7 @@
+## 8.0.1
+Minor bug fixes
+Upated changelog
+
 ## 8.0.0
 Introduction of our new live-chat
 Feedback button support
