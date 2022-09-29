@@ -1,4 +1,10 @@
-## 8.0.0 - 
+## 8.0.0
+Introduction of our new live-chat
+Feedback button support
+Improved surveys, chat messages & outbound emails
+Ability to view last conversations
+Introduction of office hours
+Bug fixes & stability improvements
 
 ## 7.0.16 - Made Gleap compatible with Android Nougat and below
 
