@@ -93,8 +93,8 @@ class GleapSdkWeb {
         return removeCustomData(key: call.arguments['key']);
       case 'clearCustomData':
         return clearCustomData();
-      case 'logEvent':
-        return logEvent(
+      case 'trackEvent':
+        return trackEvent(
           name: call.arguments['name'],
           data: call.arguments['data'],
         );
@@ -130,6 +130,9 @@ class GleapSdkWeb {
         return disableConsoleLog();
       case 'attachNetworkLogs':
         return attachNetworkLogs(networkLogs: call.arguments['networkLogs']);
+      case 'showFeedbackButton':
+      return showFeedbackButton(visible: call.arguments['visible']);
+
 
       default:
         throw PlatformException(
@@ -184,13 +187,13 @@ class GleapSdkWeb {
     await GleapJsSdkHelper.clearCustomData();
   }
 
-  Future<void> logEvent({
+  Future<void> trackEvent({
     required String name,
     dynamic data,
   }) async {
     String? stringifiedHashMap = jsonEncode(data);
 
-    await GleapJsSdkHelper.logEvent(name, stringifiedHashMap);
+    await GleapJsSdkHelper.trackEvent(name, stringifiedHashMap);
   }
 
   Future<void> sendSilentCrashReport({
@@ -252,5 +255,9 @@ class GleapSdkWeb {
     await GleapJsSdkHelper.attachNetworkLogs(
       json.encode(networkLogs),
     );
+  }
+
+  Future<void> showFeedbackButton({required bool visible}) {
+    return GleapJsSdkHelper.showFeedbackButton(visible);
   }
 }

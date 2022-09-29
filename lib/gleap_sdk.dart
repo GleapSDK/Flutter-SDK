@@ -492,7 +492,7 @@ class Gleap {
     );
   }
 
-  /// ### logEvent
+  /// ### trackEvent
   ///
   /// Logs a custom event
   ///
@@ -505,18 +505,18 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Android, iOS, Web
-  static Future<void> logEvent({
+  static Future<void> trackEvent({
     required String name,
     Map<String, dynamic>? data,
   }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
-      debugPrint('logEvent is not available for current operating system');
+      debugPrint('trackEvent is not available for current operating system');
       return;
     }
 
     data ??= <String, dynamic>{};
 
-    await _channel.invokeMethod('logEvent', {'name': name, 'data': data});
+    await _channel.invokeMethod('trackEvent', {'name': name, 'data': data});
   }
 
   /// ### addAttachment
@@ -730,5 +730,16 @@ class Gleap {
     }
 
     await _channel.invokeMethod('disableConsoleLog');
+  }
+
+  static Future<void> showFeedbackButton(bool visible) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'showFeedbackButton is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('showFeedbackButton', {'visible': visible});
   }
 }

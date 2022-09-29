@@ -4,22 +4,22 @@
 
 The Gleap SDK for Flutter is the easiest way to integrate Gleap into your apps!
 
-# Report and Fix Bugs the Easy Way
+# Report and fix bugs the easy way
 
 Gleap helps developers build the best software faster. It is your affordable in-app bug reporting tool for apps, websites and industrial applications.
 
 Checkout our [website](https://gleap.io) to learn more about gleap.
 
-## Docs & Examples
+## Docs & examples
 
 Checkout our [documentation](https://gleap.io/docs/flutter/) for full reference. Include the following dependency in your pubspec.yml:
 
 ```dart
 dependencies:
-  gleap_sdk: "^7.0.16"
+  gleap_sdk: "^8.0.0"
 ```
 
-**Flutter v2 Support**
+**Flutter v2 support**
 
 If you are using Flutter < v3, please import the gleap_sdk as shown below:
 
@@ -74,6 +74,6 @@ Gleap.initialize(token: 'YOUR_API_KEY')
 
 Your API key can be found in the project settings within Gleap.
 
-**Network Logging**
+**Network logging**
 
 We support network logging for the packages [Http](https://pub.dev/packages/http) and [Dio](https://pub.dev/packages/dio). For details on how to enable network logging for these packages, check the [Gleap Http Interceptor](https://pub.dev/packages/gleap_http_interceptor) and the [Gleap Dio Interceptor](https://pub.dev/packages/gleap_dio_interceptor) packages.
