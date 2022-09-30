@@ -1,3 +1,6 @@
+## 8.0.2
+Minor bug fixes for Android
+
 ## 8.0.1
 Minor bug fixes
 Upated changelog
