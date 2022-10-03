@@ -1,3 +1,6 @@
+## 8.0.3
+Updated Android SDK
+
 ## 8.0.2
 Minor bug fixes for Android
 

@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     await Gleap.enableDebugConsoleLog();
     await Gleap.initialize(
-      token: 'KProDXhMS0V3UUku2iNnrZ4XsBnAYzxt',
+      token: 'API_KEY',
     );
 
     await Gleap.setLanguage(language: 'SI');
