@@ -84,5 +84,8 @@ external Future<void> attachNetworkLogs(String networkLogs);
 @JS('window.Gleap.showFeedbackButton')
 external Future<void> showFeedbackButton(bool visible);
 
+@JS('window.Gleap.openNews')
+external Future<void> openNews();
+
 @JS('JSON.stringify')
 external String stringify(Object obj);

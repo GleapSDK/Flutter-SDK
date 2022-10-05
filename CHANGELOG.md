@@ -1,3 +1,6 @@
+## 8.0.4
+Added news capabilities
+
 ## 8.0.3
 Updated Android SDK
 

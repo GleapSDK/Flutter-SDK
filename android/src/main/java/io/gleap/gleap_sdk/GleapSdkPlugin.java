@@ -385,6 +385,11 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
                 result.success(true);
                 break;
+
+            case "openNews":
+                Gleap.getInstance().openNews();
+                break;
+                
             default:
                 result.notImplemented();
         }

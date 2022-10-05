@@ -215,6 +215,10 @@
     [Gleap showFeedbackButton: [call.arguments[@"visible"] boolValue]];
     result(nil);
   }
+  else if([@"openNews" isEqualToString: call.method]) {
+    [Gleap openNews];
+    result(nil);    
+  }
   else {
     result(FlutterMethodNotImplemented);
   }

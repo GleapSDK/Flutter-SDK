@@ -732,6 +732,13 @@ class Gleap {
     await _channel.invokeMethod('disableConsoleLog');
   }
 
+  /// ### showFeedbackButton
+  ///
+  /// Hides or shows the feedback button
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
   static Future<void> showFeedbackButton(bool visible) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
@@ -741,5 +748,23 @@ class Gleap {
     }
 
     await _channel.invokeMethod('showFeedbackButton', {'visible': visible});
+  }
+
+  /// ### openNews
+  ///
+  /// Opens the news feed in the widget
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> openNews() async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'openNews is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('openNews');
   }
 }
