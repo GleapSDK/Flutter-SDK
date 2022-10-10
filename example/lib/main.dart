@@ -26,6 +26,7 @@ class _MyAppState extends State<MyApp> {
     await Gleap.initialize(
       token: 'API_KEY',
     );
+    Gleap.showFeedbackButton(false);
 
     await Gleap.setLanguage(language: 'SI');
 
@@ -149,9 +150,11 @@ class _MainScreenState extends State<MainScreen> {
             ),
             GestureDetector(
               onTap: () async {
-                Gleap.trackEvent(name: 'FIRST_EVENT');
+                // Gleap.trackEvent(name: 'FIRST_EVENT');
+                // Gleap.openNews();
                 // Navigator.of(context).pushNamed(SecondScreen.routeName);
                 // Gleap.showFeedbackButton(true);
+                Gleap.openFeatureRequests();
               },
               child: Container(
                 alignment: Alignment.center,

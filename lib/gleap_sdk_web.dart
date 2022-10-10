@@ -131,8 +131,11 @@ class GleapSdkWeb {
       case 'attachNetworkLogs':
         return attachNetworkLogs(networkLogs: call.arguments['networkLogs']);
       case 'showFeedbackButton':
-      return showFeedbackButton(visible: call.arguments['visible']);
-
+        return showFeedbackButton(visible: call.arguments['visible']);
+      case 'openNews':
+        return openNews();
+      case 'openFeatureRequests':
+        return openFeatureRequests();
 
       default:
         throw PlatformException(
@@ -259,5 +262,13 @@ class GleapSdkWeb {
 
   Future<void> showFeedbackButton({required bool visible}) {
     return GleapJsSdkHelper.showFeedbackButton(visible);
+  }
+
+  Future<void> openNews() {
+    return GleapJsSdkHelper.openNews();
+  }
+
+  Future<void> openFeatureRequests() {
+    return GleapJsSdkHelper.openFeatureRequests();
   }
 }
