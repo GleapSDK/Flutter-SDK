@@ -28,6 +28,8 @@ class _MyAppState extends State<MyApp> {
     );
     Gleap.showFeedbackButton(false);
 
+    await Gleap.setLanguage(language: 'SI');
+
     // Gleap.preFillForm(formData: <String, dynamic>{
     //   'bugdescription': 'While I was trying to do something, I found a bug.',
     // });
@@ -149,9 +151,10 @@ class _MainScreenState extends State<MainScreen> {
             GestureDetector(
               onTap: () async {
                 // Gleap.trackEvent(name: 'FIRST_EVENT');
-                Gleap.openNews();
+                // Gleap.openNews();
                 // Navigator.of(context).pushNamed(SecondScreen.routeName);
                 // Gleap.showFeedbackButton(true);
+                Gleap.openFeatureRequests();
               },
               child: Container(
                 alignment: Alignment.center,

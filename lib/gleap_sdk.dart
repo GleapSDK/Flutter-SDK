@@ -767,4 +767,22 @@ class Gleap {
 
     await _channel.invokeMethod('openNews');
   }
+
+  /// ### openNews
+  ///
+  /// Opens the news feed in the widget
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> openFeatureRequests() async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'openFeatureRequests is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('openFeatureRequests');
+  }
 }

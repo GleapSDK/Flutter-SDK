@@ -389,6 +389,10 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
             case "openNews":
                 Gleap.getInstance().openNews();
                 break;
+
+            case "openFeatureRequests":
+                Gleap.getInstance().openFeatureRequests();
+                break;
                 
             default:
                 result.notImplemented();

@@ -219,6 +219,10 @@
     [Gleap openNews];
     result(nil);    
   }
+  else if([@"openFeatureRequests" isEqualToString: call.method]) {
+    [Gleap openFeatureRequests];
+    result(nil);
+  }
   else {
     result(FlutterMethodNotImplemented);
   }

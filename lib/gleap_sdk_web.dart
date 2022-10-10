@@ -134,6 +134,8 @@ class GleapSdkWeb {
         return showFeedbackButton(visible: call.arguments['visible']);
       case 'openNews':
         return openNews();
+      case 'openFeatureRequests':
+        return openFeatureRequests();
 
       default:
         throw PlatformException(
@@ -264,5 +266,9 @@ class GleapSdkWeb {
 
   Future<void> openNews() {
     return GleapJsSdkHelper.openNews();
+  }
+
+  Future<void> openFeatureRequests() {
+    return GleapJsSdkHelper.openFeatureRequests();
   }
 }

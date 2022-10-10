@@ -87,5 +87,8 @@ external Future<void> showFeedbackButton(bool visible);
 @JS('window.Gleap.openNews')
 external Future<void> openNews();
 
+@JS('window.Gleap.openFeatureRequests')
+external Future<void> openFeatureRequests();
+
 @JS('JSON.stringify')
 external String stringify(Object obj);
