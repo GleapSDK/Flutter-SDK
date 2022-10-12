@@ -223,6 +223,14 @@
     [Gleap openFeatureRequests];
     result(nil);
   }
+  else if([@"isUserIdentified" isEqualToString: call.method]) {
+    BOOL isIdentified = [Gleap isUserIdentified];
+    result(@(isIdentified));
+  }
+  else if([@"getIdentity" isEqualToString: call.method]) {
+    NSDictionary * userIdentity = [Gleap getIdentity];
+    result(userIdentity);
+  }
   else {
     result(FlutterMethodNotImplemented);
   }

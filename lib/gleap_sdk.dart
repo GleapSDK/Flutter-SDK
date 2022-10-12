@@ -785,4 +785,46 @@ class Gleap {
 
     await _channel.invokeMethod('openFeatureRequests');
   }
+
+  /// ### isUserIdentified
+  ///
+  /// Returns true if the user is identified
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<bool> isUserIdentified() async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'isUserIdentified is not available for current operating system',
+      );
+      return false;
+    }
+
+    return await _channel.invokeMethod('isUserIdentified');
+  }
+
+  /// ### getIdentity
+  ///
+  /// Returns the current identity
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<GleapUserProperty?> getIdentity() async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'getIdentity is not available for current operating system',
+      );
+      return null;
+    }
+
+    try {
+      dynamic userProperty = await _channel.invokeMethod('getIdentity');
+
+      return GleapUserProperty.fromJson(json.decode(json.encode(userProperty)));
+    } catch (err) {
+      return null;
+    }
+  }
 }

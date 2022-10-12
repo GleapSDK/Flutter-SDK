@@ -154,7 +154,9 @@ class _MainScreenState extends State<MainScreen> {
                 // Gleap.openNews();
                 // Navigator.of(context).pushNamed(SecondScreen.routeName);
                 // Gleap.showFeedbackButton(true);
-                Gleap.openFeatureRequests();
+                // Gleap.openFeatureRequests();
+                // bool isIdentified = await Gleap.isUserIdentified();
+                // GleapUserProperty? userProperty = await Gleap.getIdentity();
               },
               child: Container(
                 alignment: Alignment.center,
