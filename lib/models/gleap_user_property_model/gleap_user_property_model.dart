@@ -4,12 +4,14 @@ part 'gleap_user_property_model.g.dart';
 
 @JsonSerializable()
 class GleapUserProperty {
+  String? userId;
   String? name;
   String? email;
   String? phone;
   double? value;
 
   GleapUserProperty({
+    this.userId,
     this.name,
     this.email,
     this.phone,

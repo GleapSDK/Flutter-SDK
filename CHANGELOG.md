@@ -1,3 +1,6 @@
+## 8.0.6
+Added isUserIdentified & getIdentity
+
 ## 8.0.5
 Added feature requests capabilities
 

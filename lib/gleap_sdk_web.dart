@@ -136,6 +136,10 @@ class GleapSdkWeb {
         return openNews();
       case 'openFeatureRequests':
         return openFeatureRequests();
+      case 'isUserIdentified':
+        return isUserIdentified();
+      case 'getIdentity':
+        return getIdentity();
 
       default:
         throw PlatformException(
@@ -270,5 +274,16 @@ class GleapSdkWeb {
 
   Future<void> openFeatureRequests() {
     return GleapJsSdkHelper.openFeatureRequests();
+  }
+
+  Future<bool> isUserIdentified() async {
+    return await GleapJsSdkHelper.isUserIdentified();
+  }
+
+  Future<dynamic> getIdentity() async {
+    final dynamic identity = await GleapJsSdkHelper.getIdentity();
+    final String strifiedData = GleapJsSdkHelper.stringify(identity);
+
+    return jsonDecode(strifiedData);
   }
 }

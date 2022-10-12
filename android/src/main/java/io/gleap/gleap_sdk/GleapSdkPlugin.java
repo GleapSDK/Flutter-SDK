@@ -388,10 +388,44 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
             case "openNews":
                 Gleap.getInstance().openNews();
+
+                result.success(true);
                 break;
 
             case "openFeatureRequests":
                 Gleap.getInstance().openFeatureRequests();
+
+                result.success(true);
+                break;
+
+            case "isUserIdentified":
+               boolean isUserIdentified = Gleap.getInstance().isUserIdentified();
+               result.success(isUserIdentified);
+               break;
+
+            case "getIdentity":
+                try {
+                    GleapUser gleapUser = Gleap.getInstance().getIdentity();
+                    if (gleapUser != null) {
+                        GleapUserProperties userProps = gleapUser.getGleapUserProperties();
+
+                        Map<String, Object> map = new HashMap<>();
+
+                        if (userProps != null) {
+                            map.put("userId", gleapUser.getUserId());
+                            map.put("phone", userProps.getPhoneNumber());
+                            map.put("email", userProps.getEmail());
+                            map.put("name", userProps.getName());
+                            map.put("value", userProps.getValue());
+                        }
+
+                        result.success(map);
+                    } else {
+                        result.success(null);
+                    }
+                }catch (Exception ex) {
+                    result.success(null);
+                }
                 break;
                 
             default:

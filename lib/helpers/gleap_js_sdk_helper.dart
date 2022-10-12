@@ -90,5 +90,11 @@ external Future<void> openNews();
 @JS('window.Gleap.openFeatureRequests')
 external Future<void> openFeatureRequests();
 
+@JS('window.Gleap.isUserIdentified')
+external Future<bool> isUserIdentified();
+
+@JS('window.Gleap.getIdentity')
+external Future<dynamic> getIdentity();
+
 @JS('JSON.stringify')
 external String stringify(Object obj);
