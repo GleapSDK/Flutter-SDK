@@ -1,3 +1,6 @@
+## 8.2.0
+Updated native SDK's
+
 ## 8.0.6
 Added isUserIdentified & getIdentity
 
