@@ -1,3 +1,6 @@
+## 8.2.1
+Updated native SDK's
+
 ## 8.2.0
 Updated native SDK's
 
