@@ -1,3 +1,6 @@
+## 8.2.3
+Updated Android SDK
+
 ## 8.2.2
 Updated native SDKs
 
