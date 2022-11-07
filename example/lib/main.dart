@@ -24,9 +24,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     await Gleap.enableDebugConsoleLog();
     await Gleap.initialize(
-      token: 'API_KEY',
+      token: 'YOUR_API_KEY',
     );
-    Gleap.showFeedbackButton(false);
 
     await Gleap.setLanguage(language: 'SI');
 
@@ -152,7 +151,7 @@ class _MainScreenState extends State<MainScreen> {
               onTap: () async {
                 // Gleap.trackEvent(name: 'FIRST_EVENT');
                 // Gleap.openNews();
-                // Navigator.of(context).pushNamed(SecondScreen.routeName);
+                Navigator.of(context).pushNamed(SecondScreen.routeName);
                 // Gleap.showFeedbackButton(true);
                 // Gleap.openFeatureRequests();
                 // bool isIdentified = await Gleap.isUserIdentified();
