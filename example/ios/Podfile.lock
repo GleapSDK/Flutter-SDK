@@ -1,7 +1,7 @@
 PODS:
   - Flutter (1.0.0)
   - Gleap (8.4.0)
-  - gleap_sdk (8.4.0):
+  - gleap_sdk (8.4.1):
     - Flutter
     - Gleap (= 8.4.0)
 
