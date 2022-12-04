@@ -855,7 +855,7 @@ class Gleap {
   ///
   /// Web, Android, iOS
   static Future<void> openHelpCenterCollection(
-      String collectionId, bool showBackButton) async {
+      {required String collectionId, required bool showBackButton}) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'openHelpCenterCollection is not available for current operating system',

@@ -1,3 +1,6 @@
+## 8.4.1
+Moved openHelpCenterCollection to named params
+
 ## 8.4.0
 Updated native dependencies to 8.4.0 (iOS, Android & Web)
 Added help center capabilities
