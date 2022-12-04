@@ -134,6 +134,10 @@ class GleapSdkWeb {
         return showFeedbackButton(visible: call.arguments['visible']);
       case 'openNews':
         return openNews(showBackButton: call.arguments['showBackButton']);
+      case 'openNewsArticle':
+        return openNewsArticle(
+            articleId: call.arguments['articleId'],
+            showBackButton: call.arguments['showBackButton']);
       case 'openHelpCenter':
         return openHelpCenter(showBackButton: call.arguments['showBackButton']);
       case 'openHelpCenterArticle':
@@ -285,6 +289,11 @@ class GleapSdkWeb {
 
   Future<void> openNews({required bool showBackButton}) {
     return GleapJsSdkHelper.openNews(showBackButton);
+  }
+
+  Future<void> openNewsArticle(
+      {required String articleId, required bool showBackButton}) {
+    return GleapJsSdkHelper.openNewsArticle(articleId, showBackButton);
   }
 
   Future<void> openFeatureRequests({required bool showBackButton}) {

@@ -87,6 +87,9 @@ external Future<void> showFeedbackButton(bool visible);
 @JS('window.Gleap.openNews')
 external Future<void> openNews(bool showBackButton);
 
+@JS('window.Gleap.openNewsArticle')
+external Future<void> openNewsArticle(String articleId, bool showBackButton);
+
 @JS('window.Gleap.openFeatureRequests')
 external Future<void> openFeatureRequests(bool showBackButton);
 
