@@ -126,8 +126,8 @@ class _MainScreenState extends State<MainScreen> {
             ),
             GestureDetector(
               onTap: () async {
-                await Gleap.searchHelpCenter(
-                    term: "term", showBackButton: true);
+                await Gleap.openHelpCenterCollection(
+                    collectionId: "1", showBackButton: false);
               },
               child: Container(
                 alignment: Alignment.center,
