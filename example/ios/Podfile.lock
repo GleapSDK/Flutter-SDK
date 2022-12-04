@@ -1,7 +1,7 @@
 PODS:
   - Flutter (1.0.0)
   - Gleap (8.4.0)
-  - gleap_sdk (8.2.3):
+  - gleap_sdk (8.4.0):
     - Flutter
     - Gleap (= 8.4.0)
 
@@ -22,7 +22,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   Gleap: e557e32369e57a8db784c62d6599d3649dac560c
-  gleap_sdk: f63d7711864de2bab38ced65d9cf1452b5b18039
+  gleap_sdk: 0ab9bcd2f8bcf40e0c5a96fe237197f6331b8091
 
 PODFILE CHECKSUM: 663715e941f9adb426e33bf9376914006f9ea95b
 
