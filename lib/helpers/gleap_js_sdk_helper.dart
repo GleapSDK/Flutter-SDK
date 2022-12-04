@@ -85,10 +85,27 @@ external Future<void> attachNetworkLogs(String networkLogs);
 external Future<void> showFeedbackButton(bool visible);
 
 @JS('window.Gleap.openNews')
-external Future<void> openNews();
+external Future<void> openNews(bool showBackButton);
+
+@JS('window.Gleap.openNewsArticle')
+external Future<void> openNewsArticle(String articleId, bool showBackButton);
 
 @JS('window.Gleap.openFeatureRequests')
-external Future<void> openFeatureRequests();
+external Future<void> openFeatureRequests(bool showBackButton);
+
+@JS('window.Gleap.openHelpCenter')
+external Future<void> openHelpCenter(bool showBackButton);
+
+@JS('window.Gleap.openHelpCenterArticle')
+external Future<void> openHelpCenterArticle(
+    String articleId, bool showBackButton);
+
+@JS('window.Gleap.openHelpCenterCollection')
+external Future<void> openHelpCenterCollection(
+    String collectionId, bool showBackButton);
+
+@JS('window.Gleap.searchHelpCenter')
+external Future<void> searchHelpCenter(String term, bool showBackButton);
 
 @JS('window.Gleap.isUserIdentified')
 external Future<bool> isUserIdentified();

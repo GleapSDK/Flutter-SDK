@@ -1,3 +1,9 @@
+## 8.4.0
+Updated native dependencies to 8.4.0 (iOS, Android & Web)
+Added help center capabilities
+Improved feature request portal
+Improved news capabilities
+
 ## 8.2.3
 Updated Android SDK
 

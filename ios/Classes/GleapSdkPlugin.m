@@ -216,11 +216,54 @@
     result(nil);
   }
   else if([@"openNews" isEqualToString: call.method]) {
-    [Gleap openNews];
+    @try {
+      [Gleap openNews: [call.arguments[@"showBackButton"] boolValue]];
+    } @catch (NSException *exception) {
+      [Gleap openNews];
+    }
     result(nil);    
   }
+  else if([@"openNewsArticle" isEqualToString: call.method]) {
+    [Gleap openNewsArticle: call.arguments[@"articleId"] andShowBackButton: [call.arguments[@"showBackButton"] boolValue]];
+    result(nil);
+  }
   else if([@"openFeatureRequests" isEqualToString: call.method]) {
-    [Gleap openFeatureRequests];
+    @try {
+      [Gleap openFeatureRequests: [call.arguments[@"showBackButton"] boolValue]];
+    } @catch (NSException *exception) {
+      [Gleap openFeatureRequests];
+    }
+    result(nil);
+  }
+  else if([@"openHelpCenter" isEqualToString: call.method]) {
+    [Gleap openHelpCenter: [call.arguments[@"showBackButton"] boolValue]];
+    result(nil);
+  }
+  else if([@"openHelpCenterArticle" isEqualToString: call.method]) {
+    @try {
+      [Gleap openHelpCenterArticle: call.arguments[@"articleId"] andShowBackButton: [call.arguments[@"showBackButton"] boolValue]];
+    }
+    @catch (NSException *exception) {
+      
+    }
+    result(nil);
+  }
+  else if([@"openHelpCenterCollection" isEqualToString: call.method]) {
+    @try {
+      [Gleap openHelpCenterCollection: call.arguments[@"collectionId"] andShowBackButton: [call.arguments[@"showBackButton"] boolValue]];
+    }
+    @catch (NSException *exception) {
+      
+    }
+    result(nil);
+  }
+  else if([@"searchHelpCenter" isEqualToString: call.method]) {
+    @try {
+      [Gleap searchHelpCenter: call.arguments[@"term"] andShowBackButton: [call.arguments[@"showBackButton"] boolValue]];
+    }
+    @catch (NSException *exception) {
+      
+    }
     result(nil);
   }
   else if([@"isUserIdentified" isEqualToString: call.method]) {

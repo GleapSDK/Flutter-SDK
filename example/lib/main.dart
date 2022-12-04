@@ -24,10 +24,10 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     await Gleap.enableDebugConsoleLog();
     await Gleap.initialize(
-      token: 'YOUR_API_KEY',
+      token: 'KProDXhMS0V3UUku2iNnrZ4XsBnAYzxt',
     );
 
-    await Gleap.setLanguage(language: 'SI');
+    await Gleap.setLanguage(language: 'en');
 
     // Gleap.preFillForm(formData: <String, dynamic>{
     //   'bugdescription': 'While I was trying to do something, I found a bug.',
@@ -104,7 +104,8 @@ class _MainScreenState extends State<MainScreen> {
             ),
             GestureDetector(
               onTap: () async {
-                await Gleap.clearIdentity();
+                await Gleap.openHelpCenterArticle(
+                    articleId: "1", showBackButton: false);
               },
               child: Container(
                 alignment: Alignment.center,
@@ -112,7 +113,7 @@ class _MainScreenState extends State<MainScreen> {
                 width: 150,
                 color: const Color(0xFF485BFF),
                 child: const Text(
-                  'Clear identity',
+                  'Open news article',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -125,10 +126,8 @@ class _MainScreenState extends State<MainScreen> {
             ),
             GestureDetector(
               onTap: () async {
-                Gleap.sendSilentCrashReport(
-                  description: 'Silent crash report',
-                  severity: Severity.HIGH,
-                );
+                await Gleap.searchHelpCenter(
+                    term: "term", showBackButton: true);
               },
               child: Container(
                 alignment: Alignment.center,
@@ -136,7 +135,7 @@ class _MainScreenState extends State<MainScreen> {
                 width: 150,
                 color: const Color(0xFF485BFF),
                 child: const Text(
-                  'Silent crash report',
+                  'Open help center',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
