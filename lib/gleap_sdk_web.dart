@@ -133,9 +133,24 @@ class GleapSdkWeb {
       case 'showFeedbackButton':
         return showFeedbackButton(visible: call.arguments['visible']);
       case 'openNews':
-        return openNews();
+        return openNews(showBackButton: call.arguments['showBackButton']);
+      case 'openHelpCenter':
+        return openHelpCenter(showBackButton: call.arguments['showBackButton']);
+      case 'openHelpCenterArticle':
+        return openHelpCenterArticle(
+            articleId: call.arguments['articleId'],
+            showBackButton: call.arguments['showBackButton']);
+      case 'openHelpCenterCollection':
+        return openHelpCenterCollection(
+            collectionId: call.arguments['collectionId'],
+            showBackButton: call.arguments['showBackButton']);
+      case 'searchHelpCenter':
+        return searchHelpCenter(
+            term: call.arguments['term'],
+            showBackButton: call.arguments['showBackButton']);
       case 'openFeatureRequests':
-        return openFeatureRequests();
+        return openFeatureRequests(
+            showBackButton: call.arguments['showBackButton']);
       case 'isUserIdentified':
         return isUserIdentified();
       case 'getIdentity':
@@ -268,12 +283,32 @@ class GleapSdkWeb {
     return GleapJsSdkHelper.showFeedbackButton(visible);
   }
 
-  Future<void> openNews() {
-    return GleapJsSdkHelper.openNews();
+  Future<void> openNews({required bool showBackButton}) {
+    return GleapJsSdkHelper.openNews(showBackButton);
   }
 
-  Future<void> openFeatureRequests() {
-    return GleapJsSdkHelper.openFeatureRequests();
+  Future<void> openFeatureRequests({required bool showBackButton}) {
+    return GleapJsSdkHelper.openFeatureRequests(showBackButton);
+  }
+
+  Future<void> openHelpCenter({required bool showBackButton}) {
+    return GleapJsSdkHelper.openHelpCenter(showBackButton);
+  }
+
+  Future<void> openHelpCenterArticle(
+      {required String articleId, required bool showBackButton}) {
+    return GleapJsSdkHelper.openHelpCenterArticle(articleId, showBackButton);
+  }
+
+  Future<void> openHelpCenterCollection(
+      {required String collectionId, required bool showBackButton}) {
+    return GleapJsSdkHelper.openHelpCenterCollection(
+        collectionId, showBackButton);
+  }
+
+  Future<void> searchHelpCenter(
+      {required String term, required bool showBackButton}) {
+    return GleapJsSdkHelper.searchHelpCenter(term, showBackButton);
   }
 
   Future<bool> isUserIdentified() async {

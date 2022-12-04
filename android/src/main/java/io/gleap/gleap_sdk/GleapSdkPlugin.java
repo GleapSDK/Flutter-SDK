@@ -387,13 +387,37 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 break;
 
             case "openNews":
-                Gleap.getInstance().openNews();
+                Gleap.getInstance().openNews(((Boolean) call.argument("showBackButton")));
 
                 result.success(true);
                 break;
 
             case "openFeatureRequests":
-                Gleap.getInstance().openFeatureRequests();
+                Gleap.getInstance().openFeatureRequests(((Boolean) call.argument("showBackButton")));
+
+                result.success(true);
+                break;
+
+            case "openHelpCenter":
+                Gleap.getInstance().openHelpCenter(((Boolean) call.argument("showBackButton")));
+
+                result.success(true);
+                break;
+
+            case "openHelpCenterArticle":
+                Gleap.getInstance().openHelpCenterArticle((String) call.argument("articleId"), ((Boolean) call.argument("showBackButton")));
+
+                result.success(true);
+                break;
+
+            case "openHelpCenterCollection":
+                Gleap.getInstance().openHelpCenterArticle((String) call.argument("collectionId"), ((Boolean) call.argument("showBackButton")));
+
+                result.success(true);
+                break;
+
+            case "searchHelpCenter":
+                Gleap.getInstance().searchHelpCenter((String) call.argument("term"), ((Boolean) call.argument("showBackButton")));
 
                 result.success(true);
                 break;

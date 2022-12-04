@@ -757,7 +757,7 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Web, Android, iOS
-  static Future<void> openNews() async {
+  static Future<void> openNews(bool showBackButton) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'openNews is not available for current operating system',
@@ -765,17 +765,17 @@ class Gleap {
       return;
     }
 
-    await _channel.invokeMethod('openNews');
+    await _channel.invokeMethod('openNews', {'showBackButton': showBackButton});
   }
 
-  /// ### openNews
+  /// ### openFeatureRequests
   ///
-  /// Opens the news feed in the widget
+  /// Opens the feature request portal within the widget
   ///
   /// **Available Platforms**
   ///
   /// Web, Android, iOS
-  static Future<void> openFeatureRequests() async {
+  static Future<void> openFeatureRequests(bool showBackButton) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'openFeatureRequests is not available for current operating system',
@@ -783,7 +783,86 @@ class Gleap {
       return;
     }
 
-    await _channel.invokeMethod('openFeatureRequests');
+    await _channel.invokeMethod(
+        'openFeatureRequests', {'showBackButton': showBackButton});
+  }
+
+  /// ### openHelpCenter
+  ///
+  /// Opens the help center within the widget
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> openHelpCenter(bool showBackButton) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'openHelpCenter is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel
+        .invokeMethod('openHelpCenter', {'showBackButton': showBackButton});
+  }
+
+  /// ### openHelpCenterArticle
+  ///
+  /// Opens the help center article within the widget
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> openHelpCenterArticle(
+      String articleId, bool showBackButton) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'openHelpCenter is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('openHelpCenterArticle',
+        {'articleId': articleId, 'showBackButton': showBackButton});
+  }
+
+  /// ### openHelpCenterCollection
+  ///
+  /// Opens the help center collection within the widget
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> openHelpCenterCollection(
+      String collectionId, bool showBackButton) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'openHelpCenterCollection is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('openHelpCenterCollection',
+        {'articleId': collectionId, 'showBackButton': showBackButton});
+  }
+
+  /// ### searchHelpCenter
+  ///
+  /// Searches the help center within the widget
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> searchHelpCenter(String term, bool showBackButton) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'searchHelpCenter is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod(
+        'searchHelpCenter', {'term': term, 'showBackButton': showBackButton});
   }
 
   /// ### isUserIdentified
