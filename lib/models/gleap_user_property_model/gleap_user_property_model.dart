@@ -9,6 +9,7 @@ class GleapUserProperty {
   String? email;
   String? phone;
   double? value;
+  Map<String, dynamic>? customData;
 
   GleapUserProperty({
     this.userId,
@@ -16,6 +17,7 @@ class GleapUserProperty {
     this.email,
     this.phone,
     this.value,
+    this.customData,
   });
 
   factory GleapUserProperty.fromJson(Map<String, dynamic> json) =>

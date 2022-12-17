@@ -179,6 +179,9 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                         if(gleapUserProperty.has("value") && !gleapUserProperty.isNull("value")) {
                             gleapUserProperties.setValue(gleapUserProperty.getDouble("value"));
                         }
+                        if(gleapUserProperty.has("customData") && !gleapUserProperty.isNull("customData")) {
+                            gleapUserProperties.setCustomData(gleapUserProperty.getJSONObject("customData"));
+                        }
 
                         if(call.argument("userHash") != null) {
                             gleapUserProperties.setHash(call.argument("userHash"));
@@ -275,6 +278,16 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 JSONObject data = new JSONObject((Map) call.argument("data"));
 
                 Gleap.getInstance().trackEvent((String) call.argument("name"), data);
+                result.success(null);
+                break;
+
+            case "trackPage":
+                try {
+                    JSONObject body = new JSONObject();
+                    body.put("page", (String) call.argument("pageName"));
+                    Gleap.getInstance().trackEvent("pageView", body);
+                } catch (Exception ignore) {
+                }
                 result.success(null);
                 break;
 

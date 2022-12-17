@@ -98,6 +98,10 @@ class GleapSdkWeb {
           name: call.arguments['name'],
           data: call.arguments['data'],
         );
+      case 'trackPage':
+        return trackEvent(name: "pageView", data: <String, dynamic>{
+          'page': call.arguments['pageName'],
+        });
       case 'sendSilentCrashReport':
         return sendSilentCrashReport(
           description: call.arguments['description'],

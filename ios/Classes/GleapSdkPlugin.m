@@ -101,6 +101,9 @@
     if ([propertyData objectForKey: @"value"] != nil) {
         userProperty.value = [propertyData objectForKey: @"value"];
     }
+    if ([propertyData objectForKey: @"customData"] != nil) {
+        userProperty.customData = [propertyData objectForKey: @"customData"];
+    }
 
     [Gleap identifyUserWith: call.arguments[@"userId"] andData: userProperty andUserHash: call.arguments[@"userHash"]];
     result(nil);
@@ -135,6 +138,12 @@
   }
   else if([@"trackEvent" isEqualToString: call.method]) {
     [Gleap trackEvent: call.arguments[@"name"] withData: call.arguments[@"data"]];
+    result(nil);
+  }
+  else if([@"trackPage" isEqualToString: call.method]) {
+    [Gleap trackEvent: @"pageView" withData: @{
+      @"page": call.arguments[@"pageName"]
+    }];
     result(nil);
   }
   else if([@"setActivationMethods" isEqualToString: call.method]) {

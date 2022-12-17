@@ -1,3 +1,7 @@
+## 8.4.2
+Added custom page tracking
+Added custom data as optional user properties
+
 ## 8.4.1
 Moved openHelpCenterCollection to named params
 

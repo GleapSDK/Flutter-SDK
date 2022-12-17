@@ -519,6 +519,31 @@ class Gleap {
     await _channel.invokeMethod('trackEvent', {'name': name, 'data': data});
   }
 
+  /// ### trackPage
+  ///
+  /// Tracks a custom page view
+  ///
+  /// **Params**
+  ///
+  /// [trackPage] Name of the page
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static Future<void> trackPage({
+    required String pageName,
+    Map<String, dynamic>? data,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint('trackPage is not available for current operating system');
+      return;
+    }
+
+    data ??= <String, dynamic>{};
+
+    await _channel.invokeMethod('trackPage', {'pageName': pageName});
+  }
+
   /// ### addAttachment
   ///
   /// Attaches a file to the bug report
