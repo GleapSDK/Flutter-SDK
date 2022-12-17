@@ -13,6 +13,7 @@ GleapUserProperty _$GleapUserPropertyFromJson(Map<String, dynamic> json) =>
       email: json['email'] as String?,
       phone: json['phone'] as String?,
       value: (json['value'] as num?)?.toDouble(),
+      customData: json['customData'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$GleapUserPropertyToJson(GleapUserProperty instance) =>
@@ -22,4 +23,5 @@ Map<String, dynamic> _$GleapUserPropertyToJson(GleapUserProperty instance) =>
       'email': instance.email,
       'phone': instance.phone,
       'value': instance.value,
+      'customData': instance.customData,
     };

@@ -80,6 +80,11 @@ class _MainScreenState extends State<MainScreen> {
                   userProperties: GleapUserProperty(
                     name: 'Franz',
                     email: 'franz@gleap.io',
+                    customData: <String, dynamic>{
+                      'abc': 'Test Web',
+                      'env': 'Flutter Web',
+                      'party': true,
+                    },
                   ),
                   userHash:
                       "e12817b1f1xedb72381b249eb22ecd0dc1c4s0bb15188b5485d441485347y26f",
@@ -104,8 +109,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             GestureDetector(
               onTap: () async {
-                await Gleap.openHelpCenterArticle(
-                    articleId: "1", showBackButton: false);
+                await Gleap.trackPage(pageName: "WebWebWebWeb");
               },
               child: Container(
                 alignment: Alignment.center,
