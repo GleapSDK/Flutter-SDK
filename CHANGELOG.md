@@ -1,3 +1,6 @@
+## 8.4.3
+Bumped native Android version to 8.4.4.
+
 ## 8.4.2
 Added custom page tracking
 Added custom data as optional user properties
