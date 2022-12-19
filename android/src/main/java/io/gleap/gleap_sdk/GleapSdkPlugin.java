@@ -297,11 +297,19 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                     String base64file = call.argument("base64file");
                     if (checkAllowedEndings(fileName)) {
                         String[] splittedBase64File = base64file.split(",");
-                        byte[] fileData;
+                        byte[] fileData = null;
                         if (splittedBase64File.length == 2) {
-                            fileData = Base64.getDecoder().decode(splittedBase64File[1]);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                fileData = Base64.getDecoder().decode(splittedBase64File[1]);
+                            }
                         } else {
-                            fileData = Base64.getDecoder().decode(splittedBase64File[0]);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                fileData = Base64.getDecoder().decode(splittedBase64File[0]);
+                            }
+                        }
+
+                        if(fileData == null) {
+                            break;
                         }
 
                         String mimetype = extractMimeType(base64file);
