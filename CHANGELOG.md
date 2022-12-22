@@ -1,3 +1,6 @@
+## 8.4.4
+Bumped native Android version to 8.4.5.
+
 ## 8.4.3
 Bumped native Android version to 8.4.4.
 
