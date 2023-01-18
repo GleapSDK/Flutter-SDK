@@ -62,6 +62,20 @@ class GleapSdkWeb {
       );
     });
     GleapJsSdkHelper.registerCustomAction(customActionCalled);
+
+    void Function(dynamic data) registerPushMessageGroup =
+        allowInterop((dynamic data) {
+      channel.invokeMethod('registerPushMessageGroup', data);
+    });
+    GleapJsSdkHelper.registerEvents(
+        'register-pushmessage-group', registerPushMessageGroup);
+
+    void Function(dynamic data) unregisterPushMessageGroup =
+        allowInterop((dynamic data) {
+      channel.invokeMethod('unregisterPushMessageGroup', data);
+    });
+    GleapJsSdkHelper.registerEvents(
+        'unregister-pushmessage-group', unregisterPushMessageGroup);
   }
 
   Future<dynamic> handleMethodCall(MethodCall call) async {

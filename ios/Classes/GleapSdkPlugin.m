@@ -59,6 +59,18 @@
   }
 }
 
+- (void) registerPushMessageGroup: (NSString *)pushMessageGroup {
+  if (self.methodChannel != nil) {
+    [self.methodChannel invokeMethod: @"registerPushMessageGroup" arguments: pushMessageGroup];
+  }
+}
+
+- (void) unregisterPushMessageGroup: (NSString *)pushMessageGroup {
+  if (self.methodChannel != nil) {
+    [self.methodChannel invokeMethod: @"unregisterPushMessageGroup" arguments: pushMessageGroup];
+  }
+}
+
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
   if([@"initialize" isEqualToString:call.method]) {
 

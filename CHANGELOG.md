@@ -1,3 +1,7 @@
+## 8.5.0
+Added register Push-Notification callbacks
+Updated native SDKs
+
 ## 8.4.5
 Bumped native Android version to 8.4.7.
 
