@@ -44,6 +44,8 @@ import io.gleap.callbacks.FeedbackFlowStartedCallback;
 import io.gleap.callbacks.FeedbackSendingFailedCallback;
 import io.gleap.callbacks.FeedbackSentCallback;
 import io.gleap.callbacks.GetBitmapCallback;
+import io.gleap.callbacks.RegisterPushMessageGroupCallback;
+import io.gleap.callbacks.UnRegisterPushMessageGroupCallback;
 import io.gleap.callbacks.WidgetClosedCallback;
 import io.gleap.callbacks.WidgetOpenedCallback;
 
@@ -95,6 +97,20 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
             @Override
             public void invoke(String message) {
                 channel.invokeMethod("feedbackSendingFailed", null);
+            }
+        });
+
+        Gleap.getInstance().setRegisterPushMessageGroupCallback(new RegisterPushMessageGroupCallback() {
+            @Override
+            public void invoke(String pushMessageGroup) {
+                channel.invokeMethod("registerPushMessageGroup", pushMessageGroup);
+            }
+        });
+
+        Gleap.getInstance().setUnRegisterPushMessageGroupCallback(new UnRegisterPushMessageGroupCallback() {
+            @Override
+            public void invoke(String pushMessageGroup) {
+                channel.invokeMethod("unregisterPushMessageGroup", pushMessageGroup);
             }
         });
 

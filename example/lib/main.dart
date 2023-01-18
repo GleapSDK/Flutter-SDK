@@ -24,21 +24,18 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     await Gleap.enableDebugConsoleLog();
     await Gleap.initialize(
-      token: 'KProDXhMS0V3UUku2iNnrZ4XsBnAYzxt',
+      token: 'YOUR_API_KEY',
     );
 
     await Gleap.setLanguage(language: 'en');
 
-    // Gleap.preFillForm(formData: <String, dynamic>{
-    //   'bugdescription': 'While I was trying to do something, I found a bug.',
-    // });
+    Gleap.registerPushMessageGroup(callbackHandler: (String topic) {
+      print('Topic: $topic');
+    });
 
-    Gleap.registerListener(
-      actionName: 'custom-action',
-      callbackHandler: (dynamic action) {
-        print(action);
-      },
-    );
+    Gleap.unregisterPushMessageGroup(callbackHandler: (String topic) {
+      print('Topic: $topic');
+    });
   }
 
   @override
@@ -86,8 +83,6 @@ class _MainScreenState extends State<MainScreen> {
                       'party': true,
                     },
                   ),
-                  userHash:
-                      "e12817b1f1xedb72381b249eb22ecd0dc1c4s0bb15188b5485d441485347y26f",
                 );
               },
               child: Container(
@@ -152,13 +147,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             GestureDetector(
               onTap: () async {
-                // Gleap.trackEvent(name: 'FIRST_EVENT');
-                // Gleap.openNews();
                 Navigator.of(context).pushNamed(SecondScreen.routeName);
-                // Gleap.showFeedbackButton(true);
-                // Gleap.openFeatureRequests();
-                // bool isIdentified = await Gleap.isUserIdentified();
-                // GleapUserProperty? userProperty = await Gleap.getIdentity();
               },
               child: Container(
                 alignment: Alignment.center,

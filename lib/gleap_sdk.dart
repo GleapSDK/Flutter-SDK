@@ -953,4 +953,74 @@ class Gleap {
       return null;
     }
   }
+
+  /// ### registerPushMessageGroup
+  ///
+  /// Registers a callback for push messages
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static void registerPushMessageGroup({
+    required Function(String topic) callbackHandler,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'getIdentity is not available for current operating system',
+      );
+      return;
+    }
+
+    if (_callbackItems
+        .where((CallbackItem element) =>
+            element.callbackName == 'registerPushMessageGroup')
+        .isNotEmpty) {
+      debugPrint(
+        'registerPushMessageGroup is already registered.',
+      );
+      return;
+    }
+
+    _callbackItems.add(
+      CallbackItem(
+        callbackName: 'registerPushMessageGroup',
+        callbackHandler: callbackHandler,
+      ),
+    );
+  }
+
+  /// ### unregisterPushMessageGroup
+  ///
+  /// Unregisters a callback for push messages
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static void unregisterPushMessageGroup({
+    required Function(String topic) callbackHandler,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'getIdentity is not available for current operating system',
+      );
+      return;
+    }
+
+    if (_callbackItems
+        .where((CallbackItem element) =>
+            element.callbackName == 'unregisterPushMessageGroup')
+        .isNotEmpty) {
+      debugPrint(
+        'unregisterPushMessageGroup is already registered.',
+      );
+      return;
+    }
+
+    _callbackItems.add(
+      CallbackItem(
+        callbackName: 'unregisterPushMessageGroup',
+        callbackHandler: callbackHandler,
+      ),
+    );
+  }
 }
