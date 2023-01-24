@@ -113,5 +113,8 @@ external Future<bool> isUserIdentified();
 @JS('window.Gleap.getIdentity')
 external Future<dynamic> getIdentity();
 
+@JS('window.Gleap.showSurvey')
+external Future<void> showSurvey(String surveyId, String format);
+
 @JS('JSON.stringify')
 external String stringify(Object obj);

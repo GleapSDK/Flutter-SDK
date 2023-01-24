@@ -82,40 +82,50 @@ class GleapSdkWeb {
     switch (call.method) {
       case 'initialize':
         return initialize(token: call.arguments['token']);
+
       case 'identify':
         return identify(
           userId: call.arguments['userId'],
           userProperties: call.arguments['userProperties'],
           userHash: call.arguments['userHash'],
         );
+
       case 'clearIdentity':
         return clearIdentity();
+
       case 'attachCustomData':
         return attachCustomData(
           customData: call.arguments['customData'],
         );
+
       case 'preFillForm':
         return preFillForm(
           formData: call.arguments['formData'],
         );
+
       case 'setCustomData':
         return setCustomData(
           key: call.arguments['key'],
           value: call.arguments['value'],
         );
+
       case 'removeCustomDataForKey':
         return removeCustomData(key: call.arguments['key']);
+
       case 'clearCustomData':
         return clearCustomData();
+
       case 'trackEvent':
         return trackEvent(
           name: call.arguments['name'],
           data: call.arguments['data'],
         );
+
       case 'trackPage':
         return trackEvent(name: "pageView", data: <String, dynamic>{
           'page': call.arguments['pageName'],
         });
+
       case 'sendSilentCrashReport':
         return sendSilentCrashReport(
           description: call.arguments['description'],
@@ -124,21 +134,28 @@ class GleapSdkWeb {
         );
       case 'openWidget':
         return openWidget();
+
       case 'closeWidget':
         return closeWidget();
+
       case 'startFeedbackFlow':
         return startFeedbackFlow(
           action: call.arguments['action'],
           showBackButton: call.arguments['showBackButton'],
         );
+
       case 'setLanguage':
         return setLanguage(language: call.arguments['language']);
+
       case 'isOpened':
         return isOpened();
+
       case 'setFrameUrl':
         return setFrameUrl(url: call.arguments['url']);
+
       case 'setApiUrl':
         return setApiUrl(url: call.arguments['url']);
+
       case 'log':
         return log(
           message: call.arguments['message'],
@@ -146,37 +163,53 @@ class GleapSdkWeb {
         );
       case 'disableConsoleLog':
         return disableConsoleLog();
+
       case 'attachNetworkLogs':
         return attachNetworkLogs(networkLogs: call.arguments['networkLogs']);
+
       case 'showFeedbackButton':
         return showFeedbackButton(visible: call.arguments['visible']);
+
       case 'openNews':
         return openNews(showBackButton: call.arguments['showBackButton']);
+
       case 'openNewsArticle':
         return openNewsArticle(
             articleId: call.arguments['articleId'],
             showBackButton: call.arguments['showBackButton']);
       case 'openHelpCenter':
         return openHelpCenter(showBackButton: call.arguments['showBackButton']);
+
       case 'openHelpCenterArticle':
         return openHelpCenterArticle(
             articleId: call.arguments['articleId'],
             showBackButton: call.arguments['showBackButton']);
+
       case 'openHelpCenterCollection':
         return openHelpCenterCollection(
             collectionId: call.arguments['collectionId'],
             showBackButton: call.arguments['showBackButton']);
+
       case 'searchHelpCenter':
         return searchHelpCenter(
             term: call.arguments['term'],
             showBackButton: call.arguments['showBackButton']);
+
       case 'openFeatureRequests':
         return openFeatureRequests(
             showBackButton: call.arguments['showBackButton']);
+
       case 'isUserIdentified':
         return isUserIdentified();
+
       case 'getIdentity':
         return getIdentity();
+
+      case 'showSurvey':
+        return showSurvey(
+          surveyId: call.arguments['surveyId'],
+          format: call.arguments['format'],
+        );
 
       default:
         throw PlatformException(
@@ -309,8 +342,10 @@ class GleapSdkWeb {
     return GleapJsSdkHelper.openNews(showBackButton);
   }
 
-  Future<void> openNewsArticle(
-      {required String articleId, required bool showBackButton}) {
+  Future<void> openNewsArticle({
+    required String articleId,
+    required bool showBackButton,
+  }) {
     return GleapJsSdkHelper.openNewsArticle(articleId, showBackButton);
   }
 
@@ -322,19 +357,27 @@ class GleapSdkWeb {
     return GleapJsSdkHelper.openHelpCenter(showBackButton);
   }
 
-  Future<void> openHelpCenterArticle(
-      {required String articleId, required bool showBackButton}) {
+  Future<void> openHelpCenterArticle({
+    required String articleId,
+    required bool showBackButton,
+  }) {
     return GleapJsSdkHelper.openHelpCenterArticle(articleId, showBackButton);
   }
 
-  Future<void> openHelpCenterCollection(
-      {required String collectionId, required bool showBackButton}) {
+  Future<void> openHelpCenterCollection({
+    required String collectionId,
+    required bool showBackButton,
+  }) {
     return GleapJsSdkHelper.openHelpCenterCollection(
-        collectionId, showBackButton);
+      collectionId,
+      showBackButton,
+    );
   }
 
-  Future<void> searchHelpCenter(
-      {required String term, required bool showBackButton}) {
+  Future<void> searchHelpCenter({
+    required String term,
+    required bool showBackButton,
+  }) {
     return GleapJsSdkHelper.searchHelpCenter(term, showBackButton);
   }
 
@@ -347,5 +390,12 @@ class GleapSdkWeb {
     final String strifiedData = GleapJsSdkHelper.stringify(identity);
 
     return jsonDecode(strifiedData);
+  }
+
+  Future<void> showSurvey({
+    required String surveyId,
+    required String format,
+  }) async {
+    return GleapJsSdkHelper.showSurvey(surveyId, format);
   }
 }

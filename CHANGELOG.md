@@ -1,3 +1,7 @@
+## 8.5.1
+Added showSurvey
+Updated native SDKs
+
 ## 8.5.0
 Added register Push-Notification callbacks
 Updated native SDKs

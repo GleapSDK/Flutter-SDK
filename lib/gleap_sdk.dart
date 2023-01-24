@@ -54,6 +54,19 @@ String _getLogSevernityValue(LogLevel logSevernity) {
   }
 }
 
+enum SurveyFormat { SURVEY_FULL, SURVEY }
+
+String _getSurveyFormatValue(SurveyFormat surveyFormat) {
+  switch (surveyFormat) {
+    case SurveyFormat.SURVEY_FULL:
+      return "survey_full";
+    case SurveyFormat.SURVEY:
+      return "survey";
+    default:
+      return "survey_full";
+  }
+}
+
 class Gleap {
   static const MethodChannel _channel = MethodChannel('gleap_sdk');
   static final List<CallbackItem> _callbackItems = <CallbackItem>[];
@@ -1022,5 +1035,29 @@ class Gleap {
         callbackHandler: callbackHandler,
       ),
     );
+  }
+
+  /// ### showSurvey
+  ///
+  /// Shows a survey
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> showSurvey({
+    required String surveyId,
+    SurveyFormat format = SurveyFormat.SURVEY,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'showSurvey is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('showSurvey', {
+      'surveyId': surveyId,
+      'format': _getSurveyFormatValue(format),
+    });
   }
 }
