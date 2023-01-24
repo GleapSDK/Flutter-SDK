@@ -39,6 +39,7 @@ import io.gleap.Networklog;
 import io.gleap.GleapUserProperties;
 import io.gleap.PrefillHelper;
 import io.gleap.RequestType;
+import io.gleap.SurveyType;
 import io.gleap.callbacks.CustomActionCallback;
 import io.gleap.callbacks.FeedbackFlowStartedCallback;
 import io.gleap.callbacks.FeedbackSendingFailedCallback;
@@ -493,6 +494,19 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 }catch (Exception ex) {
                     result.success(null);
                 }
+                break;
+
+            case "showSurvey":
+                SurveyType surveyFormat;
+                switch ((String) call.argument("format")) {
+                    case "survey_full":
+                        surveyFormat = SurveyType.SURVEY_FULL;
+                        break;
+                    default:
+                        surveyFormat = SurveyType.SURVEY;
+                }
+                Gleap.getInstance().showSurvey((String) call.argument("surveyId"), surveyFormat);
+                result.success(true);
                 break;
                 
             default:

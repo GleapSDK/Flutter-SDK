@@ -295,6 +295,14 @@
     NSDictionary * userIdentity = [Gleap getIdentity];
     result(userIdentity);
   }
+  else if([@"showSurvey" isEqualToString: call.method]) {
+    GleapSurveyFormat surveyFormat = SURVEY;
+    if (call.arguments[@"format"] != nil && [call.arguments[@"format"] isEqualToString: @"survey_full"]) {
+      surveyFormat = SURVEY_FULL;
+    }
+
+    [Gleap showSurvey: call.arguments[@"surveyId"] andFormat: surveyFormat];
+  }
   else {
     result(FlutterMethodNotImplemented);
   }
