@@ -1,3 +1,6 @@
+## 8.5.2
+Bumped native Android version to 8.5.3.
+
 ## 8.5.1
 Added showSurvey
 Updated native SDKs
