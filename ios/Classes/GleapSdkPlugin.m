@@ -302,6 +302,11 @@
     }
 
     [Gleap showSurvey: call.arguments[@"surveyId"] andFormat: surveyFormat];
+    result(nil);
+  }
+  else if([@"setTags" isEqualToString: call.method]) {
+    [Gleap setTags: call.arguments[@"tags"]];
+    result(nil);
   }
   else {
     result(FlutterMethodNotImplemented);

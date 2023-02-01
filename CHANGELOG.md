@@ -1,3 +1,7 @@
+## 8.6.0
+Added setTags
+Updated native SDKs
+
 ## 8.5.1
 Added showSurvey
 Updated native SDKs

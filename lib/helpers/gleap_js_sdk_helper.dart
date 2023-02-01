@@ -116,5 +116,8 @@ external Future<dynamic> getIdentity();
 @JS('window.Gleap.showSurvey')
 external Future<void> showSurvey(String surveyId, String format);
 
+@JS('window.Gleap.setTags')
+external Future<void> setTags(List<dynamic> tags);
+
 @JS('JSON.stringify')
 external String stringify(Object obj);
