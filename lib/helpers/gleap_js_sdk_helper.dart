@@ -119,5 +119,8 @@ external Future<void> showSurvey(String surveyId, String format);
 @JS('window.Gleap.setTags')
 external Future<void> setTags(List<dynamic> tags);
 
+@JS('window.Gleap.setDisableInAppNotifications')
+external Future<void> setDisableInAppNotifications(bool disable);
+
 @JS('JSON.stringify')
 external String stringify(Object obj);

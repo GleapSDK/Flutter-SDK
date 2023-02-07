@@ -519,6 +519,11 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 Gleap.getInstance().setTags(tagsArray);
                 result.success(true);
                 break;
+
+            case "setDisableInAppNotifications":
+                Gleap.getInstance().setDisableInAppNotifications((Boolean) call.argument("disable"));
+                result.success(true);
+                break;
                 
             default:
                 result.notImplemented();
