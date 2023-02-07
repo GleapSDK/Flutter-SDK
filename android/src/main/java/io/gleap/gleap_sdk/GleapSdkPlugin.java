@@ -508,6 +508,17 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 Gleap.getInstance().showSurvey((String) call.argument("surveyId"), surveyFormat);
                 result.success(true);
                 break;
+
+            case "setTags":
+                String[] tagsArray = new String[((ArrayList<String>) call.argument("tags")).size()];
+
+                for (int i = 0; i < ((ArrayList<String>) call.argument("tags")).size(); i++) {
+                    tagsArray[i] = ((ArrayList<String>) call.argument("tags")).get(i);
+                }
+
+                Gleap.getInstance().setTags(tagsArray);
+                result.success(true);
+                break;
                 
             default:
                 result.notImplemented();

@@ -545,14 +545,11 @@ class Gleap {
   /// Android, iOS, Web
   static Future<void> trackPage({
     required String pageName,
-    Map<String, dynamic>? data,
   }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint('trackPage is not available for current operating system');
       return;
     }
-
-    data ??= <String, dynamic>{};
 
     await _channel.invokeMethod('trackPage', {'pageName': pageName});
   }
@@ -1059,5 +1056,23 @@ class Gleap {
       'surveyId': surveyId,
       'format': _getSurveyFormatValue(format),
     });
+  }
+
+  /// ### setTags
+  ///
+  /// Sets tags which will be passed with the Gleap tickets
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> setTags({required List<String> tags}) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setTags is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('setTags', {'tags': tags});
   }
 }

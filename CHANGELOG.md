@@ -1,3 +1,10 @@
+## 8.6.0
+Added setTags
+Updated native SDKs
+
+## 8.5.2
+Bumped native Android version to 8.5.3.
+
 ## 8.5.1
 Added showSurvey
 Updated native SDKs

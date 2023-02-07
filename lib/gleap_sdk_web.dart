@@ -211,6 +211,9 @@ class GleapSdkWeb {
           format: call.arguments['format'],
         );
 
+      case 'setTags':
+        return setTags(tags: call.arguments['tags']);
+
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -397,5 +400,9 @@ class GleapSdkWeb {
     required String format,
   }) async {
     return GleapJsSdkHelper.showSurvey(surveyId, format);
+  }
+
+  Future<void> setTags({required List<dynamic> tags}) async {
+    return GleapJsSdkHelper.setTags(tags);
   }
 }
