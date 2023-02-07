@@ -1075,4 +1075,27 @@ class Gleap {
 
     await _channel.invokeMethod('setTags', {'tags': tags});
   }
+
+  /// ### setDisableInAppNotifications
+  ///
+  /// Disables the in-app notifications
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> setDisableInAppNotifications({
+    required bool disable,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setDisableInAppNotifications is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'setDisableInAppNotifications',
+      {'disable': disable},
+    );
+  }
 }

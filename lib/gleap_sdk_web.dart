@@ -214,6 +214,11 @@ class GleapSdkWeb {
       case 'setTags':
         return setTags(tags: call.arguments['tags']);
 
+      case 'setDisableInAppNotifications':
+        return setDisableInAppNotifications(
+          disable: call.arguments['disable'],
+        );
+
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -404,5 +409,9 @@ class GleapSdkWeb {
 
   Future<void> setTags({required List<dynamic> tags}) async {
     return GleapJsSdkHelper.setTags(tags);
+  }
+
+  Future<void> setDisableInAppNotifications({required bool disable}) async {
+    return GleapJsSdkHelper.setDisableInAppNotifications(disable);
   }
 }

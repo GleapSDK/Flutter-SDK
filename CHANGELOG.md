@@ -1,3 +1,7 @@
+## 8.6.1
+Added setDisableInAppNotifications
+Updated native SDKs
+
 ## 8.6.0
 Added setTags
 Updated native SDKs

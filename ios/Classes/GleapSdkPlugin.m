@@ -308,6 +308,9 @@
     [Gleap setTags: call.arguments[@"tags"]];
     result(nil);
   }
+  else if([@"setDisableInAppNotifications" isEqualToString: call.method]) {
+    [Gleap setDisableInAppNotifications: [call.arguments[@"disable"] boolValue]];
+  }
   else {
     result(FlutterMethodNotImplemented);
   }
