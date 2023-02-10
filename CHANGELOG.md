@@ -1,3 +1,7 @@
+## 9.0.0
+Updated native SDKs to v9.
+Contains no breaking changes to the previous v8.6.1.
+
 ## 8.6.1
 Added setDisableInAppNotifications
 Updated native SDKs
