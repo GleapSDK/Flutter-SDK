@@ -1,3 +1,6 @@
+## 9.0.1
+Updated Android SDK
+
 ## 9.0.0
 Updated native SDKs to v9.
 Contains no breaking changes to the previous v8.6.1.
