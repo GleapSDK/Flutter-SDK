@@ -1,3 +1,7 @@
+## 9.0.2
+Updated native SDKs
+Added handlePushNotification and openConversation
+
 ## 9.0.1
 Updated Android SDK
 
