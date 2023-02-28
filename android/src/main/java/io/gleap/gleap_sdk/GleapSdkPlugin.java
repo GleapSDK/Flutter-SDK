@@ -524,7 +524,22 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 Gleap.getInstance().setDisableInAppNotifications((Boolean) call.argument("disable"));
                 result.success(true);
                 break;
-                
+
+            case "openConversation":
+                Gleap.getInstance().openConversation(call.argument("shareToken"));
+                result.success(true);
+                break;
+
+            case "handlePushNotification":
+                try {
+                    JSONObject fcmData = new JSONObject((Map) call.argument("data"));
+
+                    Gleap.getInstance().handlePushNotification(fcmData);
+                } catch (Exception ignore) {}
+
+                result.success(true);
+                break;
+
             default:
                 result.notImplemented();
         }

@@ -310,6 +310,14 @@
   }
   else if([@"setDisableInAppNotifications" isEqualToString: call.method]) {
     [Gleap setDisableInAppNotifications: [call.arguments[@"disable"] boolValue]];
+    result(nil);
+  }
+  else if([@"openConversation" isEqualToString: call.method]) {
+    [Gleap openConversation: call.arguments[@"shareToken"]];
+    result(nil);
+  }
+  else if([@"handlePushNotification" isEqualToString: call.method]) {
+    [Gleap handlePushNotification: call.arguments[@"data"]];
   }
   else {
     result(FlutterMethodNotImplemented);

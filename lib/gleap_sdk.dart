@@ -1098,4 +1098,47 @@ class Gleap {
       {'disable': disable},
     );
   }
+
+  /// ### setDisableInAppNotifications
+  ///
+  /// Disables the in-app notifications
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> openConversation({required String shareToken}) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'openConversation is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'openConversation',
+      {'shareToken': shareToken},
+    );
+  }
+
+  /// ### handlePushNotification
+  ///
+  /// Handles a push notification
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> handlePushNotification({
+    required Map<String, dynamic> data,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'handlePushNotification is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('handlePushNotification', {
+      'data': data,
+    });
+  }
 }
