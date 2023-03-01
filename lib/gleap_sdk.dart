@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gleap_sdk/models/callback_item_model/callback_item_model.dart';
@@ -73,8 +74,8 @@ class Gleap {
   static _initCallbackHandler() async {
     _channel.setMethodCallHandler((MethodCall call) async {
       if (call.method == 'feedbackWillBeSentCallback') {
-        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
-        WidgetsBinding.instance.focusManager.rootScope.requestFocus(
+        WidgetsBinding.instance?.focusManager.primaryFocus?.unfocus();
+        WidgetsBinding.instance?.focusManager.rootScope.requestFocus(
           FocusNode(),
         );
       }
