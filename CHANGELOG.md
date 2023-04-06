@@ -1,3 +1,6 @@
+## 10.0.0
+Updated native SDKs
+
 ## 9.0.4
 Updated iOS SDK
 
