@@ -319,6 +319,9 @@
   else if([@"handlePushNotification" isEqualToString: call.method]) {
     [Gleap handlePushNotification: call.arguments[@"data"]];
   }
+  else if([@"startBot" isEqualToString: call.method]) {
+    [Gleap startBot: call.arguments[@"botId"] showBackButton: [call.arguments[@"showBackButton"] boolValue]];
+  }
   else {
     result(FlutterMethodNotImplemented);
   }

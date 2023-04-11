@@ -540,6 +540,9 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 result.success(true);
                 break;
 
+            case "startBot":
+                Gleap.getInstance().startBot(call.argument("botId"), call.argument("showBackButton"));
+
             default:
                 result.notImplemented();
         }
