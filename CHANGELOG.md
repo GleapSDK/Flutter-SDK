@@ -1,3 +1,7 @@
+## 10.0.1
+Added startBot
+Updated native SDKs
+
 ## 10.0.0
 Updated native SDKs
 

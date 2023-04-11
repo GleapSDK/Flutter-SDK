@@ -1140,4 +1140,28 @@ class Gleap {
       'data': data,
     });
   }
+
+  /// ### startBot
+  /// 
+  /// Starts a bot
+  /// 
+  /// **Available Platforms**
+  /// 
+  /// Web, Android, iOS
+  static Future<void> startBot({
+    required String botId,
+    bool showBackButton = true,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'startBot is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('startBot', {
+      'botId': botId,
+      'showBackButton': showBackButton,
+    });
+  }
 }
