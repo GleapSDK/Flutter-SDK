@@ -24,11 +24,11 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     await Gleap.enableDebugConsoleLog();
     Gleap.registerPushMessageGroup(callbackHandler: (String topic) {
-      print('Topic: $topic');
+      print('Subscribe to Topic: $topic');
     });
 
     Gleap.unregisterPushMessageGroup(callbackHandler: (String topic) {
-      print('Topic: $topic');
+      print('Unsubscribe from Topic: $topic');
     });
 
     await Gleap.initialize(
@@ -106,7 +106,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             GestureDetector(
               onTap: () async {
-                await Gleap.trackPage(pageName: "WebWebWebWeb");
+                await Gleap.clearIdentity();
               },
               child: Container(
                 alignment: Alignment.center,
@@ -114,7 +114,7 @@ class _MainScreenState extends State<MainScreen> {
                 width: 150,
                 color: const Color(0xFF485BFF),
                 child: const Text(
-                  'Open news article',
+                  'Clear identifity',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
