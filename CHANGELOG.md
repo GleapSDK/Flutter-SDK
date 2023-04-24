@@ -1,3 +1,6 @@
+## 10.0.2
+Updated Android SDK
+
 ## 10.0.1
 Added startBot
 Updated native SDKs
