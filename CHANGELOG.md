@@ -1,3 +1,6 @@
+## 11.0.0
+Improved translations, Updated native SDKs
+
 ## 10.0.2
 Updated Android SDK
 

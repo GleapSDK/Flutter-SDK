@@ -23,6 +23,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initPlatformState() async {
     await Gleap.enableDebugConsoleLog();
+    Gleap.setLanguage(language: 'en');
+
     Gleap.registerPushMessageGroup(callbackHandler: (String topic) {
       print('Subscribe to Topic: $topic');
     });
@@ -32,12 +34,12 @@ class _MyAppState extends State<MyApp> {
     });
 
     await Gleap.initialize(
-      token: '<YOUR_API_TOKEN>',
+      token: '<YOUR_API_KEY>',
     );
 
-    await Gleap.setLanguage(language: 'en');
-
     Gleap.setTags(tags: ['DevTag']);
+
+    Gleap.showFeedbackButton(true);
   }
 
   @override
