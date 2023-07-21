@@ -1,3 +1,6 @@
+## 11.0.1
+Updated docs
+
 ## 11.0.0
 Improved translations, Updated native SDKs
 
