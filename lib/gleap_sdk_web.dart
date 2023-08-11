@@ -43,6 +43,12 @@ class GleapSdkWeb {
     });
     GleapJsSdkHelper.registerEvents('error-while-sending', errorWhileSending);
 
+    void Function(dynamic data) initialized =
+        allowInterop((dynamic data) {
+      channel.invokeMethod('initialized');
+    });
+    GleapJsSdkHelper.registerEvents('initialized', initialized);
+
     void Function(dynamic data) feedbackFlowStarted =
         allowInterop((dynamic data) {
       final String strifiedData = GleapJsSdkHelper.stringify(data as Object);
