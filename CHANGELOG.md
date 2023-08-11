@@ -1,3 +1,6 @@
+## 11.1.0
+Added Banners feature, Updated native SDKs
+
 ## 11.0.0
 Improved translations, Updated native SDKs
 

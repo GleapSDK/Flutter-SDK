@@ -33,6 +33,12 @@
   }
 }
 
+- (void) initialized {
+  if (self.methodChannel != nil) {
+    [self.methodChannel invokeMethod: @"initialized" arguments: @{}];
+  }
+}
+
 - (void)feedbackSendingFailed {
   if (self.methodChannel != nil) {
     [self.methodChannel invokeMethod: @"feedbackSendingFailed" arguments: @{}];
