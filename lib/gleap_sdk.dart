@@ -102,7 +102,12 @@ class Gleap {
         }
 
         CallbackItem currentCallback = callbackItem.first;
-        currentCallback.callbackHandler(callbackArgs);
+
+        if (currentCallback.takesArguments == false) {
+          currentCallback.callbackHandler();
+        } else {
+          currentCallback.callbackHandler(callbackArgs);
+        }
       }
     });
   }
@@ -126,12 +131,12 @@ class Gleap {
       return;
     }
 
+    _initCallbackHandler();
+
     await _channel.invokeMethod(
       'initialize',
       {'token': token},
     );
-
-    _initCallbackHandler();
   }
 
   /// ### startFeedbackFlow
@@ -156,6 +161,41 @@ class Gleap {
     await _channel.invokeMethod(
       'startFeedbackFlow',
       {'action': feedbackAction, 'showBackButton': showBackButton},
+    );
+  }
+
+  /// ### initialized
+  ///
+  /// Registers a callback for push messages
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static void initialized({
+    required Function() callbackHandler,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'initialized is not available for current operating system',
+      );
+      return;
+    }
+
+    if (_callbackItems
+        .where((CallbackItem element) => element.callbackName == 'initialized')
+        .isNotEmpty) {
+      debugPrint(
+        'initialized is already registered.',
+      );
+      return;
+    }
+
+    _callbackItems.add(
+      CallbackItem(
+        callbackName: 'initialized',
+        callbackHandler: callbackHandler,
+        takesArguments: false,
+      ),
     );
   }
 
@@ -1143,11 +1183,11 @@ class Gleap {
   }
 
   /// ### startBot
-  /// 
+  ///
   /// Starts a bot
-  /// 
+  ///
   /// **Available Platforms**
-  /// 
+  ///
   /// Web, Android, iOS
   static Future<void> startBot({
     required String botId,

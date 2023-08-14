@@ -40,6 +40,7 @@ import io.gleap.GleapUserProperties;
 import io.gleap.PrefillHelper;
 import io.gleap.RequestType;
 import io.gleap.SurveyType;
+import io.gleap.callbacks.InitializedCallback;
 import io.gleap.callbacks.CustomActionCallback;
 import io.gleap.callbacks.FeedbackFlowStartedCallback;
 import io.gleap.callbacks.FeedbackSendingFailedCallback;
@@ -115,7 +116,15 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
             }
         });
 
-
+        Gleap.getInstance().setInitializedCallback(new InitializedCallback() {
+            @Override
+            public void initialized() {
+                uiThreadHandler.post(() -> {
+                    channel.invokeMethod("initialized", null);
+                });
+            }
+        });
+        
         Gleap.getInstance().registerCustomAction(new CustomActionCallback() {
             @Override
             public void invoke(String message) {
