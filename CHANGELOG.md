@@ -1,4 +1,4 @@
-## 11.1.0
+## 11.1.2
 Added Banners feature, Updated native SDKs
 
 ## 11.0.1
