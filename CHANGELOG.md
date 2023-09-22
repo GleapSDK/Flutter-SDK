@@ -1,3 +1,7 @@
+## 11.2.0
+Updated iOS SDK
+Updated Android SDK
+
 ## 11.1.5
 Updated iOS SDK
 
