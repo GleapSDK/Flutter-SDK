@@ -33,7 +33,7 @@
   }
 }
 
-- (void) initialized {
+- (void)initialized {
   if (self.methodChannel != nil) {
     [self.methodChannel invokeMethod: @"initialized" arguments: @{}];
   }
@@ -81,6 +81,9 @@
   if([@"initialize" isEqualToString:call.method]) {
 
     [Gleap initializeWithToken: call.arguments[@"token"]];
+    [Gleap trackEvent: @"pageView" withData: @{
+      @"page": @"MainPage"
+    }];
 
     [self initSDK];
     result(nil);

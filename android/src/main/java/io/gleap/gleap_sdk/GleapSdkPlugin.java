@@ -154,6 +154,13 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
                 Gleap.initialize((String) call.argument("token"), application);
 
+                try {
+                    JSONObject body = new JSONObject();
+                    body.put("page", "MainPage");
+                    Gleap.getInstance().trackEvent("pageView", body);
+                } catch (Exception ignore) {
+                }
+
                 initialize();
                 initCustomAction();
 
