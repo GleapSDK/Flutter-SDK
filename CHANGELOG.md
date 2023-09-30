@@ -1,3 +1,9 @@
+## 12.0.1
+
+Updated native dependencies
+Introduced websocket communication for outbound messages (like surveys, chat messages, banners, ...)
+Performance improvements & bug fixes
+
 ## 11.2.1
 Updated iOS SDK
 

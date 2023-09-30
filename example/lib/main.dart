@@ -34,7 +34,7 @@ class _MyAppState extends State<MyApp> {
     });
 
     await Gleap.initialize(
-      token: '<YOUR_API_KEY>',
+      token: 'X5C0grjFCjUMbZKi131MjZLaGRwg2iKH',
     );
 
     Gleap.setTags(tags: ['DevTag']);
