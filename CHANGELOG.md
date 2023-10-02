@@ -1,5 +1,7 @@
-## 12.0.1
+## 12.0.2
+Updated native dependencies
 
+## 12.0.1
 Updated native dependencies
 Introduced websocket communication for outbound messages (like surveys, chat messages, banners, ...)
 Performance improvements & bug fixes
