@@ -245,6 +245,22 @@
     [Gleap showFeedbackButton: [call.arguments[@"visible"] boolValue]];
     result(nil);
   }
+  else if([@"openChecklists" isEqualToString: call.method]) {
+    @try {
+      [Gleap openChecklists: [call.arguments[@"showBackButton"] boolValue]];
+    } @catch (NSException *exception) {
+      [Gleap openChecklists];
+    }
+    result(nil);    
+  }
+  else if([@"openChecklist" isEqualToString: call.method]) {
+    [Gleap openChecklist: call.arguments[@"checklistId"] andShowBackButton: [call.arguments[@"showBackButton"] boolValue]];
+    result(nil);
+  }
+  else if([@"startChecklist" isEqualToString: call.method]) {
+    [Gleap startChecklist: call.arguments[@"outboundId"] andShowBackButton: [call.arguments[@"showBackButton"] boolValue]];
+    result(nil);
+  }
   else if([@"openNews" isEqualToString: call.method]) {
     @try {
       [Gleap openNews: [call.arguments[@"showBackButton"] boolValue]];

@@ -43,8 +43,7 @@ class GleapSdkWeb {
     });
     GleapJsSdkHelper.registerEvents('error-while-sending', errorWhileSending);
 
-    void Function(dynamic data) initialized =
-        allowInterop((dynamic data) {
+    void Function(dynamic data) initialized = allowInterop((dynamic data) {
       channel.invokeMethod('initialized');
     });
     GleapJsSdkHelper.registerEvents('initialized', initialized);
@@ -176,6 +175,19 @@ class GleapSdkWeb {
       case 'showFeedbackButton':
         return showFeedbackButton(visible: call.arguments['visible']);
 
+      case 'openChecklists':
+        return openChecklists(showBackButton: call.arguments['showBackButton']);
+
+      case 'openChecklist':
+        return openChecklist(
+            checklistId: call.arguments['checklistId'],
+            showBackButton: call.arguments['showBackButton']);
+
+      case 'startChecklist':
+        return startChecklist(
+            outboundId: call.arguments['outboundId'],
+            showBackButton: call.arguments['showBackButton']);
+
       case 'openNews':
         return openNews(showBackButton: call.arguments['showBackButton']);
 
@@ -183,6 +195,7 @@ class GleapSdkWeb {
         return openNewsArticle(
             articleId: call.arguments['articleId'],
             showBackButton: call.arguments['showBackButton']);
+
       case 'openHelpCenter':
         return openHelpCenter(showBackButton: call.arguments['showBackButton']);
 
@@ -350,6 +363,24 @@ class GleapSdkWeb {
 
   Future<void> showFeedbackButton({required bool visible}) {
     return GleapJsSdkHelper.showFeedbackButton(visible);
+  }
+
+  Future<void> openChecklists({required bool showBackButton}) {
+    return GleapJsSdkHelper.openChecklists(showBackButton);
+  }
+
+  Future<void> openChecklist({
+    required String checklistId,
+    required bool showBackButton,
+  }) {
+    return GleapJsSdkHelper.openChecklist(checklistId, showBackButton);
+  }
+
+  Future<void> startChecklist({
+    required String outboundId,
+    required bool showBackButton,
+  }) {
+    return GleapJsSdkHelper.startChecklist(outboundId, showBackButton);
   }
 
   Future<void> openNews({required bool showBackButton}) {

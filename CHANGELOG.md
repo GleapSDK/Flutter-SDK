@@ -1,3 +1,7 @@
+## 12.1.0
+Updated native dependencies
+Introducing checklists to create amazing onboarding experiences
+
 ## 12.0.2
 Updated native dependencies
 
