@@ -185,7 +185,7 @@ class GleapSdkWeb {
 
       case 'startChecklist':
         return startChecklist(
-            checklistId: call.arguments['outboundId'],
+            outboundId: call.arguments['outboundId'],
             showBackButton: call.arguments['showBackButton']);
 
       case 'openNews':
