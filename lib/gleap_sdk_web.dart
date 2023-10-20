@@ -365,6 +365,24 @@ class GleapSdkWeb {
     return GleapJsSdkHelper.showFeedbackButton(visible);
   }
 
+  Future<void> openChecklists({required bool showBackButton}) {
+    return GleapJsSdkHelper.openChecklists(showBackButton);
+  }
+
+  Future<void> openChecklist({
+    required String checklistId,
+    required bool showBackButton,
+  }) {
+    return GleapJsSdkHelper.openChecklist(checklistId, showBackButton);
+  }
+
+  Future<void> startChecklist({
+    required String outboundId,
+    required bool showBackButton,
+  }) {
+    return GleapJsSdkHelper.startChecklist(outboundId, showBackButton);
+  }
+
   Future<void> openNews({required bool showBackButton}) {
     return GleapJsSdkHelper.openNews(showBackButton);
   }
