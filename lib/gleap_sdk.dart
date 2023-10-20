@@ -824,6 +824,65 @@ class Gleap {
     await _channel.invokeMethod('showFeedbackButton', {'visible': visible});
   }
 
+  /// ### openChecklists
+  ///
+  /// Opens the checklist overview.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> openChecklists({required bool showBackButton}) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'openChecklists is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel
+        .invokeMethod('openChecklists', {'showBackButton': showBackButton});
+  }
+
+  /// ### openChecklist
+  ///
+  /// Opens an existing checklist.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> openChecklist(
+      {required String checklistId, required bool showBackButton}) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'openChecklist is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('openChecklist',
+        {'checklistId': checklistId, 'showBackButton': showBackButton});
+  }
+
+  /// ### startChecklist
+  ///
+  /// Starts a new checklist for the given outbound.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> startChecklist(
+      {required String outboundId, required bool showBackButton}) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'outboundId is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('startChecklist',
+        {'outboundId': outboundId, 'showBackButton': showBackButton});
+  }
+
   /// ### openNews
   ///
   /// Opens the news feed in the widget

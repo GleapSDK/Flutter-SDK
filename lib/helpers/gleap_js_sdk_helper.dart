@@ -84,6 +84,15 @@ external Future<void> attachNetworkLogs(String networkLogs);
 @JS('window.Gleap.showFeedbackButton')
 external Future<void> showFeedbackButton(bool visible);
 
+@JS('window.Gleap.openChecklists')
+external Future<void> openChecklists(bool showBackButton);
+
+@JS('window.Gleap.openChecklist')
+external Future<void> openChecklist(String checklistId, bool showBackButton);
+
+@JS('window.Gleap.startChecklist')
+external Future<void> startChecklist(String outboundId, bool showBackButton);
+
 @JS('window.Gleap.openNews')
 external Future<void> openNews(bool showBackButton);
 

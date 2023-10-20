@@ -76,18 +76,9 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             GestureDetector(
               onTap: () async {
-                await Gleap.identify(
-                  userId: "123456",
-                  userProperties: GleapUserProperty(
-                    name: 'Franz',
-                    email: 'franz@gleap.io',
-                    customData: <String, dynamic>{
-                      'abc': 'Test Web',
-                      'env': 'Flutter Web',
-                      'party': true,
-                    },
-                  ),
-                );
+                await Gleap.startChecklist(
+                    outboundId: "65314024e287e7aba7c7810c",
+                    showBackButton: true);
               },
               child: Container(
                 alignment: Alignment.center,
@@ -95,7 +86,7 @@ class _MainScreenState extends State<MainScreen> {
                 width: 150,
                 color: const Color(0xFF485BFF),
                 child: const Text(
-                  'Identify',
+                  'Open checks',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
