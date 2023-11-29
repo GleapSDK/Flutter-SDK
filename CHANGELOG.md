@@ -1,3 +1,7 @@
+## 13.0.0
+Updated native dependencies
+Fixed a bug with Android & activity singleInstance mode.
+
 ## 12.1.0
 Updated native dependencies
 Introducing checklists to create amazing onboarding experiences

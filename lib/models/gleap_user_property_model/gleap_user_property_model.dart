@@ -8,6 +8,9 @@ class GleapUserProperty {
   String? name;
   String? email;
   String? phone;
+  String? plan;
+  String? companyName;
+  String? companyId;
   double? value;
   Map<String, dynamic>? customData;
 
@@ -17,6 +20,9 @@ class GleapUserProperty {
     this.email,
     this.phone,
     this.value,
+    this.plan,
+    this.companyName,
+    this.companyId,
     this.customData,
   });
 

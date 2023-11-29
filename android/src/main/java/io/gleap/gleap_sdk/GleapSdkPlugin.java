@@ -207,15 +207,23 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                             gleapUserProperties.setName(gleapUserProperty.getString("name"));
                         }
                         if(gleapUserProperty.has("phone") && !gleapUserProperty.isNull("phone")) {
-                            gleapUserProperties.setPhoneNumber(gleapUserProperty.getString("phone"));
+                            gleapUserProperties.setPhone(gleapUserProperty.getString("phone"));
                         }
                         if(gleapUserProperty.has("value") && !gleapUserProperty.isNull("value")) {
                             gleapUserProperties.setValue(gleapUserProperty.getDouble("value"));
                         }
+                        if(gleapUserProperty.has("plan") && !gleapUserProperty.isNull("plan")) {
+                            gleapUserProperties.setPlan(gleapUserProperty.getString("plan"));
+                        }
+                        if(gleapUserProperty.has("companyId") && !gleapUserProperty.isNull("companyId")) {
+                            gleapUserProperties.setCompanyId(gleapUserProperty.getString("companyId"));
+                        }
+                        if(gleapUserProperty.has("companyName") && !gleapUserProperty.isNull("companyName")) {
+                            gleapUserProperties.setCompanyName(gleapUserProperty.getString("companyName"));
+                        }
                         if(gleapUserProperty.has("customData") && !gleapUserProperty.isNull("customData")) {
                             gleapUserProperties.setCustomData(gleapUserProperty.getJSONObject("customData"));
                         }
-
                         if(call.argument("userHash") != null) {
                             gleapUserProperties.setHash(call.argument("userHash"));
                         }
@@ -515,9 +523,12 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
                         if (userProps != null) {
                             map.put("userId", gleapUser.getUserId());
-                            map.put("phone", userProps.getPhoneNumber());
+                            map.put("phone", userProps.getPhone());
                             map.put("email", userProps.getEmail());
                             map.put("name", userProps.getName());
+                            map.put("plan", userProps.getPlan());
+                            map.put("companyName", userProps.getCompanyName());
+                            map.put("companyId", userProps.getCompanyId());
                             map.put("value", userProps.getValue());
                         }
 
