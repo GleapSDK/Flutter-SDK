@@ -76,9 +76,15 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             GestureDetector(
               onTap: () async {
-                await Gleap.startChecklist(
-                    outboundId: "65314024e287e7aba7c7810c",
-                    showBackButton: true);
+                await Gleap.identify(
+                    userId: "10293",
+                    userProperties: GleapUserProperty(
+                      email: "lukas@test.com",
+                      companyId: "123",
+                      name: "Lukas",
+                      companyName: "test",
+                      plan: "free",
+                    ));
               },
               child: Container(
                 alignment: Alignment.center,
@@ -86,7 +92,7 @@ class _MainScreenState extends State<MainScreen> {
                 width: 150,
                 color: const Color(0xFF485BFF),
                 child: const Text(
-                  'Open checks',
+                  'Identify',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

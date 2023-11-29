@@ -119,6 +119,15 @@
     if ([propertyData objectForKey: @"phone"] != nil) {
         userProperty.phone = [propertyData objectForKey: @"phone"];
     }
+    if ([propertyData objectForKey: @"plan"] != nil) {
+        userProperty.plan = [propertyData objectForKey: @"plan"];
+    }
+    if ([propertyData objectForKey: @"companyName"] != nil) {
+        userProperty.companyName = [propertyData objectForKey: @"companyName"];
+    }
+    if ([propertyData objectForKey: @"companyId"] != nil) {
+        userProperty.companyId = [propertyData objectForKey: @"companyId"];
+    }
     if ([propertyData objectForKey: @"value"] != nil) {
         userProperty.value = [propertyData objectForKey: @"value"];
     }
