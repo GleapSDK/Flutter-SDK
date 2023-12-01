@@ -1,3 +1,6 @@
+## 13.0.1
+Fixed a bug with Android 14 & activity singleInstance mode.
+
 ## 13.0.0
 Updated native dependencies
 Fixed a bug with Android & activity singleInstance mode.
