@@ -77,6 +77,12 @@
   }
 }
 
+- (void)notificationCountUpdated:(NSInteger)count {
+    if (self.methodChannel != nil) {
+        [self.methodChannel invokeMethod:@"notificationCountUpdated" arguments:@(count)];
+    }
+}
+
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
   if([@"initialize" isEqualToString:call.method]) {
 
@@ -355,6 +361,12 @@
   }
   else if([@"startBot" isEqualToString: call.method]) {
     [Gleap startBot: call.arguments[@"botId"] showBackButton: [call.arguments[@"showBackButton"] boolValue]];
+  }
+  else if([@"startClassicForm" isEqualToString: call.method]) {
+    [Gleap startClassicForm: call.arguments[@"formId"] showBackButton: [call.arguments[@"showBackButton"] boolValue]];
+  }
+  else if([@"startConversation" isEqualToString: call.method]) {
+    [Gleap startConversation: [call.arguments[@"showBackButton"] boolValue]];
   }
   else {
     result(FlutterMethodNotImplemented);

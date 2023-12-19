@@ -1,3 +1,7 @@
+## 13.1.0
+Updated native dependencies
+Added startClassicForm & startConversation as well as notificationCountUpdated callback.
+
 ## 13.0.1
 Fixed a bug with Android 14 & activity singleInstance mode.
 

@@ -147,6 +147,7 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Android, iOS, Web
+  @deprecated
   static Future<void> startFeedbackFlow({
     required String feedbackAction,
     bool showBackButton = true,
@@ -160,6 +161,53 @@ class Gleap {
     await _channel.invokeMethod(
       'startFeedbackFlow',
       {'action': feedbackAction, 'showBackButton': showBackButton},
+    );
+  }
+
+  /// ### startClassicForm
+  ///
+  /// Manually start the feedback form workflow.
+  ///
+  /// [GleapNotInitialisedException] thrown when Gleap is not initialised
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static Future<void> startClassicForm({
+    required String formId,
+    bool showBackButton = true,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+          'startClassicForm is not available for current operating system');
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'startClassicForm',
+      {'formId': formId, 'showBackButton': showBackButton},
+    );
+  }
+
+  /// ### startConversation
+  ///
+  /// Manually start the conversation workflow.
+  ///
+  /// [GleapNotInitialisedException] thrown when Gleap is not initialised
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static Future<void> startConversation({bool showBackButton = true}) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+          'startConversation is not available for current operating system');
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'startConversation',
+      {'showBackButton': showBackButton},
     );
   }
 

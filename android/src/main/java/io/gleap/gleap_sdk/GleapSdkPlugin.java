@@ -46,6 +46,7 @@ import io.gleap.callbacks.FeedbackFlowStartedCallback;
 import io.gleap.callbacks.FeedbackSendingFailedCallback;
 import io.gleap.callbacks.FeedbackSentCallback;
 import io.gleap.callbacks.GetBitmapCallback;
+import io.gleap.callbacks.NotificationUnreadCountUpdatedCallback;
 import io.gleap.callbacks.RegisterPushMessageGroupCallback;
 import io.gleap.callbacks.UnRegisterPushMessageGroupCallback;
 import io.gleap.callbacks.WidgetClosedCallback;
@@ -133,6 +134,13 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                     map.put("name", message);
                     channel.invokeMethod("customActionTriggered", map);
                 });
+            }
+        });
+
+        Gleap.getInstance().setNotificationUnreadCountUpdatedCallback(new NotificationUnreadCountUpdatedCallback() {
+            @Override
+            public void invoke(int count) {
+                channel.invokeMethod("notificationCountUpdated", count);
             }
         });
     }
@@ -587,6 +595,15 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
             case "startBot":
                 Gleap.getInstance().startBot(call.argument("botId"), call.argument("showBackButton"));
+                break;
+
+            case "startClassicForm":
+                Gleap.getInstance().startClassicForm(call.argument("formId"), call.argument("showBackButton"));
+                break;
+
+            case "startConversation":
+                Gleap.getInstance().startConversation(call.argument("showBackButton"));
+                break;
 
             default:
                 result.notImplemented();
