@@ -95,6 +95,9 @@ class GleapSdkWeb {
           userHash: call.arguments['userHash'],
         );
 
+      case 'updateContact':
+        return updateContact(userProperties: call.arguments['userProperties']);
+
       case 'clearIdentity':
         return clearIdentity();
 
@@ -238,6 +241,16 @@ class GleapSdkWeb {
           disable: call.arguments['disable'],
         );
 
+      case 'setNetworkLogsBlacklist':
+        return setNetworkLogsBlacklist(
+          networkLogBlacklist: call.arguments['blacklist'],
+        );
+
+      case 'setNetworkLogPropsToIgnore':
+        return setNetworkLogPropsToIgnore(
+          filters: call.arguments['networkLogPropsToIgnore'],
+        );
+
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -258,6 +271,12 @@ class GleapSdkWeb {
     String? stringifiedHashMap = jsonEncode(userProperties);
 
     await GleapJsSdkHelper.identify(userId, stringifiedHashMap, userHash);
+  }
+
+  Future<void> updateContact({dynamic userProperties}) async {
+    String? stringifiedHashMap = jsonEncode({'customerData': userProperties});
+
+    await GleapJsSdkHelper.updateContact(stringifiedHashMap);
   }
 
   Future<void> clearIdentity() async {
@@ -450,5 +469,17 @@ class GleapSdkWeb {
 
   Future<void> setDisableInAppNotifications({required bool disable}) async {
     return GleapJsSdkHelper.setDisableInAppNotifications(disable);
+  }
+
+  Future<void> setNetworkLogsBlacklist({
+    required List<dynamic> networkLogBlacklist,
+  }) async {
+    return GleapJsSdkHelper.setNetworkLogsBlacklist(networkLogBlacklist);
+  }
+
+  Future<void> setNetworkLogPropsToIgnore({
+    required List<dynamic> filters,
+  }) async {
+    return GleapJsSdkHelper.setNetworkLogPropsToIgnore(filters);
   }
 }

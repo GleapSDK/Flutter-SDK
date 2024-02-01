@@ -15,6 +15,11 @@ external Future<void> identify(
   String? userHash,
 );
 
+@JS('window.Gleap.updateContact')
+external Future<void> updateContact(
+  dynamic customerData,
+);
+
 @JS('window.Gleap.clearIdentity')
 external Future<void> clearIdentity();
 
@@ -133,3 +138,10 @@ external Future<void> setDisableInAppNotifications(bool disable);
 
 @JS('JSON.stringify')
 external String stringify(Object obj);
+
+@JS('window.Gleap.setNetworkLogsBlacklist')
+external Future<void> setNetworkLogsBlacklist(
+    List<dynamic> networkLogBlacklist);
+
+@JS('window.Gleap.setNetworkLogPropsToIgnore')
+external Future<void> setNetworkLogPropsToIgnore(List<dynamic> filters);

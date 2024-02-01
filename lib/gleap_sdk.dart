@@ -295,6 +295,7 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Android, iOS, Web
+  @Deprecated('Use identifyContact instead')
   static Future<void> identify({
     required String userId,
     GleapUserProperty? userProperties,
@@ -327,6 +328,80 @@ class Gleap {
     } else {
       await _channel.invokeMethod('identify', {'userId': userId});
     }
+  }
+
+  /// ### identifyContact
+  ///
+  /// Updates a session's user data.
+  ///
+  /// **Params**
+  ///
+  /// [gleapUserSession] The updated user data.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static Future<void> identifyContact({
+    required String userId,
+    GleapUserProperty? userProperties,
+    String? userHash,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'identifyContact is not available for current operating system',
+      );
+      return;
+    }
+
+    if (userProperties != null && userHash != null) {
+      await _channel.invokeMethod(
+        'identifyContact',
+        {
+          'userId': userId,
+          'userProperties': userProperties.toJson(),
+          'userHash': userHash,
+        },
+      );
+    } else if (userProperties != null) {
+      await _channel.invokeMethod(
+        'identifyContact',
+        {
+          'userId': userId,
+          'userProperties': userProperties.toJson(),
+        },
+      );
+    } else {
+      await _channel.invokeMethod('identify', {'userId': userId});
+    }
+  }
+
+  /// ### updateContact
+  ///
+  /// Updates a session's user data.
+  ///
+  /// **Params**
+  ///
+  /// [gleapUserSession] The updated user data.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static Future<void> updateContact({
+    required GleapUserProperty userProperties,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'updateContact is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'updateContact',
+      {
+        'userProperties': userProperties.toJson(),
+      },
+    );
   }
 
   /// ### clearIdentity
@@ -1309,6 +1384,50 @@ class Gleap {
     await _channel.invokeMethod('startBot', {
       'botId': botId,
       'showBackButton': showBackButton,
+    });
+  }
+
+  /// ### setNetworkLogsBlacklist
+  ///
+  /// Set a blacklist for network logs
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> setNetworkLogsBlacklist({
+    required List<String> blacklist,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setNetworkLogsBlacklist is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('setNetworkLogsBlacklist', {
+      'blacklist': blacklist,
+    });
+  }
+
+  /// ### setNetworkLogPropsToIgnore
+  ///
+  /// Set a list of properties to ignore for network logs
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> setNetworkLogPropsToIgnore({
+    required List<String> propsToIgnore,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setNetworkLogPropsToIgnore is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('setNetworkLogPropsToIgnore', {
+      'networkLogPropsToIgnore': propsToIgnore,
     });
   }
 }

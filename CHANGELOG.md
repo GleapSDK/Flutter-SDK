@@ -1,3 +1,7 @@
+## 13.2.1
+Updated native dependencies
+Added identifyContact, updateContact, setNetworkLogsBlacklist as well as setNetworkLogPropsToIgnore
+
 ## 13.1.0
 Updated native dependencies
 Added startClassicForm & startConversation as well as notificationCountUpdated callback.
