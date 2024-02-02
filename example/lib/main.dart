@@ -33,8 +33,15 @@ class _MyAppState extends State<MyApp> {
       print('Unsubscribe from Topic: $topic');
     });
 
+    Gleap.registerListener(
+      actionName: 'notificationCountUpdated',
+      callbackHandler: (data) {
+        print('Notification count updated: $data');
+      },
+    );
+
     await Gleap.initialize(
-      token: 'X5C0grjFCjUMbZKi131MjZLaGRwg2iKH',
+      token: '<YOUR_API_TOKEN>',
     );
 
     Gleap.setTags(tags: ['DevTag']);
@@ -148,7 +155,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             GestureDetector(
               onTap: () async {
-                Navigator.of(context).pushNamed(SecondScreen.routeName);
+                Gleap.startConversation();
               },
               child: Container(
                 alignment: Alignment.center,
@@ -156,7 +163,7 @@ class _MainScreenState extends State<MainScreen> {
                 width: 150,
                 color: const Color(0xFF485BFF),
                 child: const Text(
-                  'Navigate',
+                  'Start conversation',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

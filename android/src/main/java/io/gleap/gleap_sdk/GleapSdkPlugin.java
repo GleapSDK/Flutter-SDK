@@ -34,9 +34,8 @@ import io.gleap.APPLICATIONTYPE;
 import io.gleap.Gleap;
 import io.gleap.GleapActivationMethod;
 import io.gleap.GleapLogLevel;
-import io.gleap.GleapUser;
+import io.gleap.GleapSessionProperties;
 import io.gleap.Networklog;
-import io.gleap.GleapUserProperties;
 import io.gleap.PrefillHelper;
 import io.gleap.RequestType;
 import io.gleap.SurveyType;
@@ -46,6 +45,7 @@ import io.gleap.callbacks.FeedbackFlowStartedCallback;
 import io.gleap.callbacks.FeedbackSendingFailedCallback;
 import io.gleap.callbacks.FeedbackSentCallback;
 import io.gleap.callbacks.GetBitmapCallback;
+import io.gleap.callbacks.NotificationUnreadCountUpdatedCallback;
 import io.gleap.callbacks.RegisterPushMessageGroupCallback;
 import io.gleap.callbacks.UnRegisterPushMessageGroupCallback;
 import io.gleap.callbacks.WidgetClosedCallback;
@@ -135,6 +135,13 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 });
             }
         });
+
+        Gleap.getInstance().setNotificationUnreadCountUpdatedCallback(new NotificationUnreadCountUpdatedCallback() {
+            @Override
+            public void invoke(int count) {
+                channel.invokeMethod("notificationCountUpdated", count);
+            }
+        });
     }
 
     private void initialize() {
@@ -195,10 +202,11 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 break;
 
             case "identify":
+            case "identifyContact":
                 if (call.argument("userProperties") != null) {
                     try {
                         JSONObject gleapUserProperty = new JSONObject((Map) call.argument("userProperties"));
-                        GleapUserProperties gleapUserProperties = new GleapUserProperties();
+                        GleapSessionProperties gleapUserProperties = new GleapSessionProperties();
 
                         if(gleapUserProperty.has("email") && !gleapUserProperty.isNull("email")) {
                             gleapUserProperties.setEmail(gleapUserProperty.getString("email"));
@@ -227,13 +235,50 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                         if(call.argument("userHash") != null) {
                             gleapUserProperties.setHash(call.argument("userHash"));
                         }
-                        Gleap.getInstance().identifyUser(call.argument("userId"), gleapUserProperties);
+                        Gleap.getInstance().identifyContact(call.argument("userId"), gleapUserProperties);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 } else {
-                    Gleap.getInstance().identifyUser(call.argument("userId"));
+                    Gleap.getInstance().identifyContact(call.argument("userId"));
+                }
+
+                result.success(null);
+                break;
+
+            case "updateContact":
+                try {
+                    JSONObject gleapUserProperty = new JSONObject((Map) call.argument("userProperties"));
+                    GleapSessionProperties gleapUserProperties = new GleapSessionProperties();
+
+                    if (gleapUserProperty.has("email") && !gleapUserProperty.isNull("email")) {
+                        gleapUserProperties.setEmail(gleapUserProperty.getString("email"));
+                    }
+                    if (gleapUserProperty.has("name") && !gleapUserProperty.isNull("name")) {
+                        gleapUserProperties.setName(gleapUserProperty.getString("name"));
+                    }
+                    if (gleapUserProperty.has("phone") && !gleapUserProperty.isNull("phone")) {
+                        gleapUserProperties.setPhone(gleapUserProperty.getString("phone"));
+                    }
+                    if (gleapUserProperty.has("value") && !gleapUserProperty.isNull("value")) {
+                        gleapUserProperties.setValue(gleapUserProperty.getDouble("value"));
+                    }
+                    if (gleapUserProperty.has("plan") && !gleapUserProperty.isNull("plan")) {
+                        gleapUserProperties.setPlan(gleapUserProperty.getString("plan"));
+                    }
+                    if (gleapUserProperty.has("companyId") && !gleapUserProperty.isNull("companyId")) {
+                        gleapUserProperties.setCompanyId(gleapUserProperty.getString("companyId"));
+                    }
+                    if (gleapUserProperty.has("companyName") && !gleapUserProperty.isNull("companyName")) {
+                        gleapUserProperties.setCompanyName(gleapUserProperty.getString("companyName"));
+                    }
+                    if (gleapUserProperty.has("customData") && !gleapUserProperty.isNull("customData")) {
+                        gleapUserProperties.setCustomData(gleapUserProperty.getJSONObject("customData"));
+                    }
+                    Gleap.getInstance().updateContact(gleapUserProperties);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
 
                 result.success(null);
@@ -515,27 +560,21 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
             case "getIdentity":
                 try {
-                    GleapUser gleapUser = Gleap.getInstance().getIdentity();
-                    if (gleapUser != null) {
-                        GleapUserProperties userProps = gleapUser.getGleapUserProperties();
-
+                    GleapSessionProperties gleapUser = Gleap.getInstance().getIdentity();
                         Map<String, Object> map = new HashMap<>();
 
-                        if (userProps != null) {
+                        if (gleapUser != null) {
                             map.put("userId", gleapUser.getUserId());
-                            map.put("phone", userProps.getPhone());
-                            map.put("email", userProps.getEmail());
-                            map.put("name", userProps.getName());
-                            map.put("plan", userProps.getPlan());
-                            map.put("companyName", userProps.getCompanyName());
-                            map.put("companyId", userProps.getCompanyId());
-                            map.put("value", userProps.getValue());
+                            map.put("phone", gleapUser.getPhone());
+                            map.put("email", gleapUser.getEmail());
+                            map.put("name", gleapUser.getName());
+                            map.put("plan", gleapUser.getPlan());
+                            map.put("companyName", gleapUser.getCompanyName());
+                            map.put("companyId", gleapUser.getCompanyId());
+                            map.put("value", gleapUser.getValue());
                         }
 
                         result.success(map);
-                    } else {
-                        result.success(null);
-                    }
                 }catch (Exception ex) {
                     result.success(null);
                 }
@@ -587,6 +626,35 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
             case "startBot":
                 Gleap.getInstance().startBot(call.argument("botId"), call.argument("showBackButton"));
+                break;
+
+            case "startClassicForm":
+                Gleap.getInstance().startClassicForm(call.argument("formId"), call.argument("showBackButton"));
+                break;
+
+            case "startConversation":
+                Gleap.getInstance().startConversation(call.argument("showBackButton"));
+                break;
+
+            case "setNetworkLogsBlacklist":
+                String[] blacklistArray = new String[((ArrayList<String>) call.argument("blacklist")).size()];
+
+                for (int i = 0; i < ((ArrayList<String>) call.argument("blacklist")).size(); i++) {
+                    blacklistArray[i] = ((ArrayList<String>) call.argument("blacklist")).get(i);
+                }
+
+                Gleap.getInstance().setNetworkLogsBlacklist(blacklistArray);
+                break;
+
+            case "setNetworkLogPropsToIgnore":
+                String[] propsToIgnoreArray = new String[((ArrayList<String>) call.argument("networkLogPropsToIgnore")).size()];
+
+                for (int i = 0; i < ((ArrayList<String>) call.argument("networkLogPropsToIgnore")).size(); i++) {
+                    propsToIgnoreArray[i] = ((ArrayList<String>) call.argument("networkLogPropsToIgnore")).get(i);
+                }
+
+                Gleap.getInstance().setNetworkLogPropsToIgnore(propsToIgnoreArray);
+                break;
 
             default:
                 result.notImplemented();

@@ -77,6 +77,12 @@
   }
 }
 
+- (void)notificationCountUpdated:(NSInteger)count {
+    if (self.methodChannel != nil) {
+        [self.methodChannel invokeMethod:@"notificationCountUpdated" arguments:@(count)];
+    }
+}
+
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
   if([@"initialize" isEqualToString:call.method]) {
 
@@ -136,6 +142,99 @@
     }
 
     [Gleap identifyUserWith: call.arguments[@"userId"] andData: userProperty andUserHash: call.arguments[@"userHash"]];
+    result(nil);
+  }
+  else if([@"identify" isEqualToString: call.method]) {
+    GleapUserProperty *userProperty = [[GleapUserProperty alloc] init];
+    NSDictionary *propertyData = call.arguments[@"userProperties"];
+    if ([propertyData objectForKey: @"name"] != nil) {
+        userProperty.name = [propertyData objectForKey: @"name"];
+    }
+    if ([propertyData objectForKey: @"email"] != nil) {
+        userProperty.email = [propertyData objectForKey: @"email"];
+    }
+    if ([propertyData objectForKey: @"phone"] != nil) {
+        userProperty.phone = [propertyData objectForKey: @"phone"];
+    }
+    if ([propertyData objectForKey: @"plan"] != nil) {
+        userProperty.plan = [propertyData objectForKey: @"plan"];
+    }
+    if ([propertyData objectForKey: @"companyName"] != nil) {
+        userProperty.companyName = [propertyData objectForKey: @"companyName"];
+    }
+    if ([propertyData objectForKey: @"companyId"] != nil) {
+        userProperty.companyId = [propertyData objectForKey: @"companyId"];
+    }
+    if ([propertyData objectForKey: @"value"] != nil) {
+        userProperty.value = [propertyData objectForKey: @"value"];
+    }
+    if ([propertyData objectForKey: @"customData"] != nil) {
+        userProperty.customData = [propertyData objectForKey: @"customData"];
+    }
+
+    [Gleap identifyContact: call.arguments[@"userId"] andData: userProperty andUserHash: call.arguments[@"userHash"]];
+    result(nil);
+  }
+    else if([@"identifyContact" isEqualToString: call.method]) {
+    GleapUserProperty *userProperty = [[GleapUserProperty alloc] init];
+    NSDictionary *propertyData = call.arguments[@"userProperties"];
+    if ([propertyData objectForKey: @"name"] != nil) {
+        userProperty.name = [propertyData objectForKey: @"name"];
+    }
+    if ([propertyData objectForKey: @"email"] != nil) {
+        userProperty.email = [propertyData objectForKey: @"email"];
+    }
+    if ([propertyData objectForKey: @"phone"] != nil) {
+        userProperty.phone = [propertyData objectForKey: @"phone"];
+    }
+    if ([propertyData objectForKey: @"plan"] != nil) {
+        userProperty.plan = [propertyData objectForKey: @"plan"];
+    }
+    if ([propertyData objectForKey: @"companyName"] != nil) {
+        userProperty.companyName = [propertyData objectForKey: @"companyName"];
+    }
+    if ([propertyData objectForKey: @"companyId"] != nil) {
+        userProperty.companyId = [propertyData objectForKey: @"companyId"];
+    }
+    if ([propertyData objectForKey: @"value"] != nil) {
+        userProperty.value = [propertyData objectForKey: @"value"];
+    }
+    if ([propertyData objectForKey: @"customData"] != nil) {
+        userProperty.customData = [propertyData objectForKey: @"customData"];
+    }
+
+    [Gleap identifyContact: call.arguments[@"userId"] andData: userProperty andUserHash: call.arguments[@"userHash"]];
+    result(nil);
+  }
+  else if ([@"updateContact" isEqualToString: call.method]) {
+   GleapUserProperty *userProperty = [[GleapUserProperty alloc] init];
+    NSDictionary *propertyData = call.arguments[@"userProperties"];
+    if ([propertyData objectForKey: @"name"] != nil) {
+        userProperty.name = [propertyData objectForKey: @"name"];
+    }
+    if ([propertyData objectForKey: @"email"] != nil) {
+        userProperty.email = [propertyData objectForKey: @"email"];
+    }
+    if ([propertyData objectForKey: @"phone"] != nil) {
+        userProperty.phone = [propertyData objectForKey: @"phone"];
+    }
+    if ([propertyData objectForKey: @"plan"] != nil) {
+        userProperty.plan = [propertyData objectForKey: @"plan"];
+    }
+    if ([propertyData objectForKey: @"companyName"] != nil) {
+        userProperty.companyName = [propertyData objectForKey: @"companyName"];
+    }
+    if ([propertyData objectForKey: @"companyId"] != nil) {
+        userProperty.companyId = [propertyData objectForKey: @"companyId"];
+    }
+    if ([propertyData objectForKey: @"value"] != nil) {
+        userProperty.value = [propertyData objectForKey: @"value"];
+    }
+    if ([propertyData objectForKey: @"customData"] != nil) {
+        userProperty.customData = [propertyData objectForKey: @"customData"];
+    }
+
+    [Gleap updateContact: userProperty];
     result(nil);
   }
   else if([@"clearIdentity" isEqualToString: call.method]) {
@@ -352,9 +451,27 @@
   }
   else if([@"handlePushNotification" isEqualToString: call.method]) {
     [Gleap handlePushNotification: call.arguments[@"data"]];
+    result(nil);
   }
   else if([@"startBot" isEqualToString: call.method]) {
     [Gleap startBot: call.arguments[@"botId"] showBackButton: [call.arguments[@"showBackButton"] boolValue]];
+    result(nil);
+  }
+  else if([@"startClassicForm" isEqualToString: call.method]) {
+    [Gleap startClassicForm: call.arguments[@"formId"] showBackButton: [call.arguments[@"showBackButton"] boolValue]];
+    result(nil);
+  }
+  else if([@"startConversation" isEqualToString: call.method]) {
+    [Gleap startConversation: [call.arguments[@"showBackButton"] boolValue]];
+    result(nil);
+  }
+  else if([@"setNetworkLogsBlacklist" isEqualToString: call.method]) {
+    [Gleap setNetworkLogsBlacklist: call.arguments[@"blacklist"]];
+    result(nil);
+  }
+  else if([@"setNetworkLogPropsToIgnore" isEqualToString: call.method]) {
+    [Gleap setNetworkLogPropsToIgnore: call.arguments[@"networkLogPropsToIgnore"]];
+    result(nil);
   }
   else {
     result(FlutterMethodNotImplemented);
