@@ -1,3 +1,6 @@
+## 13.2.2
+Updated native dependencies
+
 ## 13.2.1
 Updated native dependencies
 Added identifyContact, updateContact, setNetworkLogsBlacklist as well as setNetworkLogPropsToIgnore
