@@ -89,6 +89,7 @@ class GleapSdkWeb {
         return initialize(token: call.arguments['token']);
 
       case 'identify':
+      case 'identifyContact':
         return identify(
           userId: call.arguments['userId'],
           userProperties: call.arguments['userProperties'],
@@ -274,7 +275,7 @@ class GleapSdkWeb {
   }
 
   Future<void> updateContact({dynamic userProperties}) async {
-    String? stringifiedHashMap = jsonEncode({'customerData': userProperties});
+    String? stringifiedHashMap = jsonEncode(userProperties);
 
     await GleapJsSdkHelper.updateContact(stringifiedHashMap);
   }
