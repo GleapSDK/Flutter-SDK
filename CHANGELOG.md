@@ -1,3 +1,6 @@
+## 13.2.3
+Fixed issue with Flutter web
+
 ## 13.2.2
 Updated native dependencies
 
