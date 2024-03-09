@@ -25,9 +25,9 @@ Map<String, dynamic> _$GleapUserPropertyToJson(GleapUserProperty instance) =>
       'name': instance.name,
       'email': instance.email,
       'phone': instance.phone,
-      'value': instance.value,
       'plan': instance.plan,
       'companyName': instance.companyName,
       'companyId': instance.companyId,
+      'value': instance.value,
       'customData': instance.customData,
     };

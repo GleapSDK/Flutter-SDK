@@ -145,3 +145,9 @@ external Future<void> setNetworkLogsBlacklist(
 
 @JS('window.Gleap.setNetworkLogPropsToIgnore')
 external Future<void> setNetworkLogPropsToIgnore(List<dynamic> filters);
+
+@JS('window.Gleap.setAiTools')
+external Future<void> setAiTools(List<dynamic> tools);
+
+@JS('window.Gleap.setTicketAttribute')
+external Future<void> setTicketAttribute(String key, dynamic value);

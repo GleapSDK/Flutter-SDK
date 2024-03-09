@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:js';
+import 'dart:js_util';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 // ignore: library_prefixes
@@ -81,6 +82,13 @@ class GleapSdkWeb {
     });
     GleapJsSdkHelper.registerEvents(
         'unregister-pushmessage-group', unregisterPushMessageGroup);
+
+    void Function(dynamic data) toolExecution = allowInterop((dynamic data) {
+      final String strifiedData = GleapJsSdkHelper.stringify(data as Object);
+
+      channel.invokeMethod('toolExecution', strifiedData);
+    });
+    GleapJsSdkHelper.registerEvents('tool-execution', toolExecution);
   }
 
   Future<dynamic> handleMethodCall(MethodCall call) async {
@@ -250,6 +258,15 @@ class GleapSdkWeb {
       case 'setNetworkLogPropsToIgnore':
         return setNetworkLogPropsToIgnore(
           filters: call.arguments['networkLogPropsToIgnore'],
+        );
+
+      case 'setAiTools':
+        return setAiTools(tools: call.arguments['tools']);
+
+      case 'setTicketAttribute':
+        return setTicketAttribute(
+          key: call.arguments['key'],
+          value: call.arguments['value'],
         );
 
       default:
@@ -482,5 +499,16 @@ class GleapSdkWeb {
     required List<dynamic> filters,
   }) async {
     return GleapJsSdkHelper.setNetworkLogPropsToIgnore(filters);
+  }
+
+  Future<void> setAiTools({required List<dynamic> tools}) async {
+    return GleapJsSdkHelper.setAiTools(jsify(tools));
+  }
+
+  Future<void> setTicketAttribute({
+    required String key,
+    required dynamic value,
+  }) async {
+    return GleapJsSdkHelper.setTicketAttribute(key, value);
   }
 }
