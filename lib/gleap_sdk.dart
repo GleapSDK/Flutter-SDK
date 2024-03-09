@@ -6,6 +6,7 @@ import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gleap_sdk/models/ai_tool_models/ai_tool_model/ai_tool_model.dart';
 import 'package:gleap_sdk/models/callback_item_model/callback_item_model.dart';
 import 'package:gleap_sdk/models/gleap_network_log_models/gleap_network_log_model/gleap_network_log_model.dart';
 import 'package:gleap_sdk/models/gleap_user_property_model/gleap_user_property_model.dart';
@@ -1428,6 +1429,74 @@ class Gleap {
 
     await _channel.invokeMethod('setNetworkLogPropsToIgnore', {
       'networkLogPropsToIgnore': propsToIgnore,
+    });
+  }
+
+  /// ### setAiTools
+  ///
+  /// Set the AI tools for the Gleap widget
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> setAiTools({required List<AITool> tools}) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setAiTools is not available for current operating system',
+      );
+      return;
+    }
+
+    final List<Map<String, dynamic>> toolsList;
+
+    if (kIsWeb) {
+      toolsList = tools.map((AITool tool) {
+        final toolJson = tool.toJson();
+        final parameters = toolJson['parameters'].map((param) {
+          final Map<String, dynamic> paramAsMap =
+              Map<String, dynamic>.from(param);
+          if (paramAsMap.containsKey('enums')) {
+            // Rename 'enums' to 'enum' for web
+            if (paramAsMap['enums'] != null) {
+              paramAsMap['enum'] = paramAsMap['enums'];
+            }
+            paramAsMap.remove('enums');
+          }
+          return paramAsMap;
+        }).toList();
+        toolJson['parameters'] = parameters;
+        return toolJson;
+      }).toList();
+    } else {
+      toolsList = tools.map((AITool tool) => tool.toJson()).toList();
+    }
+
+    await _channel.invokeMethod('setAiTools', {
+      'tools': toolsList,
+    });
+  }
+
+  /// ### setTicketAttribute
+  ///
+  /// Set a ticket attribute
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> setTicketAttribute({
+    required String key,
+    required dynamic value,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setTicketAttribute is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('setTicketAttribute', {
+      'key': key,
+      'value': value,
     });
   }
 }

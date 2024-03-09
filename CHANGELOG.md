@@ -1,3 +1,7 @@
+## 13.5.0
+Updated native dependencies
+Added setAiTools, setTicketAttribute
+
 ## 13.2.3
 Fixed issue with Flutter web
 

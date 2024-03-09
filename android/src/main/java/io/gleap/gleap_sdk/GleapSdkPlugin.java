@@ -33,12 +33,15 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.gleap.APPLICATIONTYPE;
 import io.gleap.Gleap;
 import io.gleap.GleapActivationMethod;
+import io.gleap.GleapAiTool;
+import io.gleap.GleapAiToolParameter;
 import io.gleap.GleapLogLevel;
 import io.gleap.GleapSessionProperties;
 import io.gleap.Networklog;
 import io.gleap.PrefillHelper;
 import io.gleap.RequestType;
 import io.gleap.SurveyType;
+import io.gleap.callbacks.AiToolExecutedCallback;
 import io.gleap.callbacks.InitializedCallback;
 import io.gleap.callbacks.CustomActionCallback;
 import io.gleap.callbacks.FeedbackFlowStartedCallback;
@@ -99,6 +102,14 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
             @Override
             public void invoke(String message) {
                 channel.invokeMethod("feedbackSendingFailed", null);
+            }
+        });
+
+        Gleap.getInstance().setAiToolExecutedCallback(new AiToolExecutedCallback() {
+            @Override
+            public void aiToolExecuted(JSONObject jsonObject) {
+                String jsonString = jsonObject.toString();
+                channel.invokeMethod("toolExecution", jsonString);
             }
         });
 
@@ -654,6 +665,56 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 }
 
                 Gleap.getInstance().setNetworkLogPropsToIgnore(propsToIgnoreArray);
+                break;
+
+            case "setAiTools":
+                try {
+                    ArrayList<Map<String, Object>> toolsList = call.argument("tools");
+                    ArrayList<GleapAiTool> gleapAiTools = new ArrayList<>();
+
+                    for (Map<String, Object> toolMap : toolsList) {
+                        String name = (String) toolMap.get("name");
+                        String description = (String) toolMap.get("description");
+                        String response = (String) toolMap.get("response");
+                        ArrayList<Map<String, Object>> parametersList = (ArrayList<Map<String, Object>>) toolMap.get("parameters");
+                        ArrayList<GleapAiToolParameter> gleapParameters = new ArrayList<>();
+
+                        for (Map<String, Object> paramMap : parametersList) {
+                            String paramName = (String) paramMap.get("name");
+                            String paramDescription = (String) paramMap.get("description");
+                            String type = (String) paramMap.get("type");
+                            boolean required = (Boolean) paramMap.get("required");
+
+                            // Fetch the enums list from paramMap, ensuring null safety
+                            ArrayList<String> enumsList = paramMap.containsKey("enums") ? (ArrayList<String>) paramMap.get("enums") : null;
+
+                            // Use a ternary operator to check for null. If enumsList is not null, convert it to an array; otherwise, use an empty array.
+                            String[] enumsArray = enumsList != null ? enumsList.toArray(new String[0]) : new String[0];
+
+                            GleapAiToolParameter gleapParameter = new GleapAiToolParameter(
+                                    paramName, paramDescription, type, required, enumsArray);
+                            gleapParameters.add(gleapParameter);
+                        }
+
+                        GleapAiTool gleapAiTool = new GleapAiTool(
+                                name, description, response, gleapParameters.toArray(new GleapAiToolParameter[0]));
+
+                        gleapAiTools.add(gleapAiTool);
+                    }
+
+                    GleapAiTool[] toolsArray = new GleapAiTool[gleapAiTools.size()];
+                    toolsArray = gleapAiTools.toArray(toolsArray);
+                    Gleap.getInstance().setAiTools(toolsArray);
+
+                    result.success(null);
+                } catch (Exception e) {
+                    result.success(null);
+                }
+                break;
+
+            case "setTicketAttribute":
+                Gleap.getInstance().setTicketAttribute(call.argument("key"), call.argument("value"));
+                result.success(null);
                 break;
 
             default:
