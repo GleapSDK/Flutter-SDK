@@ -1,3 +1,6 @@
+## 13.6.1
+Updated native dependencies
+
 ## 13.5.0
 Updated native dependencies
 Added setAiTools, setTicketAttribute
