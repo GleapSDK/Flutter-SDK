@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
     );
 
     await Gleap.initialize(
-      token: '<YOUR_API_TOKEN>',
+      token: 'ogWhNhuiZcGWrva5nlDS8l7a78OfaLlV',
     );
 
     Gleap.setTags(tags: ['DevTag']);
@@ -62,6 +62,7 @@ class _MyAppState extends State<MyApp> {
       description: 'Send money to a given contact.',
       response:
           'The transfer got initiated but not completed yet. The user must confirm the transfer in the banking app.',
+      executionType: 'button',
       parameters: [
         AIToolParams(
           name: 'amount',
