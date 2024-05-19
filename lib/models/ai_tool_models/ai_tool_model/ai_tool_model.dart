@@ -8,12 +8,14 @@ class AITool {
   String name;
   String description;
   String response;
+  String executionType;
   List<AIToolParams> parameters;
 
   AITool({
     required this.name,
     required this.description,
     required this.response,
+    required this.executionType,
     required this.parameters,
   });
 

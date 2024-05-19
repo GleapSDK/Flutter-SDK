@@ -461,6 +461,7 @@
         NSString *name = toolDict[@"name"];
         NSString *toolDescription = toolDict[@"description"];
         NSString *response = toolDict[@"response"];
+        NSString *executionType = toolDict[@"executionType"];
         NSArray *parametersArray = toolDict[@"parameters"];
 
         if (name && toolDescription && response && parametersArray) {
@@ -494,6 +495,7 @@
               [[GleapAiTool alloc] initWithName:name
                                 toolDescription:toolDescription
                                        response:response
+                                  executionType:executionType
                                      parameters:parameters];
 
           [aiTools addObject:aiTool];

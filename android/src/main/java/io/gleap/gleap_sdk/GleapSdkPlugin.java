@@ -676,6 +676,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                         String name = (String) toolMap.get("name");
                         String description = (String) toolMap.get("description");
                         String response = (String) toolMap.get("response");
+                        String executionType = (String) toolMap.get("executionType");
                         ArrayList<Map<String, Object>> parametersList = (ArrayList<Map<String, Object>>) toolMap.get("parameters");
                         ArrayList<GleapAiToolParameter> gleapParameters = new ArrayList<>();
 
@@ -697,7 +698,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                         }
 
                         GleapAiTool gleapAiTool = new GleapAiTool(
-                                name, description, response, gleapParameters.toArray(new GleapAiToolParameter[0]));
+                                name, description, response, executionType, gleapParameters.toArray(new GleapAiToolParameter[0]));
 
                         gleapAiTools.add(gleapAiTool);
                     }
