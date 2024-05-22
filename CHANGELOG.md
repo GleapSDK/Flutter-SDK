@@ -1,3 +1,6 @@
+## 13.7.1
+Updated native dependencies
+
 ## 13.7.0
 Updated native dependencies
 Added executionType to AI tools
