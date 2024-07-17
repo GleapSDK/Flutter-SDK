@@ -16,6 +16,7 @@ GleapUserProperty _$GleapUserPropertyFromJson(Map<String, dynamic> json) =>
       plan: json['plan'] as String?,
       companyName: json['companyName'] as String?,
       companyId: json['companyId'] as String?,
+      sla: (json['sla'] as num?)?.toDouble(),
       customData: json['customData'] as Map<String, dynamic>?,
     );
 
@@ -29,5 +30,6 @@ Map<String, dynamic> _$GleapUserPropertyToJson(GleapUserProperty instance) =>
       'companyName': instance.companyName,
       'companyId': instance.companyId,
       'value': instance.value,
+      'sla': instance.sla,
       'customData': instance.customData,
     };

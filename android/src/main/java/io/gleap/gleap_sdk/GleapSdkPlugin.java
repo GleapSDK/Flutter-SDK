@@ -231,6 +231,9 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                         if(gleapUserProperty.has("value") && !gleapUserProperty.isNull("value")) {
                             gleapUserProperties.setValue(gleapUserProperty.getDouble("value"));
                         }
+                        if (gleapUserProperty.has("sla") && !gleapUserProperty.isNull("sla")) {
+                            gleapUserProperties.setSla(gleapUserProperty.getDouble("sla"));
+                        }
                         if(gleapUserProperty.has("plan") && !gleapUserProperty.isNull("plan")) {
                             gleapUserProperties.setPlan(gleapUserProperty.getString("plan"));
                         }
@@ -274,6 +277,9 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                     }
                     if (gleapUserProperty.has("value") && !gleapUserProperty.isNull("value")) {
                         gleapUserProperties.setValue(gleapUserProperty.getDouble("value"));
+                    }
+                    if (gleapUserProperty.has("sla") && !gleapUserProperty.isNull("sla")) {
+                        gleapUserProperties.setSla(gleapUserProperty.getDouble("sla"));
                     }
                     if (gleapUserProperty.has("plan") && !gleapUserProperty.isNull("plan")) {
                         gleapUserProperties.setPlan(gleapUserProperty.getString("plan"));
@@ -583,6 +589,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                             map.put("companyName", gleapUser.getCompanyName());
                             map.put("companyId", gleapUser.getCompanyId());
                             map.put("value", gleapUser.getValue());
+                            map.put("sla", gleapUser.getValue());
                         }
 
                         result.success(map);

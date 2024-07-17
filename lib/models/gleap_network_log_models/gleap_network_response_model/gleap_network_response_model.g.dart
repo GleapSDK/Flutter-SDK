@@ -9,7 +9,7 @@ part of 'gleap_network_response_model.dart';
 GleapNetworkResponse _$GleapNetworkResponseFromJson(
         Map<String, dynamic> json) =>
     GleapNetworkResponse(
-      status: json['status'] as int?,
+      status: (json['status'] as num?)?.toInt(),
       statusText: json['statusText'] as String?,
       responseText: json['responseText'] as String?,
     );

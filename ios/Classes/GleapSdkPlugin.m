@@ -147,6 +147,9 @@
     if ([propertyData objectForKey:@"value"] != nil) {
       userProperty.value = [propertyData objectForKey:@"value"];
     }
+    if ([propertyData objectForKey:@"sla"] != nil) {
+      userProperty.sla = [propertyData objectForKey:@"sla"];
+    }
     if ([propertyData objectForKey:@"customData"] != nil) {
       userProperty.customData = [propertyData objectForKey:@"customData"];
     }
@@ -178,6 +181,9 @@
     }
     if ([propertyData objectForKey:@"value"] != nil) {
       userProperty.value = [propertyData objectForKey:@"value"];
+    }
+    if ([propertyData objectForKey:@"sla"] != nil) {
+      userProperty.sla = [propertyData objectForKey:@"sla"];
     }
     if ([propertyData objectForKey:@"customData"] != nil) {
       userProperty.customData = [propertyData objectForKey:@"customData"];
@@ -211,6 +217,9 @@
     if ([propertyData objectForKey:@"value"] != nil) {
       userProperty.value = [propertyData objectForKey:@"value"];
     }
+    if ([propertyData objectForKey:@"sla"] != nil) {
+      userProperty.sla = [propertyData objectForKey:@"sla"];
+    }
     if ([propertyData objectForKey:@"customData"] != nil) {
       userProperty.customData = [propertyData objectForKey:@"customData"];
     }
@@ -242,6 +251,9 @@
     }
     if ([propertyData objectForKey:@"value"] != nil) {
       userProperty.value = [propertyData objectForKey:@"value"];
+    }
+    if ([propertyData objectForKey:@"sla"] != nil) {
+      userProperty.sla = [propertyData objectForKey:@"sla"];
     }
     if ([propertyData objectForKey:@"customData"] != nil) {
       userProperty.customData = [propertyData objectForKey:@"customData"];

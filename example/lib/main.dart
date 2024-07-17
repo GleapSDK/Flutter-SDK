@@ -120,7 +120,7 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             GestureDetector(
               onTap: () async {
-                await Gleap.identify(
+                await Gleap.identifyContact(
                     userId: "10293",
                     userProperties: GleapUserProperty(
                       email: "lukas@test.com",

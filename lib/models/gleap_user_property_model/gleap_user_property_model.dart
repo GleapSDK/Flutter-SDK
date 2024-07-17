@@ -12,6 +12,7 @@ class GleapUserProperty {
   String? companyName;
   String? companyId;
   double? value;
+  double? sla;
   Map<String, dynamic>? customData;
 
   GleapUserProperty({
@@ -23,6 +24,7 @@ class GleapUserProperty {
     this.plan,
     this.companyName,
     this.companyId,
+    this.sla,
     this.customData,
   });
 
