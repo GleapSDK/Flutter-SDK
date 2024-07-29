@@ -1,3 +1,6 @@
+## 13.8.1
+Updated native dependencies
+
 ## 13.8.0
 Added SLA property to Gleap user
 
