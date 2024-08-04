@@ -161,6 +161,9 @@ class GleapSdkWeb {
           showBackButton: call.arguments['showBackButton'],
         );
 
+      case 'startConversation':
+        return startConversation();
+
       case 'setLanguage':
         return setLanguage(language: call.arguments['language']);
 
@@ -364,6 +367,10 @@ class GleapSdkWeb {
     required bool showBackButton,
   }) async {
     await GleapJsSdkHelper.startFeedbackFlow(action, showBackButton);
+  }
+
+  Future<void> startConversation() async {
+    await GleapJsSdkHelper.startConversation();
   }
 
   Future<void> setLanguage({required String language}) async {
