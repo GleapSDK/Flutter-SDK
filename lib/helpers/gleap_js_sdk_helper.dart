@@ -154,3 +154,15 @@ external Future<void> setAiTools(List<dynamic> tools);
 
 @JS('window.Gleap.setTicketAttribute')
 external Future<void> setTicketAttribute(String key, dynamic value);
+
+@JS('window.Gleap.startBot')
+external Future<void> startBot(String botId);
+
+@JS('window.Gleap.openConversation')
+external Future<void> openConversation(String shareToken);
+
+@JS('window.Gleap.openConversations')
+external Future<void> openConversations();
+
+@JS('window.Gleap.startClassicForm')
+external Future<void> startClassicForm(String formId);

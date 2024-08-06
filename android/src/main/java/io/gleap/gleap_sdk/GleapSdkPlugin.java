@@ -632,6 +632,11 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 result.success(true);
                 break;
 
+            case "openConversations":
+                Gleap.getInstance().openConversations();
+                result.success(true);
+                break;
+
             case "handlePushNotification":
                 try {
                     JSONObject fcmData = new JSONObject((Map) call.argument("data"));

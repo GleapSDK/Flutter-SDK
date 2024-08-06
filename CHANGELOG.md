@@ -1,3 +1,8 @@
+## 13.9.0
+Updated native dependencies
+Improvements for Flutter web
+Added openConversations
+
 ## 13.8.1
 Updated native dependencies
 
