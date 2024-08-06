@@ -161,6 +161,9 @@ class GleapSdkWeb {
           showBackButton: call.arguments['showBackButton'],
         );
 
+      case 'startConversation':
+        return startConversation();
+
       case 'setLanguage':
         return setLanguage(language: call.arguments['language']);
 
@@ -269,6 +272,18 @@ class GleapSdkWeb {
           value: call.arguments['value'],
         );
 
+      case 'startBot':
+        return startBot(botId: call.arguments['botId']);
+
+      case 'openConversation':
+        return openConversation(shareToken: call.arguments['shareToken']);
+
+      case 'openConversations':
+        return openConversations();
+
+      case 'startClassicForm':
+        return startClassicForm(formId: call.arguments['formId']);
+
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -364,6 +379,10 @@ class GleapSdkWeb {
     required bool showBackButton,
   }) async {
     await GleapJsSdkHelper.startFeedbackFlow(action, showBackButton);
+  }
+
+  Future<void> startConversation() async {
+    await GleapJsSdkHelper.startConversation();
   }
 
   Future<void> setLanguage({required String language}) async {
@@ -510,5 +529,21 @@ class GleapSdkWeb {
     required dynamic value,
   }) async {
     return GleapJsSdkHelper.setTicketAttribute(key, value);
+  }
+
+  Future<void> startBot({required String botId}) async {
+    return GleapJsSdkHelper.startBot(botId);
+  }
+
+  Future<void> openConversation({required String shareToken}) async {
+    return GleapJsSdkHelper.openConversation(shareToken);
+  }
+
+  Future<void> openConversations() async {
+    return GleapJsSdkHelper.openConversations();
+  }
+
+  Future<void> startClassicForm({required String formId}) async {
+    return GleapJsSdkHelper.startClassicForm(formId);
   }
 }

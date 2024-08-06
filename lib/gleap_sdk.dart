@@ -963,8 +963,9 @@ class Gleap {
       return;
     }
 
-    await _channel
-        .invokeMethod('openChecklists', {'showBackButton': showBackButton});
+    await _channel.invokeMethod('openChecklists', {
+      'showBackButton': showBackButton,
+    });
   }
 
   /// ### openChecklist
@@ -974,8 +975,10 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Web, Android, iOS
-  static Future<void> openChecklist(
-      {required String checklistId, required bool showBackButton}) async {
+  static Future<void> openChecklist({
+    required String checklistId,
+    required bool showBackButton,
+  }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'openChecklist is not available for current operating system',
@@ -983,8 +986,10 @@ class Gleap {
       return;
     }
 
-    await _channel.invokeMethod('openChecklist',
-        {'checklistId': checklistId, 'showBackButton': showBackButton});
+    await _channel.invokeMethod('openChecklist', {
+      'checklistId': checklistId,
+      'showBackButton': showBackButton,
+    });
   }
 
   /// ### startChecklist
@@ -994,8 +999,10 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Web, Android, iOS
-  static Future<void> startChecklist(
-      {required String outboundId, required bool showBackButton}) async {
+  static Future<void> startChecklist({
+    required String outboundId,
+    required bool showBackButton,
+  }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'outboundId is not available for current operating system',
@@ -1003,8 +1010,10 @@ class Gleap {
       return;
     }
 
-    await _channel.invokeMethod('startChecklist',
-        {'outboundId': outboundId, 'showBackButton': showBackButton});
+    await _channel.invokeMethod('startChecklist', {
+      'outboundId': outboundId,
+      'showBackButton': showBackButton,
+    });
   }
 
   /// ### openNews
@@ -1032,8 +1041,10 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Web, Android, iOS
-  static Future<void> openNewsArticle(
-      {required String articleId, required bool showBackButton}) async {
+  static Future<void> openNewsArticle({
+    required String articleId,
+    required bool showBackButton,
+  }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'openNewsArticle is not available for current operating system',
@@ -1041,8 +1052,10 @@ class Gleap {
       return;
     }
 
-    await _channel.invokeMethod('openNewsArticle',
-        {'articleId': articleId, 'showBackButton': showBackButton});
+    await _channel.invokeMethod('openNewsArticle', {
+      'articleId': articleId,
+      'showBackButton': showBackButton,
+    });
   }
 
   /// ### openFeatureRequests
@@ -1052,8 +1065,9 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Web, Android, iOS
-  static Future<void> openFeatureRequests(
-      {required bool showBackButton}) async {
+  static Future<void> openFeatureRequests({
+    required bool showBackButton,
+  }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'openFeatureRequests is not available for current operating system',
@@ -1061,8 +1075,9 @@ class Gleap {
       return;
     }
 
-    await _channel.invokeMethod(
-        'openFeatureRequests', {'showBackButton': showBackButton});
+    await _channel.invokeMethod('openFeatureRequests', {
+      'showBackButton': showBackButton,
+    });
   }
 
   /// ### openHelpCenter
@@ -1080,8 +1095,9 @@ class Gleap {
       return;
     }
 
-    await _channel
-        .invokeMethod('openHelpCenter', {'showBackButton': showBackButton});
+    await _channel.invokeMethod('openHelpCenter', {
+      'showBackButton': showBackButton,
+    });
   }
 
   /// ### openHelpCenterArticle
@@ -1091,8 +1107,10 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Web, Android, iOS
-  static Future<void> openHelpCenterArticle(
-      {required String articleId, required bool showBackButton}) async {
+  static Future<void> openHelpCenterArticle({
+    required String articleId,
+    required bool showBackButton,
+  }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'openHelpCenter is not available for current operating system',
@@ -1100,8 +1118,10 @@ class Gleap {
       return;
     }
 
-    await _channel.invokeMethod('openHelpCenterArticle',
-        {'articleId': articleId, 'showBackButton': showBackButton});
+    await _channel.invokeMethod('openHelpCenterArticle', {
+      'articleId': articleId,
+      'showBackButton': showBackButton,
+    });
   }
 
   /// ### openHelpCenterCollection
@@ -1111,8 +1131,10 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Web, Android, iOS
-  static Future<void> openHelpCenterCollection(
-      {required String collectionId, required bool showBackButton}) async {
+  static Future<void> openHelpCenterCollection({
+    required String collectionId,
+    required bool showBackButton,
+  }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'openHelpCenterCollection is not available for current operating system',
@@ -1120,8 +1142,10 @@ class Gleap {
       return;
     }
 
-    await _channel.invokeMethod('openHelpCenterCollection',
-        {'collectionId': collectionId, 'showBackButton': showBackButton});
+    await _channel.invokeMethod('openHelpCenterCollection', {
+      'collectionId': collectionId,
+      'showBackButton': showBackButton,
+    });
   }
 
   /// ### searchHelpCenter
@@ -1131,8 +1155,10 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Web, Android, iOS
-  static Future<void> searchHelpCenter(
-      {required String term, required bool showBackButton}) async {
+  static Future<void> searchHelpCenter({
+    required String term,
+    required bool showBackButton,
+  }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'searchHelpCenter is not available for current operating system',
@@ -1140,8 +1166,10 @@ class Gleap {
       return;
     }
 
-    await _channel.invokeMethod(
-        'searchHelpCenter', {'term': term, 'showBackButton': showBackButton});
+    await _channel.invokeMethod('searchHelpCenter', {
+      'term': term,
+      'showBackButton': showBackButton,
+    });
   }
 
   /// ### isUserIdentified
@@ -1342,6 +1370,24 @@ class Gleap {
     );
   }
 
+  /// ### openConversations
+  ///
+  /// Opens the conversation overview
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> openConversations() async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'openConversations is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('openConversations');
+  }
+
   /// ### handlePushNotification
   ///
   /// Handles a push notification
@@ -1352,10 +1398,8 @@ class Gleap {
   static Future<void> handlePushNotification({
     required Map<String, dynamic> data,
   }) async {
-    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
-      debugPrint(
-        'handlePushNotification is not available for current operating system',
-      );
+    if (kIsWeb || (!io.Platform.isAndroid && !io.Platform.isIOS)) {
+      debugPrint('addAttachment is not available for current operating system');
       return;
     }
 

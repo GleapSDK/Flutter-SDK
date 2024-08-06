@@ -442,6 +442,9 @@
   } else if ([@"openConversation" isEqualToString:call.method]) {
     [Gleap openConversation:call.arguments[@"shareToken"]];
     result(nil);
+  } else if ([@"openConversations" isEqualToString:call.method]) {
+    [Gleap openConversations];
+    result(nil);
   } else if ([@"handlePushNotification" isEqualToString:call.method]) {
     [Gleap handlePushNotification:call.arguments[@"data"]];
     result(nil);
