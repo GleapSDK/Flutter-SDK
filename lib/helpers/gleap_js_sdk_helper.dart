@@ -65,6 +65,9 @@ external Future<void> close();
 @JS('window.Gleap.startFeedbackFlow')
 external Future<void> startFeedbackFlow(String flow, bool showBackButton);
 
+@JS('window.Gleap.startConversation')
+external Future<void> startConversation();
+
 @JS('window.Gleap.setLanguage')
 external Future<void> setLanguage(String language);
 
