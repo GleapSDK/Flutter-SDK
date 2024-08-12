@@ -1,3 +1,6 @@
+## 13.9.1
+Increased Android compileSdkVersion to 33
+
 ## 13.9.0
 Updated native dependencies
 Improvements for Flutter web
