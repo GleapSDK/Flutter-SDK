@@ -1,3 +1,7 @@
+## 14.0.0
+Updated native dependencies to 14.0.0
+Added outbound-sent delegate
+
 ## 13.9.1
 Increased Android compileSdkVersion to 33
 

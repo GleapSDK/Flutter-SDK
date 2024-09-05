@@ -47,6 +47,7 @@ import io.gleap.callbacks.CustomActionCallback;
 import io.gleap.callbacks.FeedbackFlowStartedCallback;
 import io.gleap.callbacks.FeedbackSendingFailedCallback;
 import io.gleap.callbacks.FeedbackSentCallback;
+import io.gleap.callbacks.OutboundSentCallback;
 import io.gleap.callbacks.GetBitmapCallback;
 import io.gleap.callbacks.NotificationUnreadCountUpdatedCallback;
 import io.gleap.callbacks.RegisterPushMessageGroupCallback;
@@ -93,8 +94,17 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
         Gleap.getInstance().setFeedbackSentCallback(new FeedbackSentCallback() {
             @Override
-            public void invoke(String message) {
-                channel.invokeMethod("feedbackSent", null);
+            public void invoke(JSONObject jsonObject) {
+                String jsonString = jsonObject.toString();
+                channel.invokeMethod("feedbackSent", jsonString);
+            }
+        });
+
+        Gleap.getInstance().setOutboundSentCallback(new OutboundSentCallback() {
+            @Override
+            public void invoke(JSONObject jsonObject) {
+                String jsonString = jsonObject.toString();
+                channel.invokeMethod("outboundSent", jsonString);
             }
         });
 

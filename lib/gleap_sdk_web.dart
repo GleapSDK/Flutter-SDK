@@ -38,6 +38,11 @@ class GleapSdkWeb {
     });
     GleapJsSdkHelper.registerEvents('feedback-sent', feedbackSent);
 
+    void Function(dynamic data) outboundSent = allowInterop((dynamic data) {
+      channel.invokeMethod('outboundSent');
+    });
+    GleapJsSdkHelper.registerEvents('outbound-sent', outboundSent);
+
     void Function(dynamic data) errorWhileSending =
         allowInterop((dynamic data) {
       channel.invokeMethod('feedbackSendingFailed');

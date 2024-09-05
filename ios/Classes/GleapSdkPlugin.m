@@ -34,6 +34,12 @@
   }
 }
 
+- (void)outboundSent:(NSDictionary *)data {
+  if (self.methodChannel != nil) {
+    [self.methodChannel invokeMethod:@"outboundSent" arguments:data];
+  }
+}
+
 - (void)initialized {
   if (self.methodChannel != nil) {
     [self.methodChannel invokeMethod:@"initialized" arguments:@{}];
