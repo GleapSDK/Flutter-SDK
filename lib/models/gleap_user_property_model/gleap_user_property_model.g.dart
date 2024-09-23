@@ -20,16 +20,24 @@ GleapUserProperty _$GleapUserPropertyFromJson(Map<String, dynamic> json) =>
       customData: json['customData'] as Map<String, dynamic>?,
     );
 
-Map<String, dynamic> _$GleapUserPropertyToJson(GleapUserProperty instance) =>
-    <String, dynamic>{
-      'userId': instance.userId,
-      'name': instance.name,
-      'email': instance.email,
-      'phone': instance.phone,
-      'plan': instance.plan,
-      'companyName': instance.companyName,
-      'companyId': instance.companyId,
-      'value': instance.value,
-      'sla': instance.sla,
-      'customData': instance.customData,
-    };
+Map<String, dynamic> _$GleapUserPropertyToJson(GleapUserProperty instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('userId', instance.userId);
+  writeNotNull('name', instance.name);
+  writeNotNull('email', instance.email);
+  writeNotNull('phone', instance.phone);
+  writeNotNull('plan', instance.plan);
+  writeNotNull('companyName', instance.companyName);
+  writeNotNull('companyId', instance.companyId);
+  writeNotNull('value', instance.value);
+  writeNotNull('sla', instance.sla);
+  writeNotNull('customData', instance.customData);
+  return val;
+}

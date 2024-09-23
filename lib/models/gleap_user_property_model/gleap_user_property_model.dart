@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'gleap_user_property_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class GleapUserProperty {
   String? userId;
   String? name;

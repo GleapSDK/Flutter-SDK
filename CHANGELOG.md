@@ -1,3 +1,6 @@
+## 14.0.1
+Fixed issue with updateContact
+
 ## 14.0.0
 Updated native dependencies to 14.0.0
 Added outbound-sent delegate
