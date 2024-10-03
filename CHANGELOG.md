@@ -1,3 +1,6 @@
+## 14.0.2
+Updated native dependencies to 14.0.1
+
 ## 14.0.1
 Fixed issue with updateContact
 
