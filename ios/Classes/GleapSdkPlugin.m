@@ -21,6 +21,12 @@
   [Gleap setApplicationType:FLUTTER];
 }
 
+- (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
+  @synchronized(self) {
+    self.methodChannel = nil;
+  }
+}
+
 - (void)feedbackFlowStarted:(NSDictionary *)feedbackAction {
   if (self.methodChannel != nil) {
     [self.methodChannel invokeMethod:@"feedbackFlowStarted"
