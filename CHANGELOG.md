@@ -1,3 +1,8 @@
+## 14.0.3
+Updated native iOS dependency to 14.0.4
+Updated native Android dependency to 14.0.2
+Included PRs from @importRyan (Many thanks for contributing!)
+
 ## 14.0.2
 Updated native dependencies to 14.0.1
 
