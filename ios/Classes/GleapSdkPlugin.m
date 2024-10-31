@@ -28,82 +28,104 @@
 }
 
 - (void)feedbackFlowStarted:(NSDictionary *)feedbackAction {
-  if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod:@"feedbackFlowStarted"
-                           arguments:feedbackAction];
-  }
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (self.methodChannel != nil) {
+      [self.methodChannel invokeMethod:@"feedbackFlowStarted"
+                            arguments:feedbackAction];
+    }
+  });
 }
 
 - (void)feedbackSent:(NSDictionary *)data {
-  if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod:@"feedbackSent" arguments:data];
-  }
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (self.methodChannel != nil) {
+      [self.methodChannel invokeMethod:@"feedbackSent" arguments:data];
+    }
+  });
 }
 
 - (void)outboundSent:(NSDictionary *)data {
-  if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod:@"outboundSent" arguments:data];
-  }
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (self.methodChannel != nil) {
+      [self.methodChannel invokeMethod:@"outboundSent" arguments:data];
+    }
+  });
 }
 
 - (void)initialized {
   dispatch_async(dispatch_get_main_queue(), ^{
-      if (self.methodChannel != nil) {
-        [self.methodChannel invokeMethod:@"initialized" arguments:@{}];
-      }
+    if (self.methodChannel != nil) {
+      [self.methodChannel invokeMethod:@"initialized" arguments:@{}];
+    }
   });
 }
 
 - (void)feedbackSendingFailed {
-  if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod:@"feedbackSendingFailed" arguments:@{}];
-  }
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (self.methodChannel != nil) {
+      [self.methodChannel invokeMethod:@"feedbackSendingFailed" arguments:@{}];
+    }
+  });
 }
 
 - (void)customActionCalled:(NSString *)customAction {
-  if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod:@"customActionTriggered"
-                           arguments:@{@"name" : customAction}];
-  }
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (self.methodChannel != nil) {
+      [self.methodChannel invokeMethod:@"customActionTriggered"
+                            arguments:@{@"name" : customAction}];
+    }
+  });
 }
 
 - (void)widgetOpened {
-  if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod:@"widgetOpened" arguments:@{}];
-  }
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (self.methodChannel != nil) {
+      [self.methodChannel invokeMethod:@"widgetOpened" arguments:@{}];
+    }
+  });
 }
 
 - (void)widgetClosed {
-  if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod:@"widgetClosed" arguments:@{}];
-  }
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (self.methodChannel != nil) {
+      [self.methodChannel invokeMethod:@"widgetClosed" arguments:@{}];
+    }
+  });
 }
 
 - (void)registerPushMessageGroup:(NSString *)pushMessageGroup {
-  if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod:@"registerPushMessageGroup"
-                           arguments:pushMessageGroup];
-  }
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (self.methodChannel != nil) {
+      [self.methodChannel invokeMethod:@"registerPushMessageGroup"
+                            arguments:pushMessageGroup];
+    }
+  });
 }
 
 - (void)unregisterPushMessageGroup:(NSString *)pushMessageGroup {
-  if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod:@"unregisterPushMessageGroup"
-                           arguments:pushMessageGroup];
-  }
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (self.methodChannel != nil) {
+      [self.methodChannel invokeMethod:@"unregisterPushMessageGroup"
+                            arguments:pushMessageGroup];
+    }
+  });
 }
 
 - (void)onToolExecution:(NSDictionary *)toolExecution {
-  if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod:@"toolExecution" arguments:toolExecution];
-  }
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (self.methodChannel != nil) {
+      [self.methodChannel invokeMethod:@"toolExecution" arguments:toolExecution];
+    }
+  });
 }
 
 - (void)notificationCountUpdated:(NSInteger)count {
-  if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod:@"notificationCountUpdated"
-                           arguments:@(count)];
-  }
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (self.methodChannel != nil) {
+      [self.methodChannel invokeMethod:@"notificationCountUpdated"
+                            arguments:@(count)];
+    }
+  });
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call
@@ -113,7 +135,9 @@
     [Gleap initializeWithToken:call.arguments[@"token"]];
     [Gleap trackEvent:@"pageView" withData:@{@"page" : @"MainPage"}];
 
-    [self initSDK];
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [self initSDK];
+    });
     result(nil);
   } else if ([@"startFeedbackFlow" isEqualToString:call.method]) {
     [Gleap startFeedbackFlow:call.arguments[@"action"]
@@ -171,41 +195,6 @@
     [Gleap identifyUserWith:call.arguments[@"userId"]
                     andData:userProperty
                 andUserHash:call.arguments[@"userHash"]];
-    result(nil);
-  } else if ([@"identify" isEqualToString:call.method]) {
-    GleapUserProperty *userProperty = [[GleapUserProperty alloc] init];
-    NSDictionary *propertyData = call.arguments[@"userProperties"];
-    if ([propertyData objectForKey:@"name"] != nil) {
-      userProperty.name = [propertyData objectForKey:@"name"];
-    }
-    if ([propertyData objectForKey:@"email"] != nil) {
-      userProperty.email = [propertyData objectForKey:@"email"];
-    }
-    if ([propertyData objectForKey:@"phone"] != nil) {
-      userProperty.phone = [propertyData objectForKey:@"phone"];
-    }
-    if ([propertyData objectForKey:@"plan"] != nil) {
-      userProperty.plan = [propertyData objectForKey:@"plan"];
-    }
-    if ([propertyData objectForKey:@"companyName"] != nil) {
-      userProperty.companyName = [propertyData objectForKey:@"companyName"];
-    }
-    if ([propertyData objectForKey:@"companyId"] != nil) {
-      userProperty.companyId = [propertyData objectForKey:@"companyId"];
-    }
-    if ([propertyData objectForKey:@"value"] != nil) {
-      userProperty.value = [propertyData objectForKey:@"value"];
-    }
-    if ([propertyData objectForKey:@"sla"] != nil) {
-      userProperty.sla = [propertyData objectForKey:@"sla"];
-    }
-    if ([propertyData objectForKey:@"customData"] != nil) {
-      userProperty.customData = [propertyData objectForKey:@"customData"];
-    }
-
-    [Gleap identifyContact:call.arguments[@"userId"]
-                   andData:userProperty
-               andUserHash:call.arguments[@"userHash"]];
     result(nil);
   } else if ([@"identifyContact" isEqualToString:call.method]) {
     GleapUserProperty *userProperty = [[GleapUserProperty alloc] init];
