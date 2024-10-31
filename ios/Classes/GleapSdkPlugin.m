@@ -48,7 +48,9 @@
 
 - (void)initialized {
   dispatch_async(dispatch_get_main_queue(), ^{
-      [self.methodChannel invokeMethod:@"initialized" arguments:@{}];
+      if (self.methodChannel != nil) {
+        [self.methodChannel invokeMethod:@"initialized" arguments:@{}];
+      }
   });
 }
 
