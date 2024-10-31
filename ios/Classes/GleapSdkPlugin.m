@@ -41,9 +41,9 @@
 }
 
 - (void)initialized {
-  if (self.methodChannel != nil) {
-    [self.methodChannel invokeMethod:@"initialized" arguments:@{}];
-  }
+  dispatch_async(dispatch_get_main_queue(), ^{
+      [self.methodChannel invokeMethod:@"initialized" arguments:@{}];
+  });
 }
 
 - (void)feedbackSendingFailed {
