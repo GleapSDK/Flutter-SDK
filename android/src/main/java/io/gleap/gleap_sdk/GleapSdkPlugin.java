@@ -148,7 +148,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
         
         Gleap.getInstance().registerCustomAction(new CustomActionCallback() {
             @Override
-            public void invoke(String message) {
+            public void invoke(String message, String shareToken) {
                 uiThreadHandler.post(() -> {
                     Map<String, String> map = new HashMap<>();
                     map.put("name", message);
