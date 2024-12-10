@@ -1,3 +1,8 @@
+## 14.1.0
+Updated native iOS dependency to 14.1.0
+Updated native Android dependency to 14.1.0
+Added unsetTicketAttribute, clearTicketAttributes
+
 ## 14.0.5
 Updated native iOS dependency to 14.0.5
 Updated native Android dependency to 14.0.5

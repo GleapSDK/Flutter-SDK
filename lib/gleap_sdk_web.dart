@@ -277,6 +277,12 @@ class GleapSdkWeb {
           value: call.arguments['value'],
         );
 
+      case 'unsetTicketAttribute':
+        return unsetTicketAttribute(key: call.arguments['key']);
+
+      case 'clearTicketAttributes':
+        return clearTicketAttributes();
+
       case 'startBot':
         return startBot(botId: call.arguments['botId']);
 
@@ -534,6 +540,14 @@ class GleapSdkWeb {
     required dynamic value,
   }) async {
     return GleapJsSdkHelper.setTicketAttribute(key, value);
+  }
+
+  Future<void> unsetTicketAttribute({required String key}) async {
+    return GleapJsSdkHelper.unsetTicketAttribute(key);
+  }
+
+  Future<void> clearTicketAttributes() async {
+    return GleapJsSdkHelper.clearTicketAttributes();
   }
 
   Future<void> startBot({required String botId}) async {

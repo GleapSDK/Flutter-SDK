@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
     );
 
     await Gleap.initialize(
-      token: '<YOUR_GLEAP_SDK_TOKEN>',
+      token: 'ogWhNhuiZcGWrva5nlDS8l7a78OfaLlV',
     );
 
     Gleap.setTags(tags: ['DevTag']);
@@ -84,6 +84,12 @@ class _MyAppState extends State<MyApp> {
     Gleap.setAiTools(tools: [transactionTool]);
 
     Gleap.setTicketAttribute(key: 'title', value: 'Developer title');
+
+    Gleap.unsetTicketAttribute(key: 'title');
+
+    Gleap.setTicketAttribute(key: 'title', value: 'Developer title');
+
+    Gleap.clearTicketAttributes();
   }
 
   @override

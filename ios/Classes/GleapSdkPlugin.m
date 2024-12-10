@@ -529,6 +529,12 @@
     [Gleap setTicketAttributeWithKey:call.arguments[@"key"]
                                value:call.arguments[@"value"]];
     result(nil);
+  } else if ([@"unsetTicketAttribute" isEqualToString:call.method]) {
+    [Gleap unsetTicketAttributeWithKey: call.arguments[@"key"]];
+    result(nil);
+  } else if ([@"clearTicketAttributes" isEqualToString:call.method]) {
+    [Gleap clearTicketAttributes];
+    result(nil);
   } else {
     result(FlutterMethodNotImplemented);
   }

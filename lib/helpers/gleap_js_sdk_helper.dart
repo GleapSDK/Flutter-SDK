@@ -155,6 +155,12 @@ external Future<void> setAiTools(List<dynamic> tools);
 @JS('window.Gleap.setTicketAttribute')
 external Future<void> setTicketAttribute(String key, dynamic value);
 
+@JS('window.Gleap.unsetTicketAttribute')
+external Future<void> unsetTicketAttribute(String key);
+
+@JS('window.Gleap.clearTicketAttributes')
+external Future<void> clearTicketAttributes();
+
 @JS('window.Gleap.startBot')
 external Future<void> startBot(String botId);
 

@@ -1543,4 +1543,44 @@ class Gleap {
       'value': value,
     });
   }
+
+  /// ### unsetTicketAttribute^
+  ///
+  /// Unsets a ticket attribute
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> unsetTicketAttribute({
+    required String key,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'unsetTicketAttribute is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('unsetTicketAttribute', {
+      'key': key,
+    });
+  }
+
+  /// ### clearTicketAttributes
+  ///
+  /// Clears all ticket attributes
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> clearTicketAttributes() async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'clearTicketAttributes is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('clearTicketAttributes');
+  }
 }

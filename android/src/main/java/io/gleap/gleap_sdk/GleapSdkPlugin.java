@@ -740,6 +740,16 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 result.success(null);
                 break;
 
+            case "unsetTicketAttribute":
+                Gleap.getInstance().unsetTicketAttribute(call.argument("key"));
+                result.success(null);
+                break;
+
+            case "clearTicketAttributes":
+                Gleap.getInstance().clearTicketAttributes();
+                result.success(null);
+                break;
+
             default:
                 result.notImplemented();
         }
