@@ -16,6 +16,7 @@ GleapUserProperty _$GleapUserPropertyFromJson(Map<String, dynamic> json) =>
       plan: json['plan'] as String?,
       companyName: json['companyName'] as String?,
       companyId: json['companyId'] as String?,
+      lang: json['lang'] as String?,
       sla: (json['sla'] as num?)?.toDouble(),
       customData: json['customData'] as Map<String, dynamic>?,
     );
@@ -36,6 +37,7 @@ Map<String, dynamic> _$GleapUserPropertyToJson(GleapUserProperty instance) {
   writeNotNull('plan', instance.plan);
   writeNotNull('companyName', instance.companyName);
   writeNotNull('companyId', instance.companyId);
+  writeNotNull('lang', instance.lang);
   writeNotNull('value', instance.value);
   writeNotNull('sla', instance.sla);
   writeNotNull('customData', instance.customData);
