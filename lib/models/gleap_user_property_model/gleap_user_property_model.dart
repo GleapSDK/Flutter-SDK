@@ -11,6 +11,7 @@ class GleapUserProperty {
   String? plan;
   String? companyName;
   String? companyId;
+  String? avatar;
   String? lang;
   double? value;
   double? sla;
@@ -24,6 +25,7 @@ class GleapUserProperty {
     this.value,
     this.plan,
     this.companyName,
+    this.avatar,
     this.companyId,
     this.lang,
     this.sla,

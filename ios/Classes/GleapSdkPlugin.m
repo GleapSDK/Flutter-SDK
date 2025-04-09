@@ -182,6 +182,9 @@
     if ([propertyData objectForKey:@"companyId"] != nil) {
       userProperty.companyId = [propertyData objectForKey:@"companyId"];
     }
+    if ([propertyData objectForKey:@"avatar"] != nil) {
+      userProperty.avatar = [propertyData objectForKey:@"avatar"];
+    }
     if ([propertyData objectForKey:@"value"] != nil) {
       userProperty.value = [propertyData objectForKey:@"value"];
     }
@@ -217,6 +220,9 @@
     if ([propertyData objectForKey:@"companyId"] != nil) {
       userProperty.companyId = [propertyData objectForKey:@"companyId"];
     }
+    if ([propertyData objectForKey:@"avatar"] != nil) {
+      userProperty.avatar = [propertyData objectForKey:@"avatar"];
+    }
     if ([propertyData objectForKey:@"value"] != nil) {
       userProperty.value = [propertyData objectForKey:@"value"];
     }
@@ -251,6 +257,9 @@
     }
     if ([propertyData objectForKey:@"companyId"] != nil) {
       userProperty.companyId = [propertyData objectForKey:@"companyId"];
+    }
+    if ([propertyData objectForKey:@"avatar"] != nil) {
+      userProperty.avatar = [propertyData objectForKey:@"avatar"];
     }
     if ([propertyData objectForKey:@"value"] != nil) {
       userProperty.value = [propertyData objectForKey:@"value"];

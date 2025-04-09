@@ -1,3 +1,8 @@
+## 14.5.0
+Added avatar to GleapUserProperty
+Updated native iOS dependency to 14.5.0
+Updated native Android dependency to 14.5.0
+
 ## 14.2.2
 Added lang to GleapUserProperty
 Updated native iOS dependency to 14.2.2

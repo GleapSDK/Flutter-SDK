@@ -253,6 +253,9 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                         if(gleapUserProperty.has("companyName") && !gleapUserProperty.isNull("companyName")) {
                             gleapUserProperties.setCompanyName(gleapUserProperty.getString("companyName"));
                         }
+                        if(gleapUserProperty.has("avatar") && !gleapUserProperty.isNull("avatar")) {
+                            gleapUserProperties.setAvatar(gleapUserProperty.getString("avatar"));
+                        }
                         if(gleapUserProperty.has("customData") && !gleapUserProperty.isNull("customData")) {
                             gleapUserProperties.setCustomData(gleapUserProperty.getJSONObject("customData"));
                         }
@@ -299,6 +302,9 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                     }
                     if (gleapUserProperty.has("companyName") && !gleapUserProperty.isNull("companyName")) {
                         gleapUserProperties.setCompanyName(gleapUserProperty.getString("companyName"));
+                    }
+                    if (gleapUserProperty.has("avatar") && !gleapUserProperty.isNull("avatar")) {
+                        gleapUserProperties.setAvatar(gleapUserProperty.getString("avatar"));
                     }
                     if (gleapUserProperty.has("customData") && !gleapUserProperty.isNull("customData")) {
                         gleapUserProperties.setCustomData(gleapUserProperty.getJSONObject("customData"));
@@ -598,6 +604,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                             map.put("plan", gleapUser.getPlan());
                             map.put("companyName", gleapUser.getCompanyName());
                             map.put("companyId", gleapUser.getCompanyId());
+                            map.put("avatar", gleapUser.getAvatar());
                             map.put("value", gleapUser.getValue());
                             map.put("sla", gleapUser.getValue());
                         }
