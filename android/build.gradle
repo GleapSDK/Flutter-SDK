@@ -35,6 +35,6 @@ android {
     }
 
     dependencies {
-        implementation 'io.gleap:gleap-android-sdk:14.6.0'
+        implementation 'io.gleap:gleap-android-sdk:14.6.1'
     }
 }

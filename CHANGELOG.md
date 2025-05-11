@@ -1,3 +1,7 @@
+## 14.6.1
+Updated native iOS dependency to 14.6.1
+Updated native Android dependency to 14.6.1
+
 ## 14.6.0
 Updated native iOS dependency to 14.6.0
 Updated native Android dependency to 14.6.0
