@@ -1,3 +1,7 @@
+## 14.7.1
+Updated native Android dependency to 14.7.1
+Fixed issue with banners on Android
+
 ## 14.7.0
 Updated native iOS dependency to 14.7.0
 Updated native Android dependency to 14.7.0
