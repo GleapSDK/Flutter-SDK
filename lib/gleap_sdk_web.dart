@@ -224,6 +224,11 @@ class GleapSdkWeb {
             articleId: call.arguments['articleId'],
             showBackButton: call.arguments['showBackButton']);
 
+      case 'askAI':
+        return askAI(
+            question: call.arguments['question'],
+            showBackButton: call.arguments['showBackButton']);
+
       case 'openHelpCenterCollection':
         return openHelpCenterCollection(
             collectionId: call.arguments['collectionId'],
@@ -474,6 +479,13 @@ class GleapSdkWeb {
     required bool showBackButton,
   }) {
     return GleapJsSdkHelper.openHelpCenterArticle(articleId, showBackButton);
+  }
+
+  Future<void> askAI({
+    required String question,
+    required bool showBackButton,
+  }) {
+    return GleapJsSdkHelper.askAI(question, showBackButton);
   }
 
   Future<void> openHelpCenterCollection({

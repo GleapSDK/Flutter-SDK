@@ -117,6 +117,10 @@ external Future<void> openHelpCenter(bool showBackButton);
 external Future<void> openHelpCenterArticle(
     String articleId, bool showBackButton);
 
+@JS('window.Gleap.askAI')
+external Future<void> askAI(
+    String question, bool showBackButton);
+
 @JS('window.Gleap.openHelpCenterCollection')
 external Future<void> openHelpCenterCollection(
     String collectionId, bool showBackButton);

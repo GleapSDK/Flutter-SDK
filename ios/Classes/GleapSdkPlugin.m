@@ -415,6 +415,14 @@
     } @catch (NSException *exception) {
     }
     result(nil);
+  } else if ([@"askAI" isEqualToString:call.method]) {
+    @try {
+      [Gleap
+          askAI:call.arguments[@"question"]
+              andShowBackButton:[call.arguments[@"showBackButton"] boolValue]];
+    } @catch (NSException *exception) {
+    }
+    result(nil);
   } else if ([@"openHelpCenterCollection" isEqualToString:call.method]) {
     @try {
       [Gleap openHelpCenterCollection:call.arguments[@"collectionId"]

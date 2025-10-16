@@ -1124,6 +1124,30 @@ class Gleap {
     });
   }
 
+  /// ### askAI
+  ///
+  /// Asks the AI a question
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> askAI({
+    required String question,
+    required bool showBackButton,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'askAI is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('askAI', {
+      'question': question,
+      'showBackButton': showBackButton,
+    });
+  }
+
   /// ### openHelpCenterCollection
   ///
   /// Opens the help center collection within the widget

@@ -1,3 +1,8 @@
+## 15.0.0
+Updated native iOS dependency to 15.0.0
+Updated native Android dependency to 15.0.0
+Added askAI to directly ask Kai a question by code.
+
 ## 14.8.3
 Updated native Android dependency to 14.8.4
 
