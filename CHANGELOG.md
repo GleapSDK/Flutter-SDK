@@ -1,3 +1,8 @@
+## 15.2.0
+Added setNotificationContainerOffset
+Updated native iOS dependency to 15.2.0
+Updated native Android dependency to 15.2.0
+
 ## 15.0.2
 Updated native Android dependency to 15.0.2
 

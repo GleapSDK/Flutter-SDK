@@ -263,6 +263,12 @@ class GleapSdkWeb {
           disable: call.arguments['disable'],
         );
 
+      case 'setNotificationContainerOffset':
+        return setNotificationContainerOffset(
+          x: call.arguments['x'],
+          y: call.arguments['y'],
+        );
+
       case 'setNetworkLogsBlacklist':
         return setNetworkLogsBlacklist(
           networkLogBlacklist: call.arguments['blacklist'],
@@ -529,6 +535,13 @@ class GleapSdkWeb {
 
   Future<void> setDisableInAppNotifications({required bool disable}) async {
     return GleapJsSdkHelper.setDisableInAppNotifications(disable);
+  }
+
+  Future<void> setNotificationContainerOffset({
+    required num x,
+    required num y,
+  }) async {
+    // Intentionally left blank – not supported in JS SDK.
   }
 
   Future<void> setNetworkLogsBlacklist({

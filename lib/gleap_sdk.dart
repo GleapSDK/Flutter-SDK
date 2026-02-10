@@ -1373,6 +1373,39 @@ class Gleap {
     );
   }
 
+  /// ### setNotificationContainerOffset
+  ///
+  /// Sets an offset for the in-app notification container.
+  ///
+  /// **Params**
+  ///
+  /// [x] Horizontal offset.
+  ///
+  /// [y] Vertical offset.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web (no-op on Web)
+  static Future<void> setNotificationContainerOffset({
+    required double x,
+    required double y,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setNotificationContainerOffset is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'setNotificationContainerOffset',
+      {
+        'x': x,
+        'y': y,
+      },
+    );
+  }
+
   /// ### setDisableInAppNotifications
   ///
   /// Disables the in-app notifications

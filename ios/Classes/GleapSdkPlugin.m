@@ -459,6 +459,14 @@
   } else if ([@"setDisableInAppNotifications" isEqualToString:call.method]) {
     [Gleap setDisableInAppNotifications:[call.arguments[@"disable"] boolValue]];
     result(nil);
+  } else if ([@"setNotificationContainerOffset" isEqualToString:call.method]) {
+    NSNumber *x = call.arguments[@"x"];
+    NSNumber *y = call.arguments[@"y"];
+
+    if (x != nil && y != nil) {
+      [Gleap setNotificationContainerOffsetX:[x integerValue] y:[y integerValue]];
+    }
+    result(nil);
   } else if ([@"openConversation" isEqualToString:call.method]) {
     [Gleap openConversation:call.arguments[@"shareToken"]];
     result(nil);

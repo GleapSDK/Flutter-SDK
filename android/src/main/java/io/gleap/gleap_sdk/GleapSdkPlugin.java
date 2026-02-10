@@ -650,6 +650,20 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 result.success(true);
                 break;
 
+            case "setNotificationContainerOffset":
+                try {
+                    Number x = (Number) call.argument("x");
+                    Number y = (Number) call.argument("y");
+
+                    if (x != null && y != null) {
+                        Gleap.getInstance().setNotificationContainerOffset(x.intValue(), y.intValue());
+                    }
+                } catch (Exception ignore) {
+                }
+
+                result.success(null);
+                break;
+
             case "openConversation":
                 Gleap.getInstance().openConversation(call.argument("shareToken"));
                 result.success(true);
