@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'ai_tool_params_model.g.dart';
 
+// ignore: constant_identifier_names
 enum AIParamType { STRING, NUMBER, BOOLEAN }
 
 String _getAIParamTypeValue(AIParamType paramType) {

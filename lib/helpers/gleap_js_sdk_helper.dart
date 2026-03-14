@@ -1,178 +1,170 @@
 @JS()
 library gleap;
 
-import 'package:js/js.dart';
+import 'dart:js_interop';
 
 @JS('window.Gleap.initialize')
-external Future<void> initialize(
-  String token,
-);
+external void initialize(JSString token);
 
 @JS('window.Gleap.identify')
-external Future<void> identify(
-  String userId,
-  String? userData,
-  String? userHash,
+external void identify(
+  JSString userId,
+  JSString? userData,
+  JSString? userHash,
 );
 
 @JS('window.Gleap.updateContact')
-external Future<void> updateContact(
-  dynamic customerData,
-);
+external void updateContact(JSAny? customerData);
 
 @JS('window.Gleap.clearIdentity')
-external Future<void> clearIdentity();
+external void clearIdentity();
 
 @JS('window.Gleap.attachCustomData')
-external Future<void> attachCustomData(String customData);
+external void attachCustomData(JSString customData);
 
 @JS('window.Gleap.preFillForm')
-external Future<void> preFillForm(String formData);
+external void preFillForm(JSString formData);
 
 @JS('window.Gleap.setCustomData')
-external Future<void> setCustomData(String key, String value);
+external void setCustomData(JSString key, JSString value);
 
 @JS('window.Gleap.removeCustomData')
-external Future<void> removeCustomData(String key);
+external void removeCustomData(JSString key);
 
 @JS('window.Gleap.clearCustomData')
-external Future<void> clearCustomData();
+external void clearCustomData();
 
 @JS('Gleap.registerCustomAction')
-external void registerCustomAction(
-    void Function(dynamic action) callbackHandler);
+external void registerCustomAction(JSFunction callbackHandler);
 
 @JS('window.Gleap.on')
-external void registerEvents(
-    String name, void Function(dynamic data) callbackHandler);
+external void registerEvents(JSString name, JSFunction callbackHandler);
 
 @JS('window.Gleap.trackEvent')
-external Future<void> trackEvent(String event, String? data);
+external void trackEvent(JSString event, JSString? data);
 
 @JS('window.Gleap.sendSilentCrashReport')
-external Future<void> sendSilentCrashReport(
-  String description,
-  String severity,
-  String excludeData,
+external void sendSilentCrashReport(
+  JSString description,
+  JSString severity,
+  JSString excludeData,
 );
 
 @JS('window.Gleap.open')
-external Future<void> open();
+external void open();
 
 @JS('window.Gleap.close')
-external Future<void> close();
+external void close();
 
 @JS('window.Gleap.startFeedbackFlow')
-external Future<void> startFeedbackFlow(String flow, bool showBackButton);
+external void startFeedbackFlow(JSString flow, JSBoolean showBackButton);
 
 @JS('window.Gleap.startConversation')
-external Future<void> startConversation();
+external void startConversation();
 
 @JS('window.Gleap.setLanguage')
-external Future<void> setLanguage(String language);
+external void setLanguage(JSString language);
 
 @JS('window.Gleap.isOpened')
-external Future<bool> isOpened();
+external JSBoolean isOpened();
 
 @JS('window.Gleap.setFrameUrl')
-external Future<void> setFrameUrl(String url);
+external void setFrameUrl(JSString url);
 
 @JS('window.Gleap.setApiUrl')
-external Future<void> setApiUrl(String url);
+external void setApiUrl(JSString url);
 
 @JS('window.Gleap.log')
-external Future<void> log(String message, String? logLevel);
+external void log(JSString message, JSString? logLevel);
 
 @JS('window.Gleap.disableConsoleLogOverwrite')
-external Future<void> disableConsoleLog();
+external void disableConsoleLog();
 
 @JS('window.Gleap.attachNetworkLogs')
-external Future<void> attachNetworkLogs(String networkLogs);
+external void attachNetworkLogs(JSString networkLogs);
 
 @JS('window.Gleap.showFeedbackButton')
-external Future<void> showFeedbackButton(bool visible);
+external void showFeedbackButton(JSBoolean visible);
 
 @JS('window.Gleap.openChecklists')
-external Future<void> openChecklists(bool showBackButton);
+external void openChecklists(JSBoolean showBackButton);
 
 @JS('window.Gleap.openChecklist')
-external Future<void> openChecklist(String checklistId, bool showBackButton);
+external void openChecklist(JSString checklistId, JSBoolean showBackButton);
 
 @JS('window.Gleap.startChecklist')
-external Future<void> startChecklist(String outboundId, bool showBackButton);
+external void startChecklist(JSString outboundId, JSBoolean showBackButton);
 
 @JS('window.Gleap.openNews')
-external Future<void> openNews(bool showBackButton);
+external void openNews(JSBoolean showBackButton);
 
 @JS('window.Gleap.openNewsArticle')
-external Future<void> openNewsArticle(String articleId, bool showBackButton);
+external void openNewsArticle(JSString articleId, JSBoolean showBackButton);
 
 @JS('window.Gleap.openFeatureRequests')
-external Future<void> openFeatureRequests(bool showBackButton);
+external void openFeatureRequests(JSBoolean showBackButton);
 
 @JS('window.Gleap.openHelpCenter')
-external Future<void> openHelpCenter(bool showBackButton);
+external void openHelpCenter(JSBoolean showBackButton);
 
 @JS('window.Gleap.openHelpCenterArticle')
-external Future<void> openHelpCenterArticle(
-    String articleId, bool showBackButton);
+external void openHelpCenterArticle(
+    JSString articleId, JSBoolean showBackButton);
 
 @JS('window.Gleap.askAI')
-external Future<void> askAI(
-    String question, bool showBackButton);
+external void askAI(JSString question, JSBoolean showBackButton);
 
 @JS('window.Gleap.openHelpCenterCollection')
-external Future<void> openHelpCenterCollection(
-    String collectionId, bool showBackButton);
+external void openHelpCenterCollection(
+    JSString collectionId, JSBoolean showBackButton);
 
 @JS('window.Gleap.searchHelpCenter')
-external Future<void> searchHelpCenter(String term, bool showBackButton);
+external void searchHelpCenter(JSString term, JSBoolean showBackButton);
 
 @JS('window.Gleap.isUserIdentified')
-external Future<bool> isUserIdentified();
+external JSBoolean isUserIdentified();
 
 @JS('window.Gleap.getIdentity')
-external Future<dynamic> getIdentity();
+external JSAny? getIdentity();
 
 @JS('window.Gleap.showSurvey')
-external Future<void> showSurvey(String surveyId, String format);
+external void showSurvey(JSString surveyId, JSString format);
 
 @JS('window.Gleap.setTags')
-external Future<void> setTags(List<dynamic> tags);
+external void setTags(JSArray tags);
 
 @JS('window.Gleap.setDisableInAppNotifications')
-external Future<void> setDisableInAppNotifications(bool disable);
+external void setDisableInAppNotifications(JSBoolean disable);
 
 @JS('JSON.stringify')
-external String stringify(Object obj);
+external JSString stringify(JSAny obj);
 
 @JS('window.Gleap.setNetworkLogsBlacklist')
-external Future<void> setNetworkLogsBlacklist(
-    List<dynamic> networkLogBlacklist);
+external void setNetworkLogsBlacklist(JSArray networkLogBlacklist);
 
 @JS('window.Gleap.setNetworkLogPropsToIgnore')
-external Future<void> setNetworkLogPropsToIgnore(List<dynamic> filters);
+external void setNetworkLogPropsToIgnore(JSArray filters);
 
 @JS('window.Gleap.setAiTools')
-external Future<void> setAiTools(List<dynamic> tools);
+external void setAiTools(JSAny tools);
 
 @JS('window.Gleap.setTicketAttribute')
-external Future<void> setTicketAttribute(String key, dynamic value);
+external void setTicketAttribute(JSString key, JSAny? value);
 
 @JS('window.Gleap.unsetTicketAttribute')
-external Future<void> unsetTicketAttribute(String key);
+external void unsetTicketAttribute(JSString key);
 
 @JS('window.Gleap.clearTicketAttributes')
-external Future<void> clearTicketAttributes();
+external void clearTicketAttributes();
 
 @JS('window.Gleap.startBot')
-external Future<void> startBot(String botId);
+external void startBot(JSString botId);
 
 @JS('window.Gleap.openConversation')
-external Future<void> openConversation(String shareToken);
+external void openConversation(JSString shareToken);
 
 @JS('window.Gleap.openConversations')
-external Future<void> openConversations();
+external void openConversations();
 
 @JS('window.Gleap.startClassicForm')
-external Future<void> startClassicForm(String formId);
+external void startClassicForm(JSString formId);

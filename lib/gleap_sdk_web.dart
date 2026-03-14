@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:js';
-import 'dart:js_util';
+import 'dart:js_interop';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 // ignore: library_prefixes
 import 'package:gleap_sdk/helpers/gleap_js_sdk_helper.dart' as GleapJsSdkHelper;
-import 'package:js/js.dart';
 
 class GleapSdkWeb {
   static void registerWith(Registrar registrar) {
@@ -23,77 +21,86 @@ class GleapSdkWeb {
   }
 
   static void registerEvents(MethodChannel channel) {
-    void Function(dynamic data) open = allowInterop((dynamic data) {
+    void open(JSAny? data) {
       channel.invokeMethod('widgetOpened');
-    });
-    GleapJsSdkHelper.registerEvents('open', open);
+    }
+    GleapJsSdkHelper.registerEvents('open'.toJS, open.toJS);
 
-    void Function(dynamic data) close = allowInterop((dynamic data) {
+    void close(JSAny? data) {
       channel.invokeMethod('widgetClosed');
-    });
-    GleapJsSdkHelper.registerEvents('close', close);
+    }
+    GleapJsSdkHelper.registerEvents('close'.toJS, close.toJS);
 
-    void Function(dynamic data) feedbackSent = allowInterop((dynamic data) {
+    void feedbackSent(JSAny? data) {
       channel.invokeMethod('feedbackSent');
-    });
-    GleapJsSdkHelper.registerEvents('feedback-sent', feedbackSent);
+    }
+    GleapJsSdkHelper.registerEvents('feedback-sent'.toJS, feedbackSent.toJS);
 
-    void Function(dynamic data) outboundSent = allowInterop((dynamic data) {
+    void outboundSent(JSAny? data) {
       channel.invokeMethod('outboundSent');
-    });
-    GleapJsSdkHelper.registerEvents('outbound-sent', outboundSent);
+    }
+    GleapJsSdkHelper.registerEvents('outbound-sent'.toJS, outboundSent.toJS);
 
-    void Function(dynamic data) errorWhileSending =
-        allowInterop((dynamic data) {
+    void errorWhileSending(JSAny? data) {
       channel.invokeMethod('feedbackSendingFailed');
-    });
-    GleapJsSdkHelper.registerEvents('error-while-sending', errorWhileSending);
+    }
+    GleapJsSdkHelper.registerEvents(
+        'error-while-sending'.toJS, errorWhileSending.toJS);
 
-    void Function(dynamic data) initialized = allowInterop((dynamic data) {
+    void initialized(JSAny? data) {
       channel.invokeMethod('initialized');
-    });
-    GleapJsSdkHelper.registerEvents('initialized', initialized);
+    }
+    GleapJsSdkHelper.registerEvents('initialized'.toJS, initialized.toJS);
 
-    void Function(dynamic data) feedbackFlowStarted =
-        allowInterop((dynamic data) {
-      final String strifiedData = GleapJsSdkHelper.stringify(data as Object);
+    void feedbackFlowStarted(JSAny? data) {
+      final String strifiedData =
+          GleapJsSdkHelper.stringify(data!).toDart;
 
       channel.invokeMethod(
         'feedbackFlowStarted',
         jsonDecode(strifiedData),
       );
-    });
-    GleapJsSdkHelper.registerEvents('flow-started', feedbackFlowStarted);
+    }
+    GleapJsSdkHelper.registerEvents(
+        'flow-started'.toJS, feedbackFlowStarted.toJS);
 
-    void Function(dynamic data) customActionCalled =
-        allowInterop((dynamic data) {
+    void customActionCalled(JSAny? data) {
+      final String strifiedData =
+          GleapJsSdkHelper.stringify(data!).toDart;
+      final Map<String, dynamic> parsed = jsonDecode(strifiedData);
+
       channel.invokeMethod(
         'customActionTriggered',
-        <String, dynamic>{'name': data.name},
+        <String, dynamic>{'name': parsed['name']},
       );
-    });
-    GleapJsSdkHelper.registerCustomAction(customActionCalled);
+    }
+    GleapJsSdkHelper.registerCustomAction(customActionCalled.toJS);
 
-    void Function(dynamic data) registerPushMessageGroup =
-        allowInterop((dynamic data) {
-      channel.invokeMethod('registerPushMessageGroup', data);
-    });
+    void registerPushMessageGroup(JSAny? data) {
+      final String strifiedData =
+          GleapJsSdkHelper.stringify(data!).toDart;
+      channel.invokeMethod('registerPushMessageGroup', jsonDecode(strifiedData));
+    }
     GleapJsSdkHelper.registerEvents(
-        'register-pushmessage-group', registerPushMessageGroup);
+        'register-pushmessage-group'.toJS, registerPushMessageGroup.toJS);
 
-    void Function(dynamic data) unregisterPushMessageGroup =
-        allowInterop((dynamic data) {
-      channel.invokeMethod('unregisterPushMessageGroup', data);
-    });
+    void unregisterPushMessageGroup(JSAny? data) {
+      final String strifiedData =
+          GleapJsSdkHelper.stringify(data!).toDart;
+      channel.invokeMethod(
+          'unregisterPushMessageGroup', jsonDecode(strifiedData));
+    }
     GleapJsSdkHelper.registerEvents(
-        'unregister-pushmessage-group', unregisterPushMessageGroup);
+        'unregister-pushmessage-group'.toJS, unregisterPushMessageGroup.toJS);
 
-    void Function(dynamic data) toolExecution = allowInterop((dynamic data) {
-      final String strifiedData = GleapJsSdkHelper.stringify(data as Object);
+    void toolExecution(JSAny? data) {
+      final String strifiedData =
+          GleapJsSdkHelper.stringify(data!).toDart;
 
       channel.invokeMethod('toolExecution', strifiedData);
-    });
-    GleapJsSdkHelper.registerEvents('tool-execution', toolExecution);
+    }
+    GleapJsSdkHelper.registerEvents(
+        'tool-execution'.toJS, toolExecution.toJS);
   }
 
   Future<dynamic> handleMethodCall(MethodCall call) async {
@@ -315,7 +322,7 @@ class GleapSdkWeb {
   }
 
   Future<void> initialize({required String token}) async {
-    await GleapJsSdkHelper.initialize(token);
+    GleapJsSdkHelper.initialize(token.toJS);
   }
 
   Future<void> identify({
@@ -323,55 +330,59 @@ class GleapSdkWeb {
     dynamic userProperties,
     String? userHash,
   }) async {
-    String? stringifiedHashMap = jsonEncode(userProperties);
+    String stringifiedHashMap = jsonEncode(userProperties);
 
-    await GleapJsSdkHelper.identify(userId, stringifiedHashMap, userHash);
+    GleapJsSdkHelper.identify(
+      userId.toJS,
+      stringifiedHashMap.toJS,
+      userHash?.toJS,
+    );
   }
 
   Future<void> updateContact({dynamic userProperties}) async {
-    String? stringifiedHashMap = jsonEncode(userProperties);
+    String stringifiedHashMap = jsonEncode(userProperties);
 
-    await GleapJsSdkHelper.updateContact(stringifiedHashMap);
+    GleapJsSdkHelper.updateContact(stringifiedHashMap.toJS);
   }
 
   Future<void> clearIdentity() async {
-    await GleapJsSdkHelper.clearIdentity();
+    GleapJsSdkHelper.clearIdentity();
   }
 
   Future<void> preFillForm({required dynamic formData}) async {
-    String? stringifiedHashMap = jsonEncode(formData);
+    String stringifiedHashMap = jsonEncode(formData);
 
-    await GleapJsSdkHelper.preFillForm(stringifiedHashMap);
+    GleapJsSdkHelper.preFillForm(stringifiedHashMap.toJS);
   }
 
   Future<void> attachCustomData({required dynamic customData}) async {
-    String? stringifiedHashMap = jsonEncode(customData);
+    String stringifiedHashMap = jsonEncode(customData);
 
-    await GleapJsSdkHelper.attachCustomData(stringifiedHashMap);
+    GleapJsSdkHelper.attachCustomData(stringifiedHashMap.toJS);
   }
 
   Future<void> setCustomData({
     required String key,
     required String value,
   }) async {
-    await GleapJsSdkHelper.setCustomData(key, value);
+    GleapJsSdkHelper.setCustomData(key.toJS, value.toJS);
   }
 
   Future<void> removeCustomData({required String key}) async {
-    await GleapJsSdkHelper.removeCustomData(key);
+    GleapJsSdkHelper.removeCustomData(key.toJS);
   }
 
   Future<void> clearCustomData() async {
-    await GleapJsSdkHelper.clearCustomData();
+    GleapJsSdkHelper.clearCustomData();
   }
 
   Future<void> trackEvent({
     required String name,
     dynamic data,
   }) async {
-    String? stringifiedHashMap = jsonEncode(data);
+    String stringifiedHashMap = jsonEncode(data);
 
-    await GleapJsSdkHelper.trackEvent(name, stringifiedHashMap);
+    GleapJsSdkHelper.trackEvent(name.toJS, stringifiedHashMap.toJS);
   }
 
   Future<void> sendSilentCrashReport({
@@ -379,145 +390,146 @@ class GleapSdkWeb {
     required String severity,
     dynamic excludeData = const {},
   }) async {
-    String? stringifiedHashMap = jsonEncode(excludeData);
+    String stringifiedHashMap = jsonEncode(excludeData);
 
-    await GleapJsSdkHelper.sendSilentCrashReport(
-      description,
-      severity,
-      stringifiedHashMap,
+    GleapJsSdkHelper.sendSilentCrashReport(
+      description.toJS,
+      severity.toJS,
+      stringifiedHashMap.toJS,
     );
   }
 
   Future<void> openWidget() async {
-    await GleapJsSdkHelper.open();
+    GleapJsSdkHelper.open();
   }
 
   Future<void> closeWidget() async {
-    await GleapJsSdkHelper.close();
+    GleapJsSdkHelper.close();
   }
 
   Future<void> startFeedbackFlow({
     required String action,
     required bool showBackButton,
   }) async {
-    await GleapJsSdkHelper.startFeedbackFlow(action, showBackButton);
+    GleapJsSdkHelper.startFeedbackFlow(action.toJS, showBackButton.toJS);
   }
 
   Future<void> startConversation() async {
-    await GleapJsSdkHelper.startConversation();
+    GleapJsSdkHelper.startConversation();
   }
 
   Future<void> setLanguage({required String language}) async {
-    await GleapJsSdkHelper.setLanguage(language);
+    GleapJsSdkHelper.setLanguage(language.toJS);
   }
 
   Future<bool> isOpened() async {
-    return await GleapJsSdkHelper.isOpened();
+    return GleapJsSdkHelper.isOpened().toDart;
   }
 
   Future<void> setFrameUrl({required String url}) async {
-    await GleapJsSdkHelper.setFrameUrl(url);
+    GleapJsSdkHelper.setFrameUrl(url.toJS);
   }
 
   Future<void> setApiUrl({required String url}) async {
-    await GleapJsSdkHelper.setApiUrl(url);
+    GleapJsSdkHelper.setApiUrl(url.toJS);
   }
 
   Future<void> log({required String message, String? logLevel}) async {
-    await GleapJsSdkHelper.log(message, logLevel);
+    GleapJsSdkHelper.log(message.toJS, logLevel?.toJS);
   }
 
   Future<void> disableConsoleLog() async {
-    await GleapJsSdkHelper.disableConsoleLog();
+    GleapJsSdkHelper.disableConsoleLog();
   }
 
   Future<void> attachNetworkLogs({
     required List<dynamic> networkLogs,
   }) async {
-    await GleapJsSdkHelper.attachNetworkLogs(
-      json.encode(networkLogs),
+    GleapJsSdkHelper.attachNetworkLogs(
+      json.encode(networkLogs).toJS,
     );
   }
 
-  Future<void> showFeedbackButton({required bool visible}) {
-    return GleapJsSdkHelper.showFeedbackButton(visible);
+  Future<void> showFeedbackButton({required bool visible}) async {
+    GleapJsSdkHelper.showFeedbackButton(visible.toJS);
   }
 
-  Future<void> openChecklists({required bool showBackButton}) {
-    return GleapJsSdkHelper.openChecklists(showBackButton);
+  Future<void> openChecklists({required bool showBackButton}) async {
+    GleapJsSdkHelper.openChecklists(showBackButton.toJS);
   }
 
   Future<void> openChecklist({
     required String checklistId,
     required bool showBackButton,
-  }) {
-    return GleapJsSdkHelper.openChecklist(checklistId, showBackButton);
+  }) async {
+    GleapJsSdkHelper.openChecklist(checklistId.toJS, showBackButton.toJS);
   }
 
   Future<void> startChecklist({
     required String outboundId,
     required bool showBackButton,
-  }) {
-    return GleapJsSdkHelper.startChecklist(outboundId, showBackButton);
+  }) async {
+    GleapJsSdkHelper.startChecklist(outboundId.toJS, showBackButton.toJS);
   }
 
-  Future<void> openNews({required bool showBackButton}) {
-    return GleapJsSdkHelper.openNews(showBackButton);
+  Future<void> openNews({required bool showBackButton}) async {
+    GleapJsSdkHelper.openNews(showBackButton.toJS);
   }
 
   Future<void> openNewsArticle({
     required String articleId,
     required bool showBackButton,
-  }) {
-    return GleapJsSdkHelper.openNewsArticle(articleId, showBackButton);
+  }) async {
+    GleapJsSdkHelper.openNewsArticle(articleId.toJS, showBackButton.toJS);
   }
 
-  Future<void> openFeatureRequests({required bool showBackButton}) {
-    return GleapJsSdkHelper.openFeatureRequests(showBackButton);
+  Future<void> openFeatureRequests({required bool showBackButton}) async {
+    GleapJsSdkHelper.openFeatureRequests(showBackButton.toJS);
   }
 
-  Future<void> openHelpCenter({required bool showBackButton}) {
-    return GleapJsSdkHelper.openHelpCenter(showBackButton);
+  Future<void> openHelpCenter({required bool showBackButton}) async {
+    GleapJsSdkHelper.openHelpCenter(showBackButton.toJS);
   }
 
   Future<void> openHelpCenterArticle({
     required String articleId,
     required bool showBackButton,
-  }) {
-    return GleapJsSdkHelper.openHelpCenterArticle(articleId, showBackButton);
+  }) async {
+    GleapJsSdkHelper.openHelpCenterArticle(articleId.toJS, showBackButton.toJS);
   }
 
   Future<void> askAI({
     required String question,
     required bool showBackButton,
-  }) {
-    return GleapJsSdkHelper.askAI(question, showBackButton);
+  }) async {
+    GleapJsSdkHelper.askAI(question.toJS, showBackButton.toJS);
   }
 
   Future<void> openHelpCenterCollection({
     required String collectionId,
     required bool showBackButton,
-  }) {
-    return GleapJsSdkHelper.openHelpCenterCollection(
-      collectionId,
-      showBackButton,
+  }) async {
+    GleapJsSdkHelper.openHelpCenterCollection(
+      collectionId.toJS,
+      showBackButton.toJS,
     );
   }
 
   Future<void> searchHelpCenter({
     required String term,
     required bool showBackButton,
-  }) {
-    return GleapJsSdkHelper.searchHelpCenter(term, showBackButton);
+  }) async {
+    GleapJsSdkHelper.searchHelpCenter(term.toJS, showBackButton.toJS);
   }
 
   Future<bool> isUserIdentified() async {
-    return await GleapJsSdkHelper.isUserIdentified();
+    return GleapJsSdkHelper.isUserIdentified().toDart;
   }
 
   Future<dynamic> getIdentity() async {
-    final dynamic identity = await GleapJsSdkHelper.getIdentity();
-    final String strifiedData = GleapJsSdkHelper.stringify(identity);
+    final JSAny? identity = GleapJsSdkHelper.getIdentity();
+    if (identity == null) return null;
+    final String strifiedData = GleapJsSdkHelper.stringify(identity).toDart;
 
     return jsonDecode(strifiedData);
   }
@@ -526,15 +538,15 @@ class GleapSdkWeb {
     required String surveyId,
     required String format,
   }) async {
-    return GleapJsSdkHelper.showSurvey(surveyId, format);
+    GleapJsSdkHelper.showSurvey(surveyId.toJS, format.toJS);
   }
 
   Future<void> setTags({required List<dynamic> tags}) async {
-    return GleapJsSdkHelper.setTags(tags);
+    GleapJsSdkHelper.setTags(tags.jsify() as JSArray);
   }
 
   Future<void> setDisableInAppNotifications({required bool disable}) async {
-    return GleapJsSdkHelper.setDisableInAppNotifications(disable);
+    GleapJsSdkHelper.setDisableInAppNotifications(disable.toJS);
   }
 
   Future<void> setNotificationContainerOffset({
@@ -547,47 +559,48 @@ class GleapSdkWeb {
   Future<void> setNetworkLogsBlacklist({
     required List<dynamic> networkLogBlacklist,
   }) async {
-    return GleapJsSdkHelper.setNetworkLogsBlacklist(networkLogBlacklist);
+    GleapJsSdkHelper.setNetworkLogsBlacklist(
+            networkLogBlacklist.jsify() as JSArray);
   }
 
   Future<void> setNetworkLogPropsToIgnore({
     required List<dynamic> filters,
   }) async {
-    return GleapJsSdkHelper.setNetworkLogPropsToIgnore(filters);
+    GleapJsSdkHelper.setNetworkLogPropsToIgnore(filters.jsify() as JSArray);
   }
 
   Future<void> setAiTools({required List<dynamic> tools}) async {
-    return GleapJsSdkHelper.setAiTools(jsify(tools));
+    GleapJsSdkHelper.setAiTools(tools.jsify()!);
   }
 
   Future<void> setTicketAttribute({
     required String key,
     required dynamic value,
   }) async {
-    return GleapJsSdkHelper.setTicketAttribute(key, value);
+    GleapJsSdkHelper.setTicketAttribute(key.toJS, (value as Object?)?.jsify());
   }
 
   Future<void> unsetTicketAttribute({required String key}) async {
-    return GleapJsSdkHelper.unsetTicketAttribute(key);
+    GleapJsSdkHelper.unsetTicketAttribute(key.toJS);
   }
 
   Future<void> clearTicketAttributes() async {
-    return GleapJsSdkHelper.clearTicketAttributes();
+    GleapJsSdkHelper.clearTicketAttributes();
   }
 
   Future<void> startBot({required String botId}) async {
-    return GleapJsSdkHelper.startBot(botId);
+    GleapJsSdkHelper.startBot(botId.toJS);
   }
 
   Future<void> openConversation({required String shareToken}) async {
-    return GleapJsSdkHelper.openConversation(shareToken);
+    GleapJsSdkHelper.openConversation(shareToken.toJS);
   }
 
   Future<void> openConversations() async {
-    return GleapJsSdkHelper.openConversations();
+    GleapJsSdkHelper.openConversations();
   }
 
   Future<void> startClassicForm({required String formId}) async {
-    return GleapJsSdkHelper.startClassicForm(formId);
+    GleapJsSdkHelper.startClassicForm(formId.toJS);
   }
 }
