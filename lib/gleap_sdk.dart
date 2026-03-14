@@ -21,8 +21,6 @@ String _getSeverityValue(Severity bugPriority) {
       return "MEDIUM";
     case Severity.HIGH:
       return "HIGH";
-    default:
-      return "MEDIUM";
   }
 }
 
@@ -34,8 +32,6 @@ String _getActivationMethodValue(ActivationMethod activationMethod) {
       return "SHAKE";
     case ActivationMethod.SCREENSHOT:
       return "SCREENSHOT";
-    default:
-      return "SHAKE";
   }
 }
 
@@ -49,8 +45,6 @@ String _getLogSevernityValue(LogLevel logSevernity) {
       return "WARNING";
     case LogLevel.INFO:
       return "INFO";
-    default:
-      return "INFO";
   }
 }
 
@@ -62,8 +56,6 @@ String _getSurveyFormatValue(SurveyFormat surveyFormat) {
       return "survey_full";
     case SurveyFormat.SURVEY:
       return "survey";
-    default:
-      return "survey_full";
   }
 }
 
@@ -148,7 +140,7 @@ class Gleap {
   /// **Available Platforms**
   ///
   /// Android, iOS, Web
-  @deprecated
+  @Deprecated('Use startClassicForm instead')
   static Future<void> startFeedbackFlow({
     required String feedbackAction,
     bool showBackButton = true,

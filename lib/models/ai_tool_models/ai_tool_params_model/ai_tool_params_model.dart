@@ -13,8 +13,6 @@ String _getAIParamTypeValue(AIParamType paramType) {
       return "number";
     case AIParamType.BOOLEAN:
       return "boolean";
-    default:
-      return "string";
   }
 }
 

@@ -1,6 +1,7 @@
 import 'dart:collection';
 
-class RingBuffer<E> extends DoubleLinkedQueue<E> {
+class RingBuffer<E> {
+  final DoubleLinkedQueue<E> _queue = DoubleLinkedQueue<E>();
   int limit;
 
   RingBuffer(this.limit);
@@ -9,11 +10,18 @@ class RingBuffer<E> extends DoubleLinkedQueue<E> {
     this.limit = limit;
   }
 
-  @override
   void add(E value) {
-    super.add(value);
-    while (super.length > limit) {
-      super.removeFirst();
+    _queue.add(value);
+    while (_queue.length > limit) {
+      _queue.removeFirst();
     }
   }
+
+  int get length => _queue.length;
+
+  void clear() => _queue.clear();
+
+  Iterator<E> get iterator => _queue.iterator;
+
+  List<E> toList({bool growable = true}) => _queue.toList(growable: growable);
 }
