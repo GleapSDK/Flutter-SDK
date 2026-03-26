@@ -1,3 +1,9 @@
+## 15.2.6
+Updated native Android dependency to 15.2.6
+
+## 15.2.5
+Updated native Android dependency to 15.2.5
+
 ## 15.2.4
 Updated native iOS dependency to 15.2.3
 
