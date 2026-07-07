@@ -494,62 +494,31 @@
     [Gleap
         setNetworkLogPropsToIgnore:call.arguments[@"networkLogPropsToIgnore"]];
     result(nil);
-  } else if ([@"setAiTools" isEqualToString:call.method]) {
-    @try {
-      NSArray *toolsArray = call.arguments[@"tools"];
-      NSMutableArray *aiTools = [[NSMutableArray alloc] init];
-
-      for (NSDictionary *toolDict in toolsArray) {
-        // Safely unwrap tool dictionary properties
-        NSString *name = toolDict[@"name"];
-        NSString *toolDescription = toolDict[@"description"];
-        NSString *response = toolDict[@"response"];
-        NSString *executionType = toolDict[@"executionType"];
-        NSArray *parametersArray = toolDict[@"parameters"];
-
-        if (name && toolDescription && response && parametersArray) {
-          NSMutableArray *parameters = [[NSMutableArray alloc] init];
-
-          for (NSDictionary *paramDict in parametersArray) {
-            // Safely unwrap parameter dictionary properties
-            NSString *paramName = paramDict[@"name"];
-            NSString *paramDescription = paramDict[@"description"];
-            NSString *type = paramDict[@"type"];
-            NSNumber *required = paramDict[@"required"];
-            NSArray *enums = paramDict[@"enum"];
-            if (enums == nil) {
-              enums = [[NSArray alloc] init];
-            }
-
-            // Check for required properties in parameter dictionary
-            if (paramName && paramDescription && type && required) {
-              GleapAiToolParameter *parameter = [[GleapAiToolParameter alloc]
-                          initWithName:paramName
-                  parameterDescription:paramDescription
-                                  type:type
-                              required:[required boolValue]
-                                 enums:enums];
-
-              [parameters addObject:parameter];
-            }
-          }
-
-          GleapAiTool *aiTool =
-              [[GleapAiTool alloc] initWithName:name
-                                toolDescription:toolDescription
-                                       response:response
-                                  executionType:executionType
-                                     parameters:parameters];
-
-          [aiTools addObject:aiTool];
+  } else if ([@"registerAgentTool" isEqualToString:call.method]) {
+    NSString *toolName = call.arguments[@"name"];
+    __weak typeof(self) weakSelf = self;
+    [Gleap registerAgentTool:toolName
+                     handler:^(NSDictionary *params,
+                               GleapAgentToolCompletion completion) {
+      dispatch_async(dispatch_get_main_queue(), ^{
+        if (weakSelf.methodChannel == nil) {
+          completion(@"Tool execution failed: bridge error.");
+          return;
         }
-      }
 
-      [Gleap setAiTools:aiTools];
-      result(nil);
-    } @catch (NSException *exception) {
-      result(nil);
-    }
+        [weakSelf.methodChannel
+            invokeMethod:@"agentToolExecution"
+               arguments:@{@"name" : toolName, @"params" : params ?: @{}}
+                  result:^(id _Nullable channelResult) {
+          if ([channelResult isKindOfClass:[NSString class]]) {
+            completion(channelResult);
+          } else {
+            completion(@"Tool execution failed: bridge error.");
+          }
+        }];
+      });
+    }];
+    result(nil);
   } else if ([@"setTicketAttribute" isEqualToString:call.method]) {
     [Gleap setTicketAttributeWithKey:call.arguments[@"key"]
                                value:call.arguments[@"value"]];

@@ -6,7 +6,6 @@ import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gleap_sdk/models/ai_tool_models/ai_tool_model/ai_tool_model.dart';
 import 'package:gleap_sdk/models/callback_item_model/callback_item_model.dart';
 import 'package:gleap_sdk/models/gleap_network_log_models/gleap_network_log_model/gleap_network_log_model.dart';
 import 'package:gleap_sdk/models/gleap_user_property_model/gleap_user_property_model.dart';
@@ -59,12 +58,48 @@ String _getSurveyFormatValue(SurveyFormat surveyFormat) {
   }
 }
 
+typedef GleapAgentToolHandler = FutureOr<dynamic> Function(dynamic params);
+
 class Gleap {
   static const MethodChannel _channel = MethodChannel('gleap_sdk');
   static final List<CallbackItem> _callbackItems = <CallbackItem>[];
+  static final Map<String, GleapAgentToolHandler> _registeredAgentTools =
+      <String, GleapAgentToolHandler>{};
+
+  static Future<String> _executeAgentTool(dynamic arguments) async {
+    String name = '';
+    try {
+      name = arguments['name'] ?? '';
+      dynamic params = arguments['params'];
+      if (params is String) {
+        try {
+          params = json.decode(params);
+        } catch (_) {}
+      }
+
+      final GleapAgentToolHandler? handler = _registeredAgentTools[name];
+      if (handler == null) {
+        return "No handler registered for tool '$name' in the app. Register one via Gleap.registerAgentTool('$name', handler).";
+      }
+
+      final dynamic handlerResult = await handler(params ?? {});
+      String result =
+          handlerResult is String ? handlerResult : jsonEncode(handlerResult ?? '');
+      if (result.isEmpty) {
+        result = 'The action completed without returning a result.';
+      }
+      return result;
+    } catch (error) {
+      return 'Tool execution failed: $error';
+    }
+  }
 
   static _initCallbackHandler() async {
     _channel.setMethodCallHandler((MethodCall call) async {
+      if (call.method == 'agentToolExecution') {
+        return await _executeAgentTool(call.arguments);
+      }
+
       if (call.method == 'feedbackWillBeSentCallback') {
         WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
         WidgetsBinding.instance.focusManager.rootScope.requestFocus(
@@ -1525,47 +1560,34 @@ class Gleap {
     });
   }
 
-  /// ### setAiTools
+  /// ### registerAgentTool
   ///
-  /// Set the AI tools for the Gleap widget
+  /// Registers the handler for a Frontend tool defined on your AI agent in
+  /// the Gleap dashboard. The agent calls the handler with the configured
+  /// parameters and waits for the returned result (String or JSON-encodable
+  /// object, which gets stringified).
   ///
   /// **Available Platforms**
   ///
   /// Web, Android, iOS
-  static Future<void> setAiTools({required List<AITool> tools}) async {
+  static Future<void> registerAgentTool({
+    required String name,
+    required GleapAgentToolHandler handler,
+  }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
-        'setAiTools is not available for current operating system',
+        'registerAgentTool is not available for current operating system',
       );
       return;
     }
 
-    final List<Map<String, dynamic>> toolsList;
+    _registeredAgentTools[name] = handler;
 
-    if (kIsWeb) {
-      toolsList = tools.map((AITool tool) {
-        final toolJson = tool.toJson();
-        final parameters = toolJson['parameters'].map((param) {
-          final Map<String, dynamic> paramAsMap =
-              Map<String, dynamic>.from(param);
-          if (paramAsMap.containsKey('enums')) {
-            // Rename 'enums' to 'enum' for web
-            if (paramAsMap['enums'] != null) {
-              paramAsMap['enum'] = paramAsMap['enums'];
-            }
-            paramAsMap.remove('enums');
-          }
-          return paramAsMap;
-        }).toList();
-        toolJson['parameters'] = parameters;
-        return toolJson;
-      }).toList();
-    } else {
-      toolsList = tools.map((AITool tool) => tool.toJson()).toList();
-    }
+    // registerAgentTool may be called before initialize().
+    _initCallbackHandler();
 
-    await _channel.invokeMethod('setAiTools', {
-      'tools': toolsList,
+    await _channel.invokeMethod('registerAgentTool', {
+      'name': name,
     });
   }
 

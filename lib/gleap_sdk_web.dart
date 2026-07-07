@@ -7,6 +7,8 @@ import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:gleap_sdk/helpers/gleap_js_sdk_helper.dart' as GleapJsSdkHelper;
 
 class GleapSdkWeb {
+  MethodChannel? _channel;
+
   static void registerWith(Registrar registrar) {
     final MethodChannel channel = MethodChannel(
       'gleap_sdk',
@@ -15,6 +17,7 @@ class GleapSdkWeb {
     );
 
     final pluginInstance = GleapSdkWeb();
+    pluginInstance._channel = channel;
     channel.setMethodCallHandler(pluginInstance.handleMethodCall);
 
     registerEvents(channel);
@@ -286,8 +289,8 @@ class GleapSdkWeb {
           filters: call.arguments['networkLogPropsToIgnore'],
         );
 
-      case 'setAiTools':
-        return setAiTools(tools: call.arguments['tools']);
+      case 'registerAgentTool':
+        return registerAgentTool(name: call.arguments['name']);
 
       case 'setTicketAttribute':
         return setTicketAttribute(
@@ -569,8 +572,35 @@ class GleapSdkWeb {
     GleapJsSdkHelper.setNetworkLogPropsToIgnore(filters.jsify() as JSArray);
   }
 
-  Future<void> setAiTools({required List<dynamic> tools}) async {
-    GleapJsSdkHelper.setAiTools(tools.jsify()!);
+  Future<void> registerAgentTool({required String name}) async {
+    // The JS SDK calls the handler with the tool params and awaits the
+    // returned promise. The actual Dart handler runs on the app side of the
+    // method channel (see Gleap._executeAgentTool), which always resolves
+    // with a result string.
+    JSPromise<JSAny?> handler(JSAny? params) {
+      final Future<JSAny?> execution = () async {
+        dynamic decodedParams = <String, dynamic>{};
+        if (params != null) {
+          try {
+            decodedParams = jsonDecode(GleapJsSdkHelper.stringify(params).toDart);
+          } catch (_) {}
+        }
+
+        final dynamic result = await _channel?.invokeMethod(
+          'agentToolExecution',
+          <String, dynamic>{
+            'name': name,
+            'params': decodedParams,
+          },
+        );
+
+        return (result is String ? result : '').toJS;
+      }();
+
+      return execution.toJS;
+    }
+
+    GleapJsSdkHelper.registerAgentTool(name.toJS, handler.toJS);
   }
 
   Future<void> setTicketAttribute({
