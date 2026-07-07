@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:gleap_sdk/gleap_sdk.dart';
-import 'package:gleap_sdk/models/ai_tool_models/ai_tool_model/ai_tool_model.dart';
-import 'package:gleap_sdk/models/ai_tool_models/ai_tool_params_model/ai_tool_params_model.dart';
 import 'package:gleap_sdk/models/gleap_user_property_model/gleap_user_property_model.dart';
 
 void main() {
@@ -57,31 +55,14 @@ class _MyAppState extends State<MyApp> {
 
     Gleap.showFeedbackButton(true);
 
-    AITool transactionTool = AITool(
+    // Executes the "send-money" Frontend tool defined on the AI agent in the Gleap dashboard.
+    Gleap.registerAgentTool(
       name: 'send-money',
-      description: 'Send money to a given contact.',
-      response:
-          'The transfer got initiated but not completed yet. The user must confirm the transfer in the banking app.',
-      executionType: 'button',
-      parameters: [
-        AIToolParams(
-          name: 'amount',
-          description:
-              'The amount of money to send. Must be positive and provided by the user.',
-          type: AIParamType.NUMBER,
-          required: true,
-        ),
-        AIToolParams(
-          name: 'contact',
-          description: 'The contact to send money to.',
-          type: AIParamType.STRING,
-          required: true,
-          enums: ["Alice", "Bob"],
-        ),
-      ],
+      handler: (dynamic params) async {
+        print('send-money called with params: $params');
+        return 'The transfer got initiated but not completed yet. The user must confirm the transfer in the banking app.';
+      },
     );
-
-    Gleap.setAiTools(tools: [transactionTool]);
 
     Gleap.setTicketAttribute(key: 'title', value: 'Developer title');
 

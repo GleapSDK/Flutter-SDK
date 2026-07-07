@@ -145,8 +145,8 @@ external void setNetworkLogsBlacklist(JSArray networkLogBlacklist);
 @JS('window.Gleap.setNetworkLogPropsToIgnore')
 external void setNetworkLogPropsToIgnore(JSArray filters);
 
-@JS('window.Gleap.setAiTools')
-external void setAiTools(JSAny tools);
+@JS('window.Gleap.registerAgentTool')
+external void registerAgentTool(JSString name, JSFunction handler);
 
 @JS('window.Gleap.setTicketAttribute')
 external void setTicketAttribute(JSString key, JSAny? value);

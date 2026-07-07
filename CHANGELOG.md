@@ -1,3 +1,7 @@
+## 15.4.0
+Updated native iOS dependency to 15.4.0
+Updated native Android dependency to 15.4.0
+
 ## 15.3.1
 Raised Android compileSdkVersion to 34
 Added Swift Package Manager support for iOS

@@ -33,8 +33,6 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.gleap.APPLICATIONTYPE;
 import io.gleap.Gleap;
 import io.gleap.GleapActivationMethod;
-import io.gleap.GleapAiTool;
-import io.gleap.GleapAiToolParameter;
 import io.gleap.GleapLogLevel;
 import io.gleap.GleapSessionProperties;
 import io.gleap.Networklog;
@@ -42,6 +40,8 @@ import io.gleap.PrefillHelper;
 import io.gleap.RequestType;
 import io.gleap.SurveyType;
 import io.gleap.callbacks.AiToolExecutedCallback;
+import io.gleap.callbacks.GleapAgentToolHandler;
+import io.gleap.callbacks.GleapAgentToolResultCallback;
 import io.gleap.callbacks.InitializedCallback;
 import io.gleap.callbacks.CustomActionCallback;
 import io.gleap.callbacks.FeedbackFlowStartedCallback;
@@ -716,45 +716,44 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 Gleap.getInstance().setNetworkLogPropsToIgnore(propsToIgnoreArray);
                 break;
 
-            case "setAiTools":
+            case "registerAgentTool":
                 try {
-                    ArrayList<Map<String, Object>> toolsList = call.argument("tools");
-                    ArrayList<GleapAiTool> gleapAiTools = new ArrayList<>();
+                    final String toolName = call.argument("name");
+                    Gleap.getInstance().registerAgentTool(toolName, new GleapAgentToolHandler() {
+                        @Override
+                        public void execute(JSONObject params, final GleapAgentToolResultCallback callback) {
+                            uiThreadHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (channel == null) {
+                                        callback.onResult("Tool execution failed: bridge error.");
+                                        return;
+                                    }
 
-                    for (Map<String, Object> toolMap : toolsList) {
-                        String name = (String) toolMap.get("name");
-                        String description = (String) toolMap.get("description");
-                        String response = (String) toolMap.get("response");
-                        String executionType = (String) toolMap.get("executionType");
-                        ArrayList<Map<String, Object>> parametersList = (ArrayList<Map<String, Object>>) toolMap.get("parameters");
-                        ArrayList<GleapAiToolParameter> gleapParameters = new ArrayList<>();
+                                    Map<String, Object> args = new HashMap<>();
+                                    args.put("name", toolName);
+                                    args.put("params", params != null ? params.toString() : "{}");
 
-                        for (Map<String, Object> paramMap : parametersList) {
-                            String paramName = (String) paramMap.get("name");
-                            String paramDescription = (String) paramMap.get("description");
-                            String type = (String) paramMap.get("type");
-                            boolean required = (Boolean) paramMap.get("required");
+                                    channel.invokeMethod("agentToolExecution", args, new MethodChannel.Result() {
+                                        @Override
+                                        public void success(Object channelResult) {
+                                            callback.onResult(channelResult);
+                                        }
 
-                            // Fetch the enums list from paramMap, ensuring null safety
-                            ArrayList<String> enumsList = paramMap.containsKey("enums") ? (ArrayList<String>) paramMap.get("enums") : null;
+                                        @Override
+                                        public void error(String errorCode, String errorMessage, Object errorDetails) {
+                                            callback.onResult("Tool execution failed: " + errorMessage);
+                                        }
 
-                            // Use a ternary operator to check for null. If enumsList is not null, convert it to an array; otherwise, use an empty array.
-                            String[] enumsArray = enumsList != null ? enumsList.toArray(new String[0]) : new String[0];
-
-                            GleapAiToolParameter gleapParameter = new GleapAiToolParameter(
-                                    paramName, paramDescription, type, required, enumsArray);
-                            gleapParameters.add(gleapParameter);
+                                        @Override
+                                        public void notImplemented() {
+                                            callback.onResult("Tool execution failed: bridge error.");
+                                        }
+                                    });
+                                }
+                            });
                         }
-
-                        GleapAiTool gleapAiTool = new GleapAiTool(
-                                name, description, response, executionType, gleapParameters.toArray(new GleapAiToolParameter[0]));
-
-                        gleapAiTools.add(gleapAiTool);
-                    }
-
-                    GleapAiTool[] toolsArray = new GleapAiTool[gleapAiTools.size()];
-                    toolsArray = gleapAiTools.toArray(toolsArray);
-                    Gleap.getInstance().setAiTools(toolsArray);
+                    });
 
                     result.success(null);
                 } catch (Exception e) {
