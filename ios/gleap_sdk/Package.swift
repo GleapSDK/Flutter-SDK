@@ -12,7 +12,7 @@ let package = Package(
         .library(name: "gleap-sdk", targets: ["gleap_sdk"])
     ],
     dependencies: [
-        .package(url: "https://github.com/GleapSDK/Gleap-iOS-SDK.git", from: "16.4.0")
+        .package(url: "https://github.com/GleapSDK/Gleap-iOS-SDK.git", from: "16.4.2")
     ],
     targets: [
         .target(
