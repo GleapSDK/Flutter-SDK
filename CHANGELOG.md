@@ -1,3 +1,8 @@
+## 16.4.3
+Updated native iOS dependency to 16.4.3
+(fixes info cards scrolling in two places at once, and flickering in portrait, when the content is taller than the screen)
+Native Android dependency stays on 16.4.2 (unaffected)
+
 ## 16.4.2
 Updated native iOS dependency to 16.4.2
 Updated native Android dependency to 16.4.2
