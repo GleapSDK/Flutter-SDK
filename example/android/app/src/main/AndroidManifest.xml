@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.gleap.gleap_sdk_example">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
    <application
         android:label="gleap_sdk_example"
         android:icon="@mipmap/ic_launcher">
