@@ -1,3 +1,8 @@
+## 17.0.1
+Updated native Android dependency to 17.0.1
+(fixes an IllegalStateException crash from the chat image cache when the app is backgrounded after a cached image was released; memory-trim callbacks can no longer take the host app down)
+Native iOS dependency stays on 17.0.0 (unaffected)
+
 ## 17.0.0
 Updated native iOS dependency to 17.0.0
 Updated native Android dependency to 17.0.0
