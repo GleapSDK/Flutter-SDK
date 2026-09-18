@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'gleap_sdk'
-  s.version          = '17.0.1'
+  s.version          = '18.0.0'
   s.summary          = 'Gleap SDK for Flutter'
   s.description      = 'The Gleap SDK for Flutter is the easiest way to integrate Gleap into your apps!'
   s.homepage         = 'https://gleap.io'
@@ -14,8 +14,8 @@ Pod::Spec.new do |s|
   s.source_files = 'gleap_sdk/Sources/gleap_sdk/**/*.{h,m}'
   s.public_header_files = 'gleap_sdk/Sources/gleap_sdk/include/**/*.h'
   s.dependency 'Flutter'
-  s.platform = :ios, '12.0'
-  s.dependency 'Gleap', '17.0.0'
+  s.platform = :ios, '15.0'
+  s.dependency 'Gleap', '18.0.0'
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }

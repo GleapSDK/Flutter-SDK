@@ -484,6 +484,26 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 Gleap.getInstance().setFrameUrl((String) call.argument("url"));
                 result.success(null);
                 break;
+            case "setRegion":
+                Gleap.getInstance().setRegion((String) call.argument("region"));
+                result.success(null);
+                break;
+            case "setWSApiUrl":
+                Gleap.getInstance().setWSApiUrl((String) call.argument("url"));
+                result.success(null);
+                break;
+            case "setRealtimeHost":
+                Gleap.getInstance().setRealtimeHost((String) call.argument("host"));
+                result.success(null);
+                break;
+            case "setBannerUrl":
+                Gleap.getInstance().setBannerUrl((String) call.argument("url"));
+                result.success(null);
+                break;
+            case "setModalUrl":
+                Gleap.getInstance().setModalUrl((String) call.argument("url"));
+                result.success(null);
+                break;
             case "preFillForm":
                 try{
                     if(call.argument("formData")!= null) {

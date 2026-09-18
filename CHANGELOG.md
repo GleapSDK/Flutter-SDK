@@ -1,3 +1,13 @@
+## 18.0.0
+No breaking changes: major version aligned across all Gleap SDKs for the data-region release. Without `Gleap.setRegion` the SDK behaves exactly as 17.x (EU hosts).
+Updated native iOS dependency to 18.0.0
+Updated native Android dependency to 18.0.0
+Added data regions: `Gleap.setRegion(region: 'eu' | 'us')` (call before `Gleap.initialize`) sets the API url, the websocket API url and the realtime host for the region at once. The default region stays `eu`.
+(eu: `api.gleap.io`, `ws.gleap.io`, `sockets.gleap.io`; us: `api.us.gleap.ai`, `ws.us.gleap.ai`, `sockets.us.gleap.ai`; the static widget hosts are global and never changed by `setRegion`)
+Added manual host setters `Gleap.setWSApiUrl(url:)`, `Gleap.setRealtimeHost(host:)`, `Gleap.setBannerUrl(url:)` and `Gleap.setModalUrl(url:)` next to the existing `setApiUrl` / `setFrameUrl`. A manual setter called after `setRegion` overrides that single host.
+Web: requires the Gleap JavaScript SDK 18.0.0 or newer and the updated loader snippet from the README (adds the new methods to the pre-load queue).
+iOS Swift Package Manager: the Gleap-iOS-SDK package requirement is now `from: "18.0.0"`.
+
 ## 17.0.1
 Updated native Android dependency to 17.0.1
 (fixes an IllegalStateException crash from the chat image cache when the app is backgrounded after a cached image was released; memory-trim callbacks can no longer take the host app down)

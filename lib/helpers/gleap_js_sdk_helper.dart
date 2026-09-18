@@ -74,6 +74,21 @@ external void setFrameUrl(JSString url);
 @JS('window.Gleap.setApiUrl')
 external void setApiUrl(JSString url);
 
+@JS('window.Gleap.setRegion')
+external void setRegion(JSString region);
+
+@JS('window.Gleap.setWSApiUrl')
+external void setWSApiUrl(JSString url);
+
+@JS('window.Gleap.setRealtimeHost')
+external void setRealtimeHost(JSString host);
+
+@JS('window.Gleap.setBannerUrl')
+external void setBannerUrl(JSString url);
+
+@JS('window.Gleap.setModalUrl')
+external void setModalUrl(JSString url);
+
 @JS('window.Gleap.log')
 external void log(JSString message, JSString? logLevel);
 

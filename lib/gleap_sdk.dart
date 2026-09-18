@@ -847,6 +847,35 @@ class Gleap {
     await _channel.invokeMethod('enableDebugConsoleLog');
   }
 
+  /// ### setRegion
+  ///
+  /// Set the data region of your Gleap project ('eu' or 'us'). Defaults to
+  /// 'eu'. Must be called before [initialize].
+  ///
+  /// Sets the api url, the websocket api url and the realtime host for the
+  /// region at once. The frame, banner and modal urls are global and stay
+  /// unchanged. A manual setter ([setApiUrl], [setWSApiUrl],
+  /// [setRealtimeHost]) called after [setRegion] overrides that single host.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> setRegion({required String region}) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setRegion is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'setRegion',
+      {
+        'region': region,
+      },
+    );
+  }
+
   /// ### setApiUrl
   ///
   /// Set a custom api url
@@ -887,6 +916,98 @@ class Gleap {
 
     await _channel.invokeMethod(
       'setFrameUrl',
+      {
+        'url': url,
+      },
+    );
+  }
+
+  /// ### setWSApiUrl
+  ///
+  /// Set a custom websocket api url
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> setWSApiUrl({required String url}) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setWSApiUrl is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'setWSApiUrl',
+      {
+        'url': url,
+      },
+    );
+  }
+
+  /// ### setRealtimeHost
+  ///
+  /// Set a custom realtime host (hostname only, without protocol or path)
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> setRealtimeHost({required String host}) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setRealtimeHost is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'setRealtimeHost',
+      {
+        'host': host,
+      },
+    );
+  }
+
+  /// ### setBannerUrl
+  ///
+  /// Set a custom banner url
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> setBannerUrl({required String url}) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setBannerUrl is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'setBannerUrl',
+      {
+        'url': url,
+      },
+    );
+  }
+
+  /// ### setModalUrl
+  ///
+  /// Set a custom modal url
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> setModalUrl({required String url}) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setModalUrl is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'setModalUrl',
       {
         'url': url,
       },
