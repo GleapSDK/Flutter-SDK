@@ -191,6 +191,21 @@ class GleapSdkWeb {
       case 'setApiUrl':
         return setApiUrl(url: call.arguments['url']);
 
+      case 'setRegion':
+        return setRegion(region: call.arguments['region']);
+
+      case 'setWSApiUrl':
+        return setWSApiUrl(url: call.arguments['url']);
+
+      case 'setRealtimeHost':
+        return setRealtimeHost(host: call.arguments['host']);
+
+      case 'setBannerUrl':
+        return setBannerUrl(url: call.arguments['url']);
+
+      case 'setModalUrl':
+        return setModalUrl(url: call.arguments['url']);
+
       case 'log':
         return log(
           message: call.arguments['message'],
@@ -435,6 +450,26 @@ class GleapSdkWeb {
 
   Future<void> setApiUrl({required String url}) async {
     GleapJsSdkHelper.setApiUrl(url.toJS);
+  }
+
+  Future<void> setRegion({required String region}) async {
+    GleapJsSdkHelper.setRegion(region.toJS);
+  }
+
+  Future<void> setWSApiUrl({required String url}) async {
+    GleapJsSdkHelper.setWSApiUrl(url.toJS);
+  }
+
+  Future<void> setRealtimeHost({required String host}) async {
+    GleapJsSdkHelper.setRealtimeHost(host.toJS);
+  }
+
+  Future<void> setBannerUrl({required String url}) async {
+    GleapJsSdkHelper.setBannerUrl(url.toJS);
+  }
+
+  Future<void> setModalUrl({required String url}) async {
+    GleapJsSdkHelper.setModalUrl(url.toJS);
   }
 
   Future<void> log({required String message, String? logLevel}) async {

@@ -349,6 +349,21 @@
   } else if ([@"setFrameUrl" isEqualToString:call.method]) {
     [Gleap setFrameUrl:call.arguments[@"url"]];
     result(nil);
+  } else if ([@"setRegion" isEqualToString:call.method]) {
+    [Gleap setRegion:call.arguments[@"region"]];
+    result(nil);
+  } else if ([@"setWSApiUrl" isEqualToString:call.method]) {
+    [Gleap setWSApiUrl:call.arguments[@"url"]];
+    result(nil);
+  } else if ([@"setRealtimeHost" isEqualToString:call.method]) {
+    [Gleap setRealtimeHost:call.arguments[@"host"]];
+    result(nil);
+  } else if ([@"setBannerUrl" isEqualToString:call.method]) {
+    [Gleap setBannerUrl:call.arguments[@"url"]];
+    result(nil);
+  } else if ([@"setModalUrl" isEqualToString:call.method]) {
+    [Gleap setModalUrl:call.arguments[@"url"]];
+    result(nil);
   } else if ([@"isOpened" isEqualToString:call.method]) {
     BOOL isOpened = [Gleap isOpened];
     result(@(isOpened));
