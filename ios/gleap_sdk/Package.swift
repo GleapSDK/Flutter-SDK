@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "gleap_sdk",
     platforms: [
-        .iOS("12.0")
+        .iOS("15.0")
     ],
     products: [
         .library(name: "gleap-sdk", targets: ["gleap_sdk"])
