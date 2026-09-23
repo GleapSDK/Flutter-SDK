@@ -1,18 +1,14 @@
-# Gleap SDK
+# Gleap Flutter SDK
 
 ![Gleap Flutter SDK Intro](https://raw.githubusercontent.com/GleapSDK/Gleap-iOS-SDK/main/Resources/GleapHeaderImage.png)
 
-The Gleap SDK for Flutter is the easiest way to integrate Gleap into your apps!
+Add AI-native customer support, live chat, in-app bug reporting, a help center and surveys to your Flutter apps with [Gleap](https://www.gleap.ai). Gleap is an Intercom alternative for software teams that connects customer conversations and feedback with product development.
 
-# Report and fix bugs the easy way
-
-Gleap helps developers build the best software faster. It is your affordable in-app bug reporting tool for apps, websites and industrial applications.
-
-Checkout our [website](https://gleap.io) to learn more about gleap.
+[SDK documentation](https://docs.gleap.ai/documentation/flutter/README) · [Website](https://www.gleap.ai) · [Plans and pricing](https://www.gleap.ai/pricing)
 
 ## Docs & examples
 
-Checkout our [documentation](https://gleap.io/docs/flutter/) for full reference. Include the following dependency in your pubspec.yml:
+Checkout our [documentation](https://docs.gleap.ai/documentation/flutter/README) for full reference. Include the following dependency in your pubspec.yaml:
 
 ```dart
 dependencies:
