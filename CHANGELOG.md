@@ -1,3 +1,10 @@
+## 18.1.0
+Updated native iOS dependency to 18.1.0
+Updated native Android dependency to 18.1.0
+Added `Gleap.setEnvDataPropsToIgnore(propsToIgnore: [...])` to drop individual env data fields and `Gleap.setDisableEnvData(disable: true)` to stop collecting env data entirely.
+(env data keys are exact and case-sensitive, e.g. `deviceName`, `batteryLevel`, `currentUrl`; each `setEnvDataPropsToIgnore` call replaces the previous list and an empty list resets it; both can be called before or after `Gleap.initialize` and apply to the next ticket)
+Web: requires the Gleap JavaScript SDK 18.1.0 or newer. To call the new methods before the JavaScript SDK has loaded, use the updated loader snippet from the README (adds them to the pre-load queue).
+
 ## 18.0.0
 No breaking changes: major version aligned across all Gleap SDKs for the data-region release. Without `Gleap.setRegion` the SDK behaves exactly as 17.x (EU hosts).
 Updated native iOS dependency to 18.0.0
