@@ -160,6 +160,12 @@ external void setNetworkLogsBlacklist(JSArray networkLogBlacklist);
 @JS('window.Gleap.setNetworkLogPropsToIgnore')
 external void setNetworkLogPropsToIgnore(JSArray filters);
 
+@JS('window.Gleap.setEnvDataPropsToIgnore')
+external void setEnvDataPropsToIgnore(JSArray propsToIgnore);
+
+@JS('window.Gleap.setDisableEnvData')
+external void setDisableEnvData(JSBoolean disable);
+
 @JS('window.Gleap.registerAgentTool')
 external void registerAgentTool(JSString name, JSFunction handler);
 
