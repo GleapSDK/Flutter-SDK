@@ -509,6 +509,12 @@
     [Gleap
         setNetworkLogPropsToIgnore:call.arguments[@"networkLogPropsToIgnore"]];
     result(nil);
+  } else if ([@"setEnvDataPropsToIgnore" isEqualToString:call.method]) {
+    [Gleap setEnvDataPropsToIgnore:call.arguments[@"envDataPropsToIgnore"]];
+    result(nil);
+  } else if ([@"setDisableEnvData" isEqualToString:call.method]) {
+    [Gleap setDisableEnvData:[call.arguments[@"disable"] boolValue]];
+    result(nil);
   } else if ([@"registerAgentTool" isEqualToString:call.method]) {
     NSString *toolName = call.arguments[@"name"];
     __weak typeof(self) weakSelf = self;

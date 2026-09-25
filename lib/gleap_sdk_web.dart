@@ -304,6 +304,16 @@ class GleapSdkWeb {
           filters: call.arguments['networkLogPropsToIgnore'],
         );
 
+      case 'setEnvDataPropsToIgnore':
+        return setEnvDataPropsToIgnore(
+          propsToIgnore: call.arguments['envDataPropsToIgnore'],
+        );
+
+      case 'setDisableEnvData':
+        return setDisableEnvData(
+          disable: call.arguments['disable'],
+        );
+
       case 'registerAgentTool':
         return registerAgentTool(name: call.arguments['name']);
 
@@ -605,6 +615,16 @@ class GleapSdkWeb {
     required List<dynamic> filters,
   }) async {
     GleapJsSdkHelper.setNetworkLogPropsToIgnore(filters.jsify() as JSArray);
+  }
+
+  Future<void> setEnvDataPropsToIgnore({
+    required List<dynamic> propsToIgnore,
+  }) async {
+    GleapJsSdkHelper.setEnvDataPropsToIgnore(propsToIgnore.jsify() as JSArray);
+  }
+
+  Future<void> setDisableEnvData({required bool disable}) async {
+    GleapJsSdkHelper.setDisableEnvData(disable.toJS);
   }
 
   Future<void> registerAgentTool({required String name}) async {

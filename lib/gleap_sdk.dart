@@ -1681,6 +1681,59 @@ class Gleap {
     });
   }
 
+  /// ### setEnvDataPropsToIgnore
+  ///
+  /// Set a list of env data properties to ignore. The keys in [propsToIgnore]
+  /// (exact and case-sensitive, e.g. 'deviceName', 'batteryLevel' or
+  /// 'currentUrl') are removed from the env data before a ticket or
+  /// conversation is sent. Each call replaces the previous list; an empty
+  /// list resets it. Can be called before or after [initialize] and applies
+  /// to the next ticket.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> setEnvDataPropsToIgnore({
+    required List<String> propsToIgnore,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setEnvDataPropsToIgnore is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('setEnvDataPropsToIgnore', {
+      'envDataPropsToIgnore': propsToIgnore,
+    });
+  }
+
+  /// ### setDisableEnvData
+  ///
+  /// Disables the env data. While disabled, no env data is collected at all
+  /// and tickets are sent with empty env data. Pass `false` to collect it
+  /// again. Can be called before or after [initialize] and applies to the
+  /// next ticket.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> setDisableEnvData({
+    required bool disable,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setDisableEnvData is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'setDisableEnvData',
+      {'disable': disable},
+    );
+  }
+
   /// ### registerAgentTool
   ///
   /// Registers the handler for a Frontend tool defined on your AI agent in

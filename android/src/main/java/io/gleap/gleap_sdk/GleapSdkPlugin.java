@@ -736,6 +736,22 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 Gleap.getInstance().setNetworkLogPropsToIgnore(propsToIgnoreArray);
                 break;
 
+            case "setEnvDataPropsToIgnore":
+                String[] envDataPropsToIgnoreArray = new String[((ArrayList<String>) call.argument("envDataPropsToIgnore")).size()];
+
+                for (int i = 0; i < ((ArrayList<String>) call.argument("envDataPropsToIgnore")).size(); i++) {
+                    envDataPropsToIgnoreArray[i] = ((ArrayList<String>) call.argument("envDataPropsToIgnore")).get(i);
+                }
+
+                Gleap.getInstance().setEnvDataPropsToIgnore(envDataPropsToIgnoreArray);
+                result.success(true);
+                break;
+
+            case "setDisableEnvData":
+                Gleap.getInstance().setDisableEnvData((Boolean) call.argument("disable"));
+                result.success(true);
+                break;
+
             case "registerAgentTool":
                 try {
                     final String toolName = call.argument("name");
