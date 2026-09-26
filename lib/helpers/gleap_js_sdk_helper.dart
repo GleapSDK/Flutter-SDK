@@ -166,6 +166,9 @@ external void setEnvDataPropsToIgnore(JSArray propsToIgnore);
 @JS('window.Gleap.setDisableEnvData')
 external void setDisableEnvData(JSBoolean disable);
 
+@JS('window.Gleap.setColorScheme')
+external void setColorScheme(JSString colorScheme, JSObject options);
+
 @JS('window.Gleap.registerAgentTool')
 external void registerAgentTool(JSString name, JSFunction handler);
 

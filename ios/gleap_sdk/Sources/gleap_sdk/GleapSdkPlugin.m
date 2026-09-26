@@ -515,6 +515,18 @@
   } else if ([@"setDisableEnvData" isEqualToString:call.method]) {
     [Gleap setDisableEnvData:[call.arguments[@"disable"] boolValue]];
     result(nil);
+  } else if ([@"setColorScheme" isEqualToString:call.method]) {
+    // Unset colors arrive as NSNull from the method channel.
+    id lightBackgroundColor = call.arguments[@"lightBackgroundColor"];
+    id darkBackgroundColor = call.arguments[@"darkBackgroundColor"];
+    [Gleap setColorScheme:call.arguments[@"colorScheme"]
+        lightBackgroundColor:[lightBackgroundColor isKindOfClass:[NSString class]]
+                                 ? lightBackgroundColor
+                                 : nil
+         darkBackgroundColor:[darkBackgroundColor isKindOfClass:[NSString class]]
+                                 ? darkBackgroundColor
+                                 : nil];
+    result(nil);
   } else if ([@"registerAgentTool" isEqualToString:call.method]) {
     NSString *toolName = call.arguments[@"name"];
     __weak typeof(self) weakSelf = self;
