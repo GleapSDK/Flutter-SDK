@@ -1,3 +1,10 @@
+## 18.2.0
+Updated native iOS dependency to 18.2.0
+Updated native Android dependency to 18.2.0
+Added `Gleap.setColorScheme(colorScheme: 'auto' | 'light' | 'dark' | 'default', lightBackgroundColor: ..., darkBackgroundColor: ...)` to switch the widget between dark and light mode. It overrides the color scheme set in the Gleap dashboard.
+(`auto` follows the device appearance on Android and iOS and the page theme on web; apps with their own in-app theme toggle should pass `light` / `dark` explicitly, e.g. from `Theme.of(context).brightness`, and call it again when the theme changes; `default` removes the override. Only the widget background is swapped: the dashboard background is kept when it already matches the active scheme, otherwise `lightBackgroundColor` (default `#ffffff`) or `darkBackgroundColor` (default `#18181b`) is used. Can be called before or after `Gleap.initialize` and applies live)
+Web: requires the Gleap JavaScript SDK 18.2.0 or newer. To call `setColorScheme` before the JavaScript SDK has loaded, use the updated loader snippet from the README (adds it to the pre-load queue).
+
 ## 18.1.0
 Updated native iOS dependency to 18.1.0
 Updated native Android dependency to 18.1.0

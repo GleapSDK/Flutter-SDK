@@ -314,6 +314,13 @@ class GleapSdkWeb {
           disable: call.arguments['disable'],
         );
 
+      case 'setColorScheme':
+        return setColorScheme(
+          colorScheme: call.arguments['colorScheme'],
+          lightBackgroundColor: call.arguments['lightBackgroundColor'],
+          darkBackgroundColor: call.arguments['darkBackgroundColor'],
+        );
+
       case 'registerAgentTool':
         return registerAgentTool(name: call.arguments['name']);
 
@@ -625,6 +632,26 @@ class GleapSdkWeb {
 
   Future<void> setDisableEnvData({required bool disable}) async {
     GleapJsSdkHelper.setDisableEnvData(disable.toJS);
+  }
+
+  Future<void> setColorScheme({
+    required String colorScheme,
+    String? lightBackgroundColor,
+    String? darkBackgroundColor,
+  }) async {
+    // Unset colors are left out so the JS SDK falls back to the dashboard
+    // setting / its defaults.
+    final Map<String, String> options = <String, String>{
+      if (lightBackgroundColor != null)
+        'lightBackgroundColor': lightBackgroundColor,
+      if (darkBackgroundColor != null)
+        'darkBackgroundColor': darkBackgroundColor,
+    };
+
+    GleapJsSdkHelper.setColorScheme(
+      colorScheme.toJS,
+      options.jsify() as JSObject,
+    );
   }
 
   Future<void> registerAgentTool({required String name}) async {

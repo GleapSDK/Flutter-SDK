@@ -752,6 +752,14 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 result.success(true);
                 break;
 
+            case "setColorScheme":
+                Gleap.getInstance().setColorScheme(
+                        (String) call.argument("colorScheme"),
+                        (String) call.argument("lightBackgroundColor"),
+                        (String) call.argument("darkBackgroundColor"));
+                result.success(true);
+                break;
+
             case "registerAgentTool":
                 try {
                     final String toolName = call.argument("name");

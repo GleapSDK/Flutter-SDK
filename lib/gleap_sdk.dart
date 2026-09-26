@@ -1734,6 +1734,55 @@ class Gleap {
     );
   }
 
+  /// ### setColorScheme
+  ///
+  /// Sets the color scheme of the Gleap widget and overrides the color scheme
+  /// configured in the Gleap dashboard.
+  ///
+  /// - `'auto'` follows the device appearance (dark/light mode) on Android and
+  ///   iOS, and the page theme on web.
+  /// - `'light'` / `'dark'` force a scheme. Apps with their own in-app theme
+  ///   toggle should pass the scheme explicitly, e.g. from
+  ///   `Theme.of(context).brightness == Brightness.dark ? 'dark' : 'light'`,
+  ///   and call this again whenever the app theme changes.
+  /// - `'default'` removes the override and uses the dashboard setting.
+  ///
+  /// Only the widget background is swapped: the dashboard background is kept
+  /// when it already matches the active scheme, otherwise
+  /// [lightBackgroundColor] (default `#ffffff`) or [darkBackgroundColor]
+  /// (default `#18181b`) is used. Colors are hex strings (`#rrggbb`). Can be
+  /// called before or after [initialize] and applies live.
+  ///
+  /// **Params**
+  ///
+  /// [colorScheme] `'default'`, `'auto'`, `'light'` or `'dark'`
+  ///
+  /// [lightBackgroundColor] Background used in light mode (optional)
+  ///
+  /// [darkBackgroundColor] Background used in dark mode (optional)
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS
+  static Future<void> setColorScheme({
+    required String colorScheme,
+    String? lightBackgroundColor,
+    String? darkBackgroundColor,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setColorScheme is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('setColorScheme', {
+      'colorScheme': colorScheme,
+      'lightBackgroundColor': lightBackgroundColor,
+      'darkBackgroundColor': darkBackgroundColor,
+    });
+  }
+
   /// ### registerAgentTool
   ///
   /// Registers the handler for a Frontend tool defined on your AI agent in
