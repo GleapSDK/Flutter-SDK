@@ -9,6 +9,19 @@ import 'package:gleap_sdk/helpers/gleap_js_sdk_helper.dart' as GleapJsSdkHelper;
 class GleapSdkWeb {
   MethodChannel? _channel;
 
+  /// Network logs that could not be handed to the JavaScript SDK yet (it
+  /// was not loaded); applied once it reports `initialized`.
+  static String? _pendingNetworkLogs;
+
+  static bool _applyNetworkLogs(String networkLogs) {
+    try {
+      GleapJsSdkHelper.attachNetworkLogs(networkLogs.toJS);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   static void registerWith(Registrar registrar) {
     final MethodChannel channel = MethodChannel(
       'gleap_sdk',
@@ -51,6 +64,11 @@ class GleapSdkWeb {
         'error-while-sending'.toJS, errorWhileSending.toJS);
 
     void initialized(JSAny? data) {
+      final String? pendingNetworkLogs = _pendingNetworkLogs;
+      if (pendingNetworkLogs != null && _applyNetworkLogs(pendingNetworkLogs)) {
+        _pendingNetworkLogs = null;
+      }
+
       channel.invokeMethod('initialized');
     }
     GleapJsSdkHelper.registerEvents('initialized'.toJS, initialized.toJS);
@@ -490,12 +508,16 @@ class GleapSdkWeb {
     GleapJsSdkHelper.disableConsoleLog();
   }
 
+  /// Replaces the network logs attached to the JavaScript SDK (the complete
+  /// list is sent every time). Never throws: before the JavaScript SDK has
+  /// loaded, the list is kept and applied once it is initialized.
   Future<void> attachNetworkLogs({
-    required List<dynamic> networkLogs,
+    required List<dynamic>? networkLogs,
   }) async {
-    GleapJsSdkHelper.attachNetworkLogs(
-      json.encode(networkLogs).toJS,
-    );
+    try {
+      final String encoded = json.encode(networkLogs ?? const <dynamic>[]);
+      _pendingNetworkLogs = _applyNetworkLogs(encoded) ? null : encoded;
+    } catch (_) {}
   }
 
   Future<void> showFeedbackButton({required bool visible}) async {

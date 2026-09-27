@@ -12,9 +12,17 @@ GleapNetworkRequest _$GleapNetworkRequestFromJson(Map<String, dynamic> json) =>
       headers: json['headers'] as Map<String, dynamic>?,
     );
 
-Map<String, dynamic> _$GleapNetworkRequestToJson(
-        GleapNetworkRequest instance) =>
-    <String, dynamic>{
-      'payload': _preparePayload(instance.payload),
-      'headers': instance.headers,
-    };
+Map<String, dynamic> _$GleapNetworkRequestToJson(GleapNetworkRequest instance) {
+  final val = <String, dynamic>{
+    'payload': _preparePayload(instance.payload),
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('headers', _prepareHeaders(instance.headers));
+  return val;
+}
