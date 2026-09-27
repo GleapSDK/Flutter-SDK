@@ -196,7 +196,8 @@ class GleapNetworkLogHelper {
   /// body (e.g. a captured stream prefix): the complete size in bytes, or
   /// `-1` when it is unknown ("more than 150000").
   static String capBody(String body, {int? totalBytes}) {
-    if (totalBytes == null && body.length <= maxBodyLength) {
+    if (totalBytes == null &&
+        (body.length <= maxBodyLength || _isCapped(body))) {
       return body;
     }
 
@@ -261,6 +262,20 @@ class GleapNetworkLogHelper {
     } catch (_) {
       return bodyNotCapturedMarker;
     }
+  }
+
+  static final RegExp _truncationNote =
+      RegExp(r'\n… \[truncated, (?:\d+|more than \d+) bytes\]$');
+
+  /// True when [body] was already capped by [capBody] (head + note), so
+  /// capping it again keeps it as it is.
+  static bool _isCapped(String body) {
+    const int maxNoteLength = 64;
+    if (body.length > maxBodyLength + maxNoteLength) {
+      return false;
+    }
+
+    return _truncationNote.hasMatch(body.substring(body.length - maxNoteLength));
   }
 
   static String? _strictUtf8(List<int> bytes, {required bool truncated}) {
