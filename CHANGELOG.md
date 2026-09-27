@@ -1,3 +1,13 @@
+## 18.2.0
+Updated native iOS dependency to 18.2.0
+Updated native Android dependency to 18.2.0
+Added `Gleap.logNetworkRequest(networkLog)` for logging network requests one by one (used by the Gleap http and dio interceptors 2.0). All logged requests share one buffer with the newest 30 entries, so several interceptors no longer overwrite each other, and the list is handed to the native SDK at most every 500 ms instead of on every request. `Gleap.attachNetworkLogs` still replaces the list.
+Network log entries now have the same shape as in the other Gleap SDKs: the request start date in ISO-8601 UTC, the duration in whole milliseconds, Map and List bodies as JSON (instead of Dart's `{a: b}` syntax), bodies capped at 150 KB with a truncation note, response headers, and an `errorText` for requests that failed without a response (new `headers` and `errorText` on `GleapNetworkResponse`).
+`setNetworkLogPropsToIgnore` and `setNetworkLogsBlacklist` now also apply in Dart before the logs leave the app: matching headers, JSON keys (at any depth; `user.password` also works as a path), form fields and url query parameters are removed (case-insensitive), authorization and cookie headers are always masked, and requests to gleap.io / gleap.ai are never logged. Each call replaces the previous list.
+Fixed `await Gleap.attachNetworkLogs(...)` never completing on iOS, and `setNetworkLogsBlacklist`, `setNetworkLogPropsToIgnore`, `preFillForm`, `startBot`, `startClassicForm` and `startConversation` (and `addAttachment` with an unreadable file) never completing on Android.
+Android: attached network logs keep their date and method (HEAD, OPTIONS etc. no longer fail), one incomplete entry no longer drops the whole list, and attaching replaces the previous list instead of adding duplicates.
+Web: network logs logged before the JavaScript SDK has loaded are handed over once it is initialized instead of throwing.
+
 ## 18.1.0
 Updated native iOS dependency to 18.1.0
 Updated native Android dependency to 18.1.0
