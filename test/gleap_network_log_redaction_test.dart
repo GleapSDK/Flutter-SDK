@@ -203,8 +203,8 @@ void main() {
       expect(result['response']['responseText'], '[{"user":{"id":7}}]');
     });
 
-    test('leaves unparseable (truncated) and unchanged bodies untouched', () {
-      const String truncated = '{"password":"p1","data":"aaaa\n… [truncated, '
+    test('leaves bodies without a match untouched (parsed or truncated)', () {
+      const String truncated = '{"name":"a","data":"aaaa\n… [truncated, '
           '200000 bytes]';
       const String unchanged = '{ "name": "a",\n  "list": [1, 2] }';
       final Map<String, dynamic> result = redact(
@@ -212,8 +212,31 @@ void main() {
         props: <String>['password'],
       );
 
-      expect(result['request']['payload'], truncated);
+      expect(result['request']['payload'], same(truncated));
       expect(result['response']['responseText'], same(unchanged));
+    });
+
+    test('masks ignored keys in JSON bodies cut at the size limit', () {
+      const String note = '\n… [truncated, 200000 bytes]';
+      final Map<String, dynamic> result = redact(
+        entry(
+          payload: '{"user":{"password":"pw-0","name":"n"},"token":"abc",'
+              '"items":[{"Token":"x"$note',
+          responseText: '{"user":{"id":1,"Secret":"s3cr$note',
+        ),
+        props: <String>['password', 'token', 'user.secret'],
+      );
+
+      expect(
+        result['request']['payload'],
+        '{"user":{"password":"[REDACTED]","name":"n"},"token":"[REDACTED]",'
+        '"items":[{"Token":"[REDACTED]"$note',
+      );
+      // A string value cut at the end is masked, the truncation note kept.
+      expect(
+        result['response']['responseText'],
+        '{"user":{"id":1,"Secret":"[REDACTED]"$note',
+      );
     });
 
     test('does not double-encode plain text or JSON scalars', () {

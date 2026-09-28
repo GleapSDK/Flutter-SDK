@@ -12,12 +12,14 @@ import 'dart:convert';
 /// * `authorization`, `proxy-authorization`, `cookie` and `set-cookie`
 ///   headers are always masked with `[REDACTED]`.
 /// * JSON bodies: keys named like a prop are removed at any depth, a prop
-///   containing `.` is also applied as a path from the root.
+///   containing `.` is also applied as a path from the root. JSON bodies
+///   that do not parse (cut at the size limit) get the values of matching
+///   keys masked with `[REDACTED]` instead.
 /// * `application/x-www-form-urlencoded` bodies and url query parameters:
 ///   params named like a prop are removed.
 ///
-/// Prop names match case-insensitively everywhere. Bodies that do not parse
-/// (e.g. truncated ones) and bodies without a match are returned untouched.
+/// Prop names match case-insensitively everywhere. Bodies without a match
+/// are returned untouched.
 class GleapNetworkLogRedaction {
   GleapNetworkLogRedaction._();
 
@@ -181,7 +183,7 @@ class GleapNetworkLogRedaction {
   }
 
   /// Redacts a JSON or form-urlencoded body. Returns [body] untouched when
-  /// it does not parse or nothing matched. [props] must be lower case.
+  /// nothing matched. [props] must be lower case.
   static String redactBody(
     String body,
     Set<String> props, {
@@ -193,7 +195,15 @@ class GleapNetworkLogRedaction {
 
     final String trimmed = body.trimLeft();
     if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
-      return _redactJson(body, props) ?? body;
+      dynamic decoded;
+      try {
+        decoded = jsonDecode(body);
+      } catch (_) {
+        // Cut at the size limit (or otherwise broken): mask what is visible.
+        return _maskUnparsedJson(body, props);
+      }
+
+      return _redactJson(decoded, props) ?? body;
     }
 
     if (contentType != null &&
@@ -232,14 +242,9 @@ class GleapNetworkLogRedaction {
         url.substring(queryEnd);
   }
 
-  static String? _redactJson(String body, Set<String> props) {
-    dynamic decoded;
-    try {
-      decoded = jsonDecode(body);
-    } catch (_) {
-      return null;
-    }
-
+  /// Removes matching keys from a decoded JSON body. Returns null when
+  /// nothing was removed.
+  static String? _redactJson(dynamic decoded, Set<String> props) {
     if (decoded is! Map && decoded is! List) {
       return null;
     }
@@ -269,6 +274,46 @@ class GleapNetworkLogRedaction {
     } catch (_) {
       return null;
     }
+  }
+
+  static final RegExp _truncationNote =
+      RegExp(r'\n… \[truncated, (?:\d+|more than \d+) bytes\]$');
+
+  /// Masks the values of matching keys in a JSON body that does not parse
+  /// (e.g. cut at the size limit): every prop, plus the last segment of a
+  /// dotted prop, case-insensitive. String, number, boolean and null values
+  /// become `"[REDACTED]"` (a string cut at the end too); objects and arrays
+  /// are left alone, their keys are matched on their own. A trailing
+  /// truncation note is kept. Returns [body] itself when nothing matched.
+  static String _maskUnparsedJson(String body, Set<String> props) {
+    final Set<String> keys = <String>{};
+    for (final String prop in props) {
+      keys.add(prop);
+      final int lastDot = prop.lastIndexOf('.');
+      if (lastDot >= 0 && lastDot < prop.length - 1) {
+        keys.add(prop.substring(lastDot + 1));
+      }
+    }
+
+    // Keep the truncation note out of reach of a string value cut at the end.
+    final RegExpMatch? note = _truncationNote.firstMatch(body);
+    String head = note == null ? body : body.substring(0, note.start);
+    final String tail = note == null ? '' : body.substring(note.start);
+
+    bool changed = false;
+    for (final String key in keys) {
+      final RegExp pattern = RegExp(
+        '"(${RegExp.escape(key)})"'
+        r'(\s*:\s*)("(?:[^"\\]|\\.)*"?|-?\d[0-9.eE+-]*|true|false|null)',
+        caseSensitive: false,
+      );
+      head = head.replaceAllMapped(pattern, (Match match) {
+        changed = true;
+        return '"${match[1]}"${match[2]}"$redactedValue"';
+      });
+    }
+
+    return changed ? head + tail : body;
   }
 
   static bool _removeKeys(dynamic node, Set<String> props) {
