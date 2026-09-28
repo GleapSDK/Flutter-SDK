@@ -35,9 +35,7 @@ import io.gleap.Gleap;
 import io.gleap.GleapActivationMethod;
 import io.gleap.GleapLogLevel;
 import io.gleap.GleapSessionProperties;
-import io.gleap.Networklog;
 import io.gleap.PrefillHelper;
-import io.gleap.RequestType;
 import io.gleap.SurveyType;
 import io.gleap.callbacks.AiToolExecutedCallback;
 import io.gleap.callbacks.GleapAgentToolHandler;
@@ -370,23 +368,16 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 break;
 
             case "attachNetworkLogs":
+                // Replaces the network logs attached from Dart (the full list is sent every
+                // time). Entries are handed over as they are (date, method and missing
+                // fields included); the Android SDK redacts them when a report is built.
                 try {
-                    JSONArray object = new JSONArray((Collection) call.argument("networkLogs"));
-                    Networklog[] networklogs = new Networklog[object.length()];
-                    for (int i = 0; i < object.length(); i++) {
-                        JSONObject currentRequest = (JSONObject) object.get(i);
-                        JSONObject response = (JSONObject) currentRequest.get("response");
-                        JSONObject request = new JSONObject();
-                        if (currentRequest.has("request")) {
-                            request = (JSONObject) currentRequest.get("request");
-                        }
-                        networklogs[i] = new Networklog(currentRequest.getString("url"),
-                                RequestType.valueOf(currentRequest.getString("type")), response.getInt("status"),
-                                currentRequest.getInt("duration"), request, response);
-                    }
-
-                    Gleap.getInstance().attachNetworkLogs(networklogs);
-                } catch (Exception ex) {
+                    Object networkLogs = call.argument("networkLogs");
+                    JSONArray networkLogsArray = networkLogs instanceof Collection
+                            ? new JSONArray((Collection) networkLogs)
+                            : new JSONArray();
+                    Gleap.getInstance().attachNetworkLogs(networkLogsArray);
+                } catch (Throwable ex) {
                     System.out.println(ex);
                 }
 
@@ -428,6 +419,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                         }
 
                         if(fileData == null) {
+                            result.success(null);
                             break;
                         }
 
@@ -511,6 +503,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                         PrefillHelper.getInstancen().setPrefillData(prefill);
                     }
                 }catch (Exception ex) {}
+                result.success(null);
                 break;
 
             case "isOpened":
@@ -706,34 +699,43 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
             case "startBot":
                 Gleap.getInstance().startBot(call.argument("botId"), call.argument("showBackButton"));
+                result.success(null);
                 break;
 
             case "startClassicForm":
                 Gleap.getInstance().startClassicForm(call.argument("formId"), call.argument("showBackButton"));
+                result.success(null);
                 break;
 
             case "startConversation":
                 Gleap.getInstance().startConversation(call.argument("showBackButton"));
+                result.success(null);
                 break;
 
             case "setNetworkLogsBlacklist":
-                String[] blacklistArray = new String[((ArrayList<String>) call.argument("blacklist")).size()];
-
-                for (int i = 0; i < ((ArrayList<String>) call.argument("blacklist")).size(); i++) {
-                    blacklistArray[i] = ((ArrayList<String>) call.argument("blacklist")).get(i);
+                try {
+                    ArrayList<String> blacklist = call.argument("blacklist");
+                    if (blacklist == null) {
+                        blacklist = new ArrayList<>();
+                    }
+                    Gleap.getInstance().setNetworkLogsBlacklist(blacklist.toArray(new String[0]));
+                } catch (Exception ex) {
+                    System.out.println(ex);
                 }
-
-                Gleap.getInstance().setNetworkLogsBlacklist(blacklistArray);
+                result.success(null);
                 break;
 
             case "setNetworkLogPropsToIgnore":
-                String[] propsToIgnoreArray = new String[((ArrayList<String>) call.argument("networkLogPropsToIgnore")).size()];
-
-                for (int i = 0; i < ((ArrayList<String>) call.argument("networkLogPropsToIgnore")).size(); i++) {
-                    propsToIgnoreArray[i] = ((ArrayList<String>) call.argument("networkLogPropsToIgnore")).get(i);
+                try {
+                    ArrayList<String> propsToIgnore = call.argument("networkLogPropsToIgnore");
+                    if (propsToIgnore == null) {
+                        propsToIgnore = new ArrayList<>();
+                    }
+                    Gleap.getInstance().setNetworkLogPropsToIgnore(propsToIgnore.toArray(new String[0]));
+                } catch (Exception ex) {
+                    System.out.println(ex);
                 }
-
-                Gleap.getInstance().setNetworkLogPropsToIgnore(propsToIgnoreArray);
+                result.success(null);
                 break;
 
             case "setEnvDataPropsToIgnore":

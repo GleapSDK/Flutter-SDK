@@ -60,10 +60,12 @@
   });
 }
 
-- (void)feedbackSendingFailed {
+// GleapDelegate declares feedbackSendingFailed: with the error data; the SDK never calls a
+// variant without it.
+- (void)feedbackSendingFailed:(NSDictionary *)data {
   dispatch_async(dispatch_get_main_queue(), ^{
     if (self.methodChannel != nil) {
-      [self.methodChannel invokeMethod:@"feedbackSendingFailed" arguments:@{}];
+      [self.methodChannel invokeMethod:@"feedbackSendingFailed" arguments:data ?: @{}];
     }
   });
 }
@@ -119,7 +121,7 @@
   });
 }
 
-- (void)notificationCountUpdated:(NSInteger)count {
+- (void)notificationCountUpdated:(int)count {
   dispatch_async(dispatch_get_main_queue(), ^{
     if (self.methodChannel != nil) {
       [self.methodChannel invokeMethod:@"notificationCountUpdated"
@@ -329,8 +331,13 @@
       result(nil);
     }
   } else if ([@"attachNetworkLogs" isEqualToString:call.method]) {
-    [Gleap
-        attachExternalData:@{@"networkLogs" : call.arguments[@"networkLogs"]}];
+    // Replaces the network logs attached from Dart (full list every time).
+    id networkLogs = call.arguments[@"networkLogs"];
+    if (![networkLogs isKindOfClass:[NSArray class]]) {
+      networkLogs = @[];
+    }
+    [Gleap attachExternalData:@{@"networkLogs" : networkLogs}];
+    result(nil);
   } else if ([@"removeAllAttachments" isEqualToString:call.method]) {
     [Gleap removeAllAttachments];
     result(nil);

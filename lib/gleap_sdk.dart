@@ -6,9 +6,14 @@ import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gleap_sdk/helpers/gleap_network_log_store.dart';
 import 'package:gleap_sdk/models/callback_item_model/callback_item_model.dart';
 import 'package:gleap_sdk/models/gleap_network_log_models/gleap_network_log_model/gleap_network_log_model.dart';
 import 'package:gleap_sdk/models/gleap_user_property_model/gleap_user_property_model.dart';
+
+export 'package:gleap_sdk/models/gleap_network_log_models/gleap_network_log_model/gleap_network_log_model.dart';
+export 'package:gleap_sdk/models/gleap_network_log_models/gleap_network_request_model/gleap_network_request_model.dart';
+export 'package:gleap_sdk/models/gleap_network_log_models/gleap_network_response_model/gleap_network_response_model.dart';
 
 enum Severity { LOW, MEDIUM, HIGH }
 
@@ -65,6 +70,27 @@ class Gleap {
   static final List<CallbackItem> _callbackItems = <CallbackItem>[];
   static final Map<String, GleapAgentToolHandler> _registeredAgentTools =
       <String, GleapAgentToolHandler>{};
+  static final GleapNetworkLogStore _networkLogStore = GleapNetworkLogStore(
+    push: _pushNetworkLogs,
+    canPush: _isSupportedPlatform,
+  );
+
+  static bool _isSupportedPlatform() {
+    return kIsWeb || io.Platform.isAndroid || io.Platform.isIOS;
+  }
+
+  static Future<void> _pushNetworkLogs(
+    List<Map<String, dynamic>> networkLogs,
+  ) async {
+    try {
+      await _channel.invokeMethod(
+        'attachNetworkLogs',
+        {
+          'networkLogs': networkLogs,
+        },
+      );
+    } catch (_) {}
+  }
 
   static Future<String> _executeAgentTool(dynamic arguments) async {
     String name = '';
@@ -659,9 +685,41 @@ class Gleap {
     );
   }
 
-  /// ### logNetwork
+  /// ### logNetworkRequest
   ///
-  /// Log network traffic by logging it manually.
+  /// Logs one network request (used by the Gleap http and dio
+  /// interceptors). All logged requests share one buffer that keeps the
+  /// newest 30 entries. Entries are redacted with the props and blacklist
+  /// set through [setNetworkLogPropsToIgnore] / [setNetworkLogsBlacklist]
+  /// (plus the always-on defaults: gleap.io / gleap.ai urls are dropped,
+  /// credential headers are masked) and the complete list is handed to the
+  /// native SDK at most every 500 ms.
+  ///
+  /// Returns immediately and never throws, so it can't slow down or break
+  /// the app's networking.
+  ///
+  /// **Params**
+  ///
+  /// [networkLog] The request: absolute url, method, start date, duration in
+  /// ms, request / response headers and bodies. For a request that failed
+  /// without a response set `success: false` and only
+  /// `GleapNetworkResponse(errorText: ...)`.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static void logNetworkRequest(GleapNetworkLog networkLog) {
+    try {
+      _networkLogStore.add(networkLog.toJson());
+    } catch (_) {}
+  }
+
+  /// ### attachNetworkLogs
+  ///
+  /// Replaces the logged network requests with [networkLogs] (the newest 30
+  /// are kept) and hands them to the native SDK right away. The same
+  /// redaction as for [logNetworkRequest] applies. To log requests one by
+  /// one, use [logNetworkRequest].
   ///
   /// **Params**
   ///
@@ -687,12 +745,19 @@ class Gleap {
       } catch (_) {}
     }
 
-    await _channel.invokeMethod(
-      'attachNetworkLogs',
-      {
-        'networkLogs': jsonNetworkLogs,
-      },
-    );
+    await _networkLogStore.replaceAll(jsonNetworkLogs);
+  }
+
+  /// The logged network requests as they are handed to the native SDK
+  /// (redacted, oldest first).
+  @visibleForTesting
+  static List<Map<String, dynamic>> get debugNetworkLogs =>
+      _networkLogStore.entries;
+
+  /// Drops the logged network requests.
+  @visibleForTesting
+  static void debugClearNetworkLogs() {
+    _networkLogStore.clear();
   }
 
   /// ### trackEvent
@@ -1639,7 +1704,9 @@ class Gleap {
 
   /// ### setNetworkLogsBlacklist
   ///
-  /// Set a blacklist for network logs
+  /// Set a blacklist for network logs: requests whose url contains one of
+  /// the entries are not sent. Urls containing gleap.io / gleap.ai are always
+  /// excluded. Each call replaces the previous list.
   ///
   /// **Available Platforms**
   ///
@@ -1647,6 +1714,8 @@ class Gleap {
   static Future<void> setNetworkLogsBlacklist({
     required List<String> blacklist,
   }) async {
+    _networkLogStore.setBlacklist(blacklist);
+
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'setNetworkLogsBlacklist is not available for current operating system',
@@ -1661,7 +1730,11 @@ class Gleap {
 
   /// ### setNetworkLogPropsToIgnore
   ///
-  /// Set a list of properties to ignore for network logs
+  /// Set a list of properties to remove from network logs: request and
+  /// response headers, JSON body keys (at any depth; `user.password` also
+  /// works as a path), form fields and url query parameters with one of
+  /// these names are removed (case-insensitive). Authorization and cookie
+  /// headers are always masked. Each call replaces the previous list.
   ///
   /// **Available Platforms**
   ///
@@ -1669,6 +1742,8 @@ class Gleap {
   static Future<void> setNetworkLogPropsToIgnore({
     required List<String> propsToIgnore,
   }) async {
+    _networkLogStore.setPropsToIgnore(propsToIgnore);
+
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint(
         'setNetworkLogPropsToIgnore is not available for current operating system',

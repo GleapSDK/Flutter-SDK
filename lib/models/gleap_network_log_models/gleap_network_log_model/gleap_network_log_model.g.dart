@@ -24,13 +24,21 @@ GleapNetworkLog _$GleapNetworkLogFromJson(Map<String, dynamic> json) =>
               json['response'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$GleapNetworkLogToJson(GleapNetworkLog instance) =>
-    <String, dynamic>{
-      'type': instance.type,
-      'url': instance.url,
-      'date': instance.date?.toIso8601String(),
-      'request': instance.request?.toJson(),
-      'duration': _prepareDuration(instance.duration),
-      'success': instance.success,
-      'response': instance.response?.toJson(),
-    };
+Map<String, dynamic> _$GleapNetworkLogToJson(GleapNetworkLog instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('type', _prepareType(instance.type));
+  writeNotNull('url', instance.url);
+  writeNotNull('date', _prepareDate(instance.date));
+  writeNotNull('request', instance.request?.toJson());
+  val['duration'] = _prepareDuration(instance.duration);
+  writeNotNull('success', instance.success);
+  writeNotNull('response', instance.response?.toJson());
+  return val;
+}

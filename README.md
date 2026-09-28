@@ -12,7 +12,7 @@ Checkout our [documentation](https://docs.gleap.ai/documentation/flutter/README)
 
 ```dart
 dependencies:
-  gleap_sdk: "^16.4.3"
+  gleap_sdk: "^18.2.0"
 ```
 
 **Flutter v2 support**
@@ -115,4 +115,31 @@ await Gleap.setColorScheme(
 
 **Network logging**
 
-We support network logging for the packages [Http](https://pub.dev/packages/http) and [Dio](https://pub.dev/packages/dio). For details on how to enable network logging for these packages, check the [Gleap Http Interceptor](https://pub.dev/packages/gleap_http_interceptor) and the [Gleap Dio Interceptor](https://pub.dev/packages/gleap_dio_interceptor) packages.
+We support network logging for the packages [Http](https://pub.dev/packages/http) and [Dio](https://pub.dev/packages/dio). For details on how to enable network logging for these packages, check the [Gleap Http Interceptor](https://pub.dev/packages/gleap_http_interceptor) and the [Gleap Dio Interceptor](https://pub.dev/packages/gleap_dio_interceptor) packages (2.0 or newer).
+
+Requests from any other client can be logged with `Gleap.logNetworkRequest`:
+
+```dart
+Gleap.logNetworkRequest(
+  GleapNetworkLog(
+    type: 'POST',
+    url: 'https://api.example.com/orders',
+    date: startedAt, // when the request started
+    duration: stopwatch.elapsedMilliseconds.toDouble(),
+    success: true, // false when no response arrived
+    request: GleapNetworkRequest(
+      headers: {'content-type': 'application/json'},
+      payload: {'productId': 42}, // Maps and Lists are sent as JSON
+    ),
+    response: GleapNetworkResponse(
+      status: 201,
+      statusText: 'Created',
+      headers: {'content-type': 'application/json'},
+      responseText: responseBody,
+      // for a failed request: GleapNetworkResponse(errorText: 'Connection refused')
+    ),
+  ),
+);
+```
+
+Gleap keeps the newest 30 requests. `Gleap.setNetworkLogPropsToIgnore(propsToIgnore: ['password', 'token'])` removes headers, JSON keys (at any depth, `user.password` also works as a path), form fields and url query parameters with these names; `Gleap.setNetworkLogsBlacklist(blacklist: ['/internal/'])` skips requests whose url contains an entry. Authorization and cookie headers are always masked.
