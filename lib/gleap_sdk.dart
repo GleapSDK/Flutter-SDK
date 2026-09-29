@@ -1814,7 +1814,7 @@ class Gleap {
   /// Sets the color scheme of the Gleap widget and overrides the color scheme
   /// configured in the Gleap dashboard. Only takes effect when "Adapt to dark /
   /// light mode" is enabled in the dashboard; otherwise the widget always keeps
-  /// its normal colors.
+  /// its normal colors. Before the first call the dashboard setting applies.
   ///
   /// - `'auto'` follows the device appearance (dark/light mode) on Android and
   ///   iOS, and the page theme on web.
@@ -1822,7 +1822,6 @@ class Gleap {
   ///   toggle should pass the scheme explicitly, e.g. from
   ///   `Theme.of(context).brightness == Brightness.dark ? 'dark' : 'light'`,
   ///   and call this again whenever the app theme changes.
-  /// - `'default'` removes the override and uses the dashboard setting.
   ///
   /// In dark mode the widget uses the dark mode colors, logo, header image and
   /// composer glow set in the Gleap dashboard; without dark colors it keeps
@@ -1832,7 +1831,7 @@ class Gleap {
   ///
   /// **Params**
   ///
-  /// [colorScheme] `'default'`, `'auto'`, `'light'` or `'dark'`
+  /// [colorScheme] `'auto'`, `'light'` or `'dark'`
   ///
   /// [lightBackgroundColor] Background used in light mode (optional)
   ///
