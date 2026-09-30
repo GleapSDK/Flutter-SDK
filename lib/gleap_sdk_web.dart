@@ -9,6 +9,33 @@ import 'package:gleap_sdk/helpers/gleap_js_sdk_helper.dart' as GleapJsSdkHelper;
 class GleapSdkWeb {
   MethodChannel? _channel;
 
+  /// Network logs that could not be handed to the JavaScript SDK yet (it
+  /// was not loaded); applied once it reports `initialized`.
+  static String? _pendingNetworkLogs;
+
+  static bool _applyNetworkLogs(String networkLogs) {
+    try {
+      GleapJsSdkHelper.attachNetworkLogs(networkLogs.toJS);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// startNetworkLogging was called before the JavaScript SDK had loaded
+  /// (with a loader snippet that doesn't queue startNetworkLogger); the
+  /// network logger is started once it reports `initialized`.
+  static bool _pendingStartNetworkLogger = false;
+
+  static bool _startNetworkLogger() {
+    try {
+      GleapJsSdkHelper.startNetworkLogger();
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   static void registerWith(Registrar registrar) {
     final MethodChannel channel = MethodChannel(
       'gleap_sdk',
@@ -51,6 +78,15 @@ class GleapSdkWeb {
         'error-while-sending'.toJS, errorWhileSending.toJS);
 
     void initialized(JSAny? data) {
+      final String? pendingNetworkLogs = _pendingNetworkLogs;
+      if (pendingNetworkLogs != null && _applyNetworkLogs(pendingNetworkLogs)) {
+        _pendingNetworkLogs = null;
+      }
+
+      if (_pendingStartNetworkLogger && _startNetworkLogger()) {
+        _pendingStartNetworkLogger = false;
+      }
+
       channel.invokeMethod('initialized');
     }
     GleapJsSdkHelper.registerEvents('initialized'.toJS, initialized.toJS);
@@ -177,7 +213,9 @@ class GleapSdkWeb {
         );
 
       case 'startConversation':
-        return startConversation();
+        return startConversation(
+          showBackButton: call.arguments['showBackButton'] ?? true,
+        );
 
       case 'setLanguage':
         return setLanguage(language: call.arguments['language']);
@@ -216,6 +254,12 @@ class GleapSdkWeb {
 
       case 'attachNetworkLogs':
         return attachNetworkLogs(networkLogs: call.arguments['networkLogs']);
+
+      case 'startNetworkLogging':
+        return startNetworkLogging();
+
+      case 'stopNetworkLogging':
+        return stopNetworkLogging();
 
       case 'showFeedbackButton':
         return showFeedbackButton(visible: call.arguments['visible']);
@@ -314,6 +358,13 @@ class GleapSdkWeb {
           disable: call.arguments['disable'],
         );
 
+      case 'setColorScheme':
+        return setColorScheme(
+          colorScheme: call.arguments['colorScheme'],
+          lightBackgroundColor: call.arguments['lightBackgroundColor'],
+          darkBackgroundColor: call.arguments['darkBackgroundColor'],
+        );
+
       case 'registerAgentTool':
         return registerAgentTool(name: call.arguments['name']);
 
@@ -330,7 +381,10 @@ class GleapSdkWeb {
         return clearTicketAttributes();
 
       case 'startBot':
-        return startBot(botId: call.arguments['botId']);
+        return startBot(
+          botId: call.arguments['botId'],
+          showBackButton: call.arguments['showBackButton'] ?? true,
+        );
 
       case 'openConversation':
         return openConversation(shareToken: call.arguments['shareToken']);
@@ -339,7 +393,10 @@ class GleapSdkWeb {
         return openConversations();
 
       case 'startClassicForm':
-        return startClassicForm(formId: call.arguments['formId']);
+        return startClassicForm(
+          formId: call.arguments['formId'],
+          showBackButton: call.arguments['showBackButton'] ?? true,
+        );
 
       default:
         throw PlatformException(
@@ -442,8 +499,8 @@ class GleapSdkWeb {
     GleapJsSdkHelper.startFeedbackFlow(action.toJS, showBackButton.toJS);
   }
 
-  Future<void> startConversation() async {
-    GleapJsSdkHelper.startConversation();
+  Future<void> startConversation({required bool showBackButton}) async {
+    GleapJsSdkHelper.startConversation(showBackButton.toJS);
   }
 
   Future<void> setLanguage({required String language}) async {
@@ -490,12 +547,30 @@ class GleapSdkWeb {
     GleapJsSdkHelper.disableConsoleLog();
   }
 
+  /// Replaces the network logs attached to the JavaScript SDK (the complete
+  /// list is sent every time). Never throws: before the JavaScript SDK has
+  /// loaded, the list is kept and applied once it is initialized.
   Future<void> attachNetworkLogs({
-    required List<dynamic> networkLogs,
+    required List<dynamic>? networkLogs,
   }) async {
-    GleapJsSdkHelper.attachNetworkLogs(
-      json.encode(networkLogs).toJS,
-    );
+    try {
+      final String encoded = json.encode(networkLogs ?? const <dynamic>[]);
+      _pendingNetworkLogs = _applyNetworkLogs(encoded) ? null : encoded;
+    } catch (_) {}
+  }
+
+  /// Starts the JavaScript SDK's network logger (fetch and XMLHttpRequest).
+  /// Never throws: before the JavaScript SDK has loaded, it is started once
+  /// it is initialized.
+  Future<void> startNetworkLogging() async {
+    _pendingStartNetworkLogger = !_startNetworkLogger();
+  }
+
+  /// The JavaScript SDK's network logger can't be stopped; the requests
+  /// logged from Dart are stopped on the Dart side (see
+  /// Gleap.stopNetworkLogging). Only drops a start that is still pending.
+  Future<void> stopNetworkLogging() async {
+    _pendingStartNetworkLogger = false;
   }
 
   Future<void> showFeedbackButton({required bool visible}) async {
@@ -627,6 +702,26 @@ class GleapSdkWeb {
     GleapJsSdkHelper.setDisableEnvData(disable.toJS);
   }
 
+  Future<void> setColorScheme({
+    required String colorScheme,
+    String? lightBackgroundColor,
+    String? darkBackgroundColor,
+  }) async {
+    // Unset colors are left out so the JS SDK falls back to the dashboard
+    // setting / its defaults.
+    final Map<String, String> options = <String, String>{
+      if (lightBackgroundColor != null)
+        'lightBackgroundColor': lightBackgroundColor,
+      if (darkBackgroundColor != null)
+        'darkBackgroundColor': darkBackgroundColor,
+    };
+
+    GleapJsSdkHelper.setColorScheme(
+      colorScheme.toJS,
+      options.jsify() as JSObject,
+    );
+  }
+
   Future<void> registerAgentTool({required String name}) async {
     // The JS SDK calls the handler with the tool params and awaits the
     // returned promise. The actual Dart handler runs on the app side of the
@@ -673,8 +768,11 @@ class GleapSdkWeb {
     GleapJsSdkHelper.clearTicketAttributes();
   }
 
-  Future<void> startBot({required String botId}) async {
-    GleapJsSdkHelper.startBot(botId.toJS);
+  Future<void> startBot({
+    required String botId,
+    required bool showBackButton,
+  }) async {
+    GleapJsSdkHelper.startBot(botId.toJS, showBackButton.toJS);
   }
 
   Future<void> openConversation({required String shareToken}) async {
@@ -685,7 +783,10 @@ class GleapSdkWeb {
     GleapJsSdkHelper.openConversations();
   }
 
-  Future<void> startClassicForm({required String formId}) async {
-    GleapJsSdkHelper.startClassicForm(formId.toJS);
+  Future<void> startClassicForm({
+    required String formId,
+    required bool showBackButton,
+  }) async {
+    GleapJsSdkHelper.startClassicForm(formId.toJS, showBackButton.toJS);
   }
 }

@@ -1,6 +1,6 @@
 name: gleap_sdk
 description: "Gleap SDK for Flutter: customer support, live chat, in-app bug reporting and customer feedback."
-version: 18.1.0
+version: 19.0.0
 homepage: https://www.gleap.ai
 
 environment:
@@ -22,6 +22,10 @@ dev_dependencies:
   json_serializable:
 
 flutter:
+  # Only affects work on this repo (keeps the example app on Swift Package Manager with
+  # Flutter 3.41-3.43); apps that depend on gleap_sdk decide for themselves.
+  config:
+    enable-swift-package-manager: true
   plugin:
     platforms:
       android:

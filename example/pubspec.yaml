@@ -46,6 +46,9 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  # gleap_sdk's iOS side is a Swift package only; on by default from Flutter 3.44.
+  config:
+    enable-swift-package-manager: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

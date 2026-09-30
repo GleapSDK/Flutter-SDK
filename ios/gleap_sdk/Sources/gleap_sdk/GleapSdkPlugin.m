@@ -1,10 +1,21 @@
-#import "GleapSdkPlugin.h"
+#import "./include/gleap_sdk/GleapSdkPlugin.h"
+// CocoaPods exposes the Gleap pod as <Gleap/Gleap.h>; Swift Package Manager as the Gleap module.
+#if __has_include(<Gleap/Gleap.h>)
+#import <Gleap/Gleap.h>
+#else
+@import Gleap;
+#endif
 
-@interface GleapSdkPlugin ()
+@interface GleapSdkPlugin () <GleapDelegate>
 
 @property(retain, nonatomic) FlutterMethodChannel *methodChannel;
 
 @end
+
+// Set by stopNetworkLogging, cleared by startNetworkLogging. The native SDK starts network
+// recording when the config enables network logs, so an explicit stop is applied again once the
+// config has loaded. Process-wide like the native SDK's recorder.
+static BOOL gleapNetworkLoggingStoppedByApp = NO;
 
 @implementation GleapSdkPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
@@ -52,6 +63,13 @@
   });
 }
 
+- (void)configLoaded:(NSDictionary *)config {
+  // An explicit stopNetworkLogging wins over the dashboard setting.
+  if (gleapNetworkLoggingStoppedByApp) {
+    [Gleap stopNetworkRecording];
+  }
+}
+
 - (void)initialized {
   dispatch_async(dispatch_get_main_queue(), ^{
     if (self.methodChannel != nil) {
@@ -60,10 +78,12 @@
   });
 }
 
-- (void)feedbackSendingFailed {
+// GleapDelegate declares feedbackSendingFailed: with the error data; the SDK never calls a
+// variant without it.
+- (void)feedbackSendingFailed:(NSDictionary *)data {
   dispatch_async(dispatch_get_main_queue(), ^{
     if (self.methodChannel != nil) {
-      [self.methodChannel invokeMethod:@"feedbackSendingFailed" arguments:@{}];
+      [self.methodChannel invokeMethod:@"feedbackSendingFailed" arguments:data ?: @{}];
     }
   });
 }
@@ -119,7 +139,7 @@
   });
 }
 
-- (void)notificationCountUpdated:(NSInteger)count {
+- (void)notificationCountUpdated:(int)count {
   dispatch_async(dispatch_get_main_queue(), ^{
     if (self.methodChannel != nil) {
       [self.methodChannel invokeMethod:@"notificationCountUpdated"
@@ -329,8 +349,21 @@
       result(nil);
     }
   } else if ([@"attachNetworkLogs" isEqualToString:call.method]) {
-    [Gleap
-        attachExternalData:@{@"networkLogs" : call.arguments[@"networkLogs"]}];
+    // Replaces the network logs attached from Dart (full list every time).
+    id networkLogs = call.arguments[@"networkLogs"];
+    if (![networkLogs isKindOfClass:[NSArray class]]) {
+      networkLogs = @[];
+    }
+    [Gleap attachExternalData:@{@"networkLogs" : networkLogs}];
+    result(nil);
+  } else if ([@"startNetworkLogging" isEqualToString:call.method]) {
+    gleapNetworkLoggingStoppedByApp = NO;
+    [Gleap startNetworkRecording];
+    result(nil);
+  } else if ([@"stopNetworkLogging" isEqualToString:call.method]) {
+    gleapNetworkLoggingStoppedByApp = YES;
+    [Gleap stopNetworkRecording];
+    result(nil);
   } else if ([@"removeAllAttachments" isEqualToString:call.method]) {
     [Gleap removeAllAttachments];
     result(nil);
@@ -514,6 +547,18 @@
     result(nil);
   } else if ([@"setDisableEnvData" isEqualToString:call.method]) {
     [Gleap setDisableEnvData:[call.arguments[@"disable"] boolValue]];
+    result(nil);
+  } else if ([@"setColorScheme" isEqualToString:call.method]) {
+    // Unset colors arrive as NSNull from the method channel.
+    id lightBackgroundColor = call.arguments[@"lightBackgroundColor"];
+    id darkBackgroundColor = call.arguments[@"darkBackgroundColor"];
+    [Gleap setColorScheme:call.arguments[@"colorScheme"]
+        lightBackgroundColor:[lightBackgroundColor isKindOfClass:[NSString class]]
+                                 ? lightBackgroundColor
+                                 : nil
+         darkBackgroundColor:[darkBackgroundColor isKindOfClass:[NSString class]]
+                                 ? darkBackgroundColor
+                                 : nil];
     result(nil);
   } else if ([@"registerAgentTool" isEqualToString:call.method]) {
     NSString *toolName = call.arguments[@"name"];
