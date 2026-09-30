@@ -1,5 +1,10 @@
 #import "./include/gleap_sdk/GleapSdkPlugin.h"
+// CocoaPods exposes the Gleap pod as <Gleap/Gleap.h>; Swift Package Manager as the Gleap module.
+#if __has_include(<Gleap/Gleap.h>)
+#import <Gleap/Gleap.h>
+#else
 @import Gleap;
+#endif
 
 @interface GleapSdkPlugin () <GleapDelegate>
 
