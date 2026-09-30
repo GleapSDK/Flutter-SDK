@@ -56,11 +56,24 @@ Important: Always have a look at your minSdkVersion on android and your minimum 
 
 **iOS installation**
 
-Navigate to your iOS project folder within the terminal and update the cocoapods by typing
+Requirements: iOS 15.0 or newer, Flutter 3.41 or newer with Swift Package Manager enabled, Xcode 15 or newer.
 
-```
-pod install
-```
+Since 19.0.0 the iOS side of gleap_sdk is a Swift package: Flutter adds it and the native [Gleap iOS SDK](https://github.com/GleapSDK/Gleap-iOS-SDK) to your Xcode project automatically. There is no CocoaPods pod any more, because the CocoaPods registry becomes read-only on December 2, 2026.
+
+- **Flutter 3.44 and newer:** Swift Package Manager is on by default. Just run `flutter run` / `flutter build ios`; the first run adds the Swift Package Manager integration to your Xcode project.
+- **Flutter 3.41 to 3.43:** turn it on first, either for your machine with `flutter config --enable-swift-package-manager`, or for the project in your app's `pubspec.yaml`:
+
+  ```yaml
+  flutter:
+    config:
+      enable-swift-package-manager: true
+  ```
+
+Set your app's iOS deployment target (Runner → Minimum Deployments, and `platform :ios` in your Podfile if you still have one) to 15.0 or higher, otherwise Xcode reports that `gleap-sdk` requires iOS 15.0.
+
+Upgrading from 18.x or older: remove any `pod 'Gleap'` line you added to your Podfile yourself (the Gleap iOS SDK now comes from the Swift package; having both links it twice). If gleap_sdk was your only plugin that needed CocoaPods, you can remove CocoaPods from your iOS project as described in [Swift Package Manager for app developers](https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-app-developers#how-to-remove-cocoapods-integration); other plugins that still use CocoaPods keep working next to it.
+
+Apps that embed Flutter into an existing iOS app (add-to-app) need the Swift Package Manager integration (`flutter build swift-package`, Flutter 3.44+) described in [Integrate a Flutter app into your iOS project](https://docs.flutter.dev/add-to-app/ios/project-setup); the CocoaPods and `flutter build ios-framework` integrations can't include gleap_sdk 19.
 
 **Web installation**
 
