@@ -392,6 +392,9 @@ class GleapSdkWeb {
       case 'openConversations':
         return openConversations();
 
+      case 'openProtectedFileFromUrl':
+        return openProtectedFileFromUrl(url: call.arguments['url']);
+
       case 'startClassicForm':
         return startClassicForm(
           formId: call.arguments['formId'],
@@ -781,6 +784,11 @@ class GleapSdkWeb {
 
   Future<void> openConversations() async {
     GleapJsSdkHelper.openConversations();
+  }
+
+  /// The JavaScript SDK opens `?gleapFile=` links on page load by itself.
+  Future<bool> openProtectedFileFromUrl({required String url}) async {
+    return false;
   }
 
   Future<void> startClassicForm({

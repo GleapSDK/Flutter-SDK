@@ -12,7 +12,7 @@ Checkout our [documentation](https://docs.gleap.ai/documentation/flutter/README)
 
 ```dart
 dependencies:
-  gleap_sdk: "^19.0.0"
+  gleap_sdk: "^19.0.1"
 ```
 
 **Flutter v2 support**
@@ -131,6 +131,26 @@ await Gleap.setColorScheme(
 ```
 
 `setColorScheme` only takes effect when "Adapt to dark / light mode" is enabled in the Gleap dashboard; it then overrides the dashboard's color scheme. Before the first call the dashboard setting applies. In dark mode the widget uses the dark mode colors, logo, header image and composer glow set in the Gleap dashboard; without dark colors it keeps its normal colors. `lightBackgroundColor` / `darkBackgroundColor` override the background in light / dark mode. Can be called before or after `Gleap.initialize`.
+
+**Protected conversation files**
+
+With "Require authenticated file access" (Project settings → User identity), conversation files can only be opened by agents and by the verified customer the conversation belongs to. Identify the customer with a user hash on every app start (the hash is created on your server with the project's identity verification secret):
+
+```dart
+await Gleap.identifyContact(
+  userId: 'user-1',
+  userProperties: GleapUserProperty(email: 'user@example.com'),
+  userHash: userHash,
+);
+```
+
+Email replies link attachments to your customer application URL with a `gleapFile` query parameter. If that URL opens your app (universal link / App Link, e.g. handled with [app_links](https://pub.dev/packages/app_links)), pass it to Gleap; the conversation opens once the customer is identified with a user hash:
+
+```dart
+final bool isGleapFile = await Gleap.openProtectedFileFromUrl(url: uri.toString());
+```
+
+`openProtectedFileFromUrl` returns `true` if the link carries a Gleap file reference and `false` otherwise. Keep the parameter through your app's login flow. On web the JavaScript SDK opens `?gleapFile=` links on page load by itself, so the method returns `false` there.
 
 **Network logging**
 
