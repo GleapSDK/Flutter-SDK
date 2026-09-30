@@ -12,7 +12,7 @@ Checkout our [documentation](https://docs.gleap.ai/documentation/flutter/README)
 
 ```dart
 dependencies:
-  gleap_sdk: "^18.2.0"
+  gleap_sdk: "^19.0.0"
 ```
 
 **Flutter v2 support**
@@ -68,7 +68,7 @@ Navigate to your web project folder and insert the following snippet as first el
 
 ```
 <script>
-!function(Gleap,t,i){if(!(Gleap=window.Gleap=window.Gleap||[]).invoked){for(window.GleapActions=[],Gleap.invoked=!0,Gleap.methods=["identify","setEnvironment","setEnvDataPropsToIgnore","setDisableEnvData","setColorScheme","setTags","attachCustomData","setCustomData","removeCustomData","clearCustomData","registerCustomAction","trackEvent","log","preFillForm","showSurvey","sendSilentCrashReport","startFeedbackFlow","startBot","setAppBuildNumber","setAppVersionCode","setApiUrl","setFrameUrl","setRegion","setWSApiUrl","setRealtimeHost","setBannerUrl","setModalUrl","isOpened","open","close","on","setLanguage","setOfflineMode","initialize","disableConsoleLogOverwrite","logEvent","hide","enableShortcuts","showFeedbackButton","destroy","getIdentity","isUserIdentified","clearIdentity","openConversations","openConversation","openHelpCenterCollection","openHelpCenterArticle", "askAI","openHelpCenter","searchHelpCenter","openNewsArticle","openNews","openFeatureRequests","isLiveMode"],Gleap.f=function(e){return function(){var t=Array.prototype.slice.call(arguments);window.GleapActions.push({e:e,a:t})}},t=0;t<Gleap.methods.length;t++)Gleap[i=Gleap.methods[t]]=Gleap.f(i);Gleap.load=function(){var t=document.getElementsByTagName("head")[0],i=document.createElement("script");i.type="text/javascript",i.async=!0,i.src="https://sdk.gleap.io/latest/index.js",t.appendChild(i)},Gleap.load()}}();
+!function(Gleap,t,i){if(!(Gleap=window.Gleap=window.Gleap||[]).invoked){for(window.GleapActions=[],Gleap.invoked=!0,Gleap.methods=["identify","updateContact","setEnvironment","setEnvDataPropsToIgnore","setDisableEnvData","setColorScheme","setTags","attachCustomData","setCustomData","removeCustomData","clearCustomData","setTicketAttribute","unsetTicketAttribute","clearTicketAttributes","registerCustomAction","registerAgentTool","trackEvent","log","preFillForm","showSurvey","sendSilentCrashReport","startFeedbackFlow","startClassicForm","startConversation","startBot","setAppBuildNumber","setAppVersionCode","setApiUrl","setFrameUrl","setRegion","setWSApiUrl","setRealtimeHost","setBannerUrl","setModalUrl","startNetworkLogger","setNetworkLogsBlacklist","setNetworkLogPropsToIgnore","setDisableInAppNotifications","isOpened","open","close","on","setLanguage","setOfflineMode","initialize","disableConsoleLogOverwrite","logEvent","hide","enableShortcuts","showFeedbackButton","destroy","getIdentity","isUserIdentified","clearIdentity","openConversations","openConversation","openChecklists","openChecklist","startChecklist","openHelpCenterCollection","openHelpCenterArticle", "askAI","openHelpCenter","searchHelpCenter","openNewsArticle","openNews","openFeatureRequests","isLiveMode"],Gleap.f=function(e){return function(){var t=Array.prototype.slice.call(arguments);window.GleapActions.push({e:e,a:t})}},t=0;t<Gleap.methods.length;t++)Gleap[i=Gleap.methods[t]]=Gleap.f(i);Gleap.load=function(){var t=document.getElementsByTagName("head")[0],i=document.createElement("script");i.type="text/javascript",i.async=!0,i.src="https://sdk.gleap.io/latest/index.js",t.appendChild(i)},Gleap.load()}}();
 </script>
 ```
 
@@ -143,3 +143,16 @@ Gleap.logNetworkRequest(
 ```
 
 Gleap keeps the newest 30 requests. `Gleap.setNetworkLogPropsToIgnore(propsToIgnore: ['password', 'token'])` removes headers, JSON keys (at any depth, `user.password` also works as a path), form fields and url query parameters with these names; `Gleap.setNetworkLogsBlacklist(blacklist: ['/internal/'])` skips requests whose url contains an entry. Authorization and cookie headers are always masked.
+
+Switch network logging on or off from your app, also against the network logs setting in the Gleap dashboard:
+
+```dart
+await Gleap.stopNetworkLogging();
+await Gleap.startNetworkLogging(); // resumes after a stop
+```
+
+Without these calls nothing changes: requests logged from Dart are attached, and the native recording on iOS and web follows the dashboard setting.
+
+- **All platforms:** after `stopNetworkLogging`, `logNetworkRequest` and `attachNetworkLogs` (and with them the Gleap http and dio interceptors) ignore new requests until `startNetworkLogging` is called. Requests logged before stay attached.
+- **iOS:** the native SDK records every NSURLSession request of the app (e.g. made by native plugins or `cupertino_http`) when network logs are enabled in the dashboard. `startNetworkLogging` starts this recording, `stopNetworkLogging` stops it.
+- **Web:** `startNetworkLogging` also starts the JavaScript SDK's network logger (fetch and XMLHttpRequest). The JavaScript SDK can't stop it, so on web `stopNetworkLogging` only stops the requests logged from Dart.
