@@ -1,0 +1,41 @@
+# The pre-publish checks of release.yml, without publishing.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Keep in sync with release.yml.
+  FLUTTER_VERSION: '3.41.4'
+
+jobs:
+  check:
+    name: Analyze and dry-run publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Infos (avoid_print in example/) are pre-existing; warnings and errors still fail.
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: Publish (dry run)
+        run: flutter pub publish --dry-run
