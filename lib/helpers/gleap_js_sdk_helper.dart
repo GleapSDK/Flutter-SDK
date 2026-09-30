@@ -60,7 +60,7 @@ external void close();
 external void startFeedbackFlow(JSString flow, JSBoolean showBackButton);
 
 @JS('window.Gleap.startConversation')
-external void startConversation();
+external void startConversation(JSBoolean showBackButton);
 
 @JS('window.Gleap.setLanguage')
 external void setLanguage(JSString language);
@@ -97,6 +97,9 @@ external void disableConsoleLog();
 
 @JS('window.Gleap.attachNetworkLogs')
 external void attachNetworkLogs(JSString networkLogs);
+
+@JS('window.Gleap.startNetworkLogger')
+external void startNetworkLogger();
 
 @JS('window.Gleap.showFeedbackButton')
 external void showFeedbackButton(JSBoolean visible);
@@ -182,7 +185,7 @@ external void unsetTicketAttribute(JSString key);
 external void clearTicketAttributes();
 
 @JS('window.Gleap.startBot')
-external void startBot(JSString botId);
+external void startBot(JSString botId, JSBoolean showBackButton);
 
 @JS('window.Gleap.openConversation')
 external void openConversation(JSString shareToken);
@@ -191,4 +194,4 @@ external void openConversation(JSString shareToken);
 external void openConversations();
 
 @JS('window.Gleap.startClassicForm')
-external void startClassicForm(JSString formId);
+external void startClassicForm(JSString formId, JSBoolean showBackButton);

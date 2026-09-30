@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gleap_sdk/gleap_sdk.dart';
 import 'package:gleap_sdk/helpers/gleap_network_log_redaction.dart';
 import 'package:gleap_sdk/helpers/gleap_network_log_store.dart';
 
@@ -368,6 +369,71 @@ void main() {
       expect(pushed.single.single['request']['headers'], <String, dynamic>{
         'cookie': '[REDACTED]',
       });
+    });
+
+    test('ignores new entries while disabled and keeps the logged ones',
+        () async {
+      final GleapNetworkLogStore logs = store();
+      expect(logs.enabled, isTrue);
+
+      logs.add(entry(url: 'https://api.example.com/before'));
+      logs.setEnabled(false);
+      logs.add(entry(url: 'https://api.example.com/while-stopped'));
+      await logs.replaceAll(<Map<String, dynamic>>[
+        entry(url: 'https://api.example.com/attached-while-stopped'),
+      ]);
+
+      expect(logs.entries.map((Map<String, dynamic> e) => e['url']),
+          <String>['https://api.example.com/before']);
+
+      logs.setEnabled(true);
+      logs.add(entry(url: 'https://api.example.com/after'));
+
+      expect(logs.entries.map((Map<String, dynamic> e) => e['url']),
+          <String>[
+            'https://api.example.com/before',
+            'https://api.example.com/after',
+          ]);
+    });
+  });
+
+  group('Gleap.startNetworkLogging / stopNetworkLogging', () {
+    GleapNetworkLog log(String url) => GleapNetworkLog(
+          type: 'GET',
+          url: url,
+          date: DateTime.utc(2026, 9, 29),
+          duration: 5,
+          success: true,
+        );
+
+    tearDown(() async {
+      await Gleap.startNetworkLogging();
+      Gleap.debugClearNetworkLogs();
+    });
+
+    test('logNetworkRequest is accepted by default', () {
+      Gleap.logNetworkRequest(log('https://api.example.com/default'));
+
+      expect(Gleap.debugNetworkLogs.single['url'],
+          'https://api.example.com/default');
+    });
+
+    test('stop ignores new requests until start, logged ones stay', () async {
+      Gleap.logNetworkRequest(log('https://api.example.com/before'));
+      await Gleap.stopNetworkLogging();
+      Gleap.logNetworkRequest(log('https://api.example.com/while-stopped'));
+
+      expect(Gleap.debugNetworkLogs.map((Map<String, dynamic> e) => e['url']),
+          <String>['https://api.example.com/before']);
+
+      await Gleap.startNetworkLogging();
+      Gleap.logNetworkRequest(log('https://api.example.com/after'));
+
+      expect(Gleap.debugNetworkLogs.map((Map<String, dynamic> e) => e['url']),
+          <String>[
+            'https://api.example.com/before',
+            'https://api.example.com/after',
+          ]);
     });
   });
 }

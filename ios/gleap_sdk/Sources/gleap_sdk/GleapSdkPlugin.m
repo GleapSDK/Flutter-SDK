@@ -6,6 +6,11 @@
 
 @end
 
+// Set by stopNetworkLogging, cleared by startNetworkLogging. The native SDK starts network
+// recording when the config enables network logs, so an explicit stop is applied again once the
+// config has loaded. Process-wide like the native SDK's recorder.
+static BOOL gleapNetworkLoggingStoppedByApp = NO;
+
 @implementation GleapSdkPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FlutterMethodChannel *channel =
@@ -50,6 +55,13 @@
       [self.methodChannel invokeMethod:@"outboundSent" arguments:data];
     }
   });
+}
+
+- (void)configLoaded:(NSDictionary *)config {
+  // An explicit stopNetworkLogging wins over the dashboard setting.
+  if (gleapNetworkLoggingStoppedByApp) {
+    [Gleap stopNetworkRecording];
+  }
 }
 
 - (void)initialized {
@@ -337,6 +349,14 @@
       networkLogs = @[];
     }
     [Gleap attachExternalData:@{@"networkLogs" : networkLogs}];
+    result(nil);
+  } else if ([@"startNetworkLogging" isEqualToString:call.method]) {
+    gleapNetworkLoggingStoppedByApp = NO;
+    [Gleap startNetworkRecording];
+    result(nil);
+  } else if ([@"stopNetworkLogging" isEqualToString:call.method]) {
+    gleapNetworkLoggingStoppedByApp = YES;
+    [Gleap stopNetworkRecording];
     result(nil);
   } else if ([@"removeAllAttachments" isEqualToString:call.method]) {
     [Gleap removeAllAttachments];

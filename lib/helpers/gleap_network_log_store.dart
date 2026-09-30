@@ -15,6 +15,9 @@ typedef GleapNetworkLogPush = Future<void> Function(
 /// change) and hands the complete list to [push] at most once per
 /// [pushDelay] (trailing), never on every request. Every interceptor adds to
 /// this one buffer, so several interceptors no longer overwrite each other.
+///
+/// While [enabled] is false (see [Gleap.stopNetworkLogging]) new entries are
+/// ignored; the ones logged before stay.
 class GleapNetworkLogStore {
   GleapNetworkLogStore({
     required GleapNetworkLogPush push,
@@ -32,6 +35,7 @@ class GleapNetworkLogStore {
   final List<Map<String, dynamic>> _entries = <Map<String, dynamic>>[];
   List<String> _propsToIgnore = const <String>[];
   List<String> _blacklist = const <String>[];
+  bool _enabled = true;
   Timer? _pushTimer;
 
   /// The buffered (already redacted) entries, oldest first.
@@ -42,8 +46,23 @@ class GleapNetworkLogStore {
 
   List<String> get blacklist => _blacklist;
 
-  /// Adds an entry and schedules a push. Never throws.
+  /// Whether new entries are accepted ([add] and [replaceAll]). Defaults to
+  /// true.
+  bool get enabled => _enabled;
+
+  /// Accepts (true) or ignores (false) new entries. Entries logged before
+  /// stay and are still handed over.
+  void setEnabled(bool enabled) {
+    _enabled = enabled;
+  }
+
+  /// Adds an entry and schedules a push. Ignored while not [enabled]. Never
+  /// throws.
   void add(Map<String, dynamic> entry) {
+    if (!_enabled) {
+      return;
+    }
+
     try {
       final Map<String, dynamic>? redacted = _redact(entry);
       if (redacted == null) {
@@ -56,8 +75,13 @@ class GleapNetworkLogStore {
     } catch (_) {}
   }
 
-  /// Replaces all entries and pushes the new list right away.
+  /// Replaces all entries and pushes the new list right away. Ignored while
+  /// not [enabled].
   Future<void> replaceAll(Iterable<Map<String, dynamic>> entries) async {
+    if (!_enabled) {
+      return;
+    }
+
     try {
       _entries.clear();
       for (final Map<String, dynamic> entry in entries) {

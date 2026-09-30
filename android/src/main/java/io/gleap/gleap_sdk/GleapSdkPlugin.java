@@ -552,7 +552,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 break;
 
             case "openChecklist":
-                Gleap.getInstance().startChecklist((String) call.argument("checklistId"), ((Boolean) call.argument("showBackButton")));
+                Gleap.getInstance().openChecklist((String) call.argument("checklistId"), ((Boolean) call.argument("showBackButton")));
 
                 result.success(true);
                 break;
@@ -613,23 +613,26 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
             case "getIdentity":
                 try {
                     GleapSessionProperties gleapUser = Gleap.getInstance().getIdentity();
-                        Map<String, Object> map = new HashMap<>();
+                    // No identity: null like on iOS and web (not an empty map).
+                    if (gleapUser == null) {
+                        result.success(null);
+                        break;
+                    }
 
-                        if (gleapUser != null) {
-                            map.put("userId", gleapUser.getUserId());
-                            map.put("phone", gleapUser.getPhone());
-                            map.put("email", gleapUser.getEmail());
-                            map.put("name", gleapUser.getName());
-                            map.put("plan", gleapUser.getPlan());
-                            map.put("companyName", gleapUser.getCompanyName());
-                            map.put("companyId", gleapUser.getCompanyId());
-                            map.put("avatar", gleapUser.getAvatar());
-                            map.put("value", gleapUser.getValue());
-                            map.put("sla", gleapUser.getValue());
-                        }
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("userId", gleapUser.getUserId());
+                    map.put("phone", gleapUser.getPhone());
+                    map.put("email", gleapUser.getEmail());
+                    map.put("name", gleapUser.getName());
+                    map.put("plan", gleapUser.getPlan());
+                    map.put("companyName", gleapUser.getCompanyName());
+                    map.put("companyId", gleapUser.getCompanyId());
+                    map.put("avatar", gleapUser.getAvatar());
+                    map.put("value", gleapUser.getValue());
+                    map.put("sla", gleapUser.getSla());
 
-                        result.success(map);
-                }catch (Exception ex) {
+                    result.success(map);
+                } catch (Exception ex) {
                     result.success(null);
                 }
                 break;

@@ -267,7 +267,7 @@ class Gleap {
 
   /// ### initialized
   ///
-  /// Registers a callback for push messages
+  /// Registers a callback that is called once the SDK is initialized
   ///
   /// **Available Platforms**
   ///
@@ -308,7 +308,7 @@ class Gleap {
   ///
   /// [description] Description of the bug
   ///
-  /// [severity] Severity of the bug "LOW", "MIDDLE", "HIGH"
+  /// [severity] Severity of the bug: [Severity.LOW], [Severity.MEDIUM] or [Severity.HIGH]
   ///
   /// [excludeData] Exclude data from the crash report
   ///
@@ -693,7 +693,8 @@ class Gleap {
   /// set through [setNetworkLogPropsToIgnore] / [setNetworkLogsBlacklist]
   /// (plus the always-on defaults: gleap.io / gleap.ai urls are dropped,
   /// credential headers are masked) and the complete list is handed to the
-  /// native SDK at most every 500 ms.
+  /// native SDK at most every 500 ms. Ignored after [stopNetworkLogging]
+  /// (until [startNetworkLogging]).
   ///
   /// Returns immediately and never throws, so it can't slow down or break
   /// the app's networking.
@@ -719,7 +720,8 @@ class Gleap {
   /// Replaces the logged network requests with [networkLogs] (the newest 30
   /// are kept) and hands them to the native SDK right away. The same
   /// redaction as for [logNetworkRequest] applies. To log requests one by
-  /// one, use [logNetworkRequest].
+  /// one, use [logNetworkRequest]. Ignored after [stopNetworkLogging] (until
+  /// [startNetworkLogging]).
   ///
   /// **Params**
   ///
@@ -746,6 +748,62 @@ class Gleap {
     }
 
     await _networkLogStore.replaceAll(jsonNetworkLogs);
+  }
+
+  /// ### startNetworkLogging
+  ///
+  /// Starts network logging, also when network logs are turned off in the
+  /// Gleap dashboard, or resumes it after [stopNetworkLogging]. Without
+  /// [startNetworkLogging] / [stopNetworkLogging] nothing changes: requests
+  /// logged from Dart are attached and the native recording (iOS, web)
+  /// follows the dashboard setting.
+  ///
+  /// - iOS: starts the native recording of every NSURLSession request of the
+  ///   app (e.g. made by native plugins or `cupertino_http`).
+  /// - Web: starts the JavaScript SDK's network logger (fetch and
+  ///   XMLHttpRequest).
+  /// - Android, iOS and Web: requests logged from Dart ([logNetworkRequest],
+  ///   used by the Gleap http and dio interceptors, and [attachNetworkLogs])
+  ///   are accepted again after [stopNetworkLogging]. Android has no native
+  ///   recording.
+  ///
+  /// Can be called before or after [initialize].
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static Future<void> startNetworkLogging() async {
+    _networkLogStore.setEnabled(true);
+
+    if (kIsWeb || io.Platform.isIOS) {
+      await _channel.invokeMethod('startNetworkLogging');
+    }
+  }
+
+  /// ### stopNetworkLogging
+  ///
+  /// Stops network logging, also when network logs are turned on in the
+  /// Gleap dashboard, until [startNetworkLogging] is called. Requests logged
+  /// before stay attached.
+  ///
+  /// - Android, iOS and Web: [logNetworkRequest] and [attachNetworkLogs]
+  ///   ignore new requests.
+  /// - iOS: stops the native recording of NSURLSession requests.
+  /// - Web: the JavaScript SDK's network logger (fetch and XMLHttpRequest)
+  ///   can't be stopped; it keeps logging when the dashboard or
+  ///   [startNetworkLogging] started it.
+  ///
+  /// Can be called before or after [initialize].
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static Future<void> stopNetworkLogging() async {
+    _networkLogStore.setEnabled(false);
+
+    if (kIsWeb || io.Platform.isIOS) {
+      await _channel.invokeMethod('stopNetworkLogging');
+    }
   }
 
   /// The logged network requests as they are handed to the native SDK
@@ -1429,7 +1487,7 @@ class Gleap {
 
   /// ### getIdentity
   ///
-  /// Returns the current identity
+  /// Returns the current identity, or null when there is none
   ///
   /// **Available Platforms**
   ///
@@ -1444,6 +1502,9 @@ class Gleap {
 
     try {
       dynamic userProperty = await _channel.invokeMethod('getIdentity');
+      if (userProperty == null) {
+        return null;
+      }
 
       return GleapUserProperty.fromJson(json.decode(json.encode(userProperty)));
     } catch (err) {
@@ -1619,9 +1680,9 @@ class Gleap {
     );
   }
 
-  /// ### setDisableInAppNotifications
+  /// ### openConversation
   ///
-  /// Disables the in-app notifications
+  /// Opens the conversation with the given share token
   ///
   /// **Available Platforms**
   ///

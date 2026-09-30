@@ -22,6 +22,20 @@ class GleapSdkWeb {
     }
   }
 
+  /// startNetworkLogging was called before the JavaScript SDK had loaded
+  /// (with a loader snippet that doesn't queue startNetworkLogger); the
+  /// network logger is started once it reports `initialized`.
+  static bool _pendingStartNetworkLogger = false;
+
+  static bool _startNetworkLogger() {
+    try {
+      GleapJsSdkHelper.startNetworkLogger();
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   static void registerWith(Registrar registrar) {
     final MethodChannel channel = MethodChannel(
       'gleap_sdk',
@@ -67,6 +81,10 @@ class GleapSdkWeb {
       final String? pendingNetworkLogs = _pendingNetworkLogs;
       if (pendingNetworkLogs != null && _applyNetworkLogs(pendingNetworkLogs)) {
         _pendingNetworkLogs = null;
+      }
+
+      if (_pendingStartNetworkLogger && _startNetworkLogger()) {
+        _pendingStartNetworkLogger = false;
       }
 
       channel.invokeMethod('initialized');
@@ -195,7 +213,9 @@ class GleapSdkWeb {
         );
 
       case 'startConversation':
-        return startConversation();
+        return startConversation(
+          showBackButton: call.arguments['showBackButton'] ?? true,
+        );
 
       case 'setLanguage':
         return setLanguage(language: call.arguments['language']);
@@ -234,6 +254,12 @@ class GleapSdkWeb {
 
       case 'attachNetworkLogs':
         return attachNetworkLogs(networkLogs: call.arguments['networkLogs']);
+
+      case 'startNetworkLogging':
+        return startNetworkLogging();
+
+      case 'stopNetworkLogging':
+        return stopNetworkLogging();
 
       case 'showFeedbackButton':
         return showFeedbackButton(visible: call.arguments['visible']);
@@ -355,7 +381,10 @@ class GleapSdkWeb {
         return clearTicketAttributes();
 
       case 'startBot':
-        return startBot(botId: call.arguments['botId']);
+        return startBot(
+          botId: call.arguments['botId'],
+          showBackButton: call.arguments['showBackButton'] ?? true,
+        );
 
       case 'openConversation':
         return openConversation(shareToken: call.arguments['shareToken']);
@@ -364,7 +393,10 @@ class GleapSdkWeb {
         return openConversations();
 
       case 'startClassicForm':
-        return startClassicForm(formId: call.arguments['formId']);
+        return startClassicForm(
+          formId: call.arguments['formId'],
+          showBackButton: call.arguments['showBackButton'] ?? true,
+        );
 
       default:
         throw PlatformException(
@@ -467,8 +499,8 @@ class GleapSdkWeb {
     GleapJsSdkHelper.startFeedbackFlow(action.toJS, showBackButton.toJS);
   }
 
-  Future<void> startConversation() async {
-    GleapJsSdkHelper.startConversation();
+  Future<void> startConversation({required bool showBackButton}) async {
+    GleapJsSdkHelper.startConversation(showBackButton.toJS);
   }
 
   Future<void> setLanguage({required String language}) async {
@@ -525,6 +557,20 @@ class GleapSdkWeb {
       final String encoded = json.encode(networkLogs ?? const <dynamic>[]);
       _pendingNetworkLogs = _applyNetworkLogs(encoded) ? null : encoded;
     } catch (_) {}
+  }
+
+  /// Starts the JavaScript SDK's network logger (fetch and XMLHttpRequest).
+  /// Never throws: before the JavaScript SDK has loaded, it is started once
+  /// it is initialized.
+  Future<void> startNetworkLogging() async {
+    _pendingStartNetworkLogger = !_startNetworkLogger();
+  }
+
+  /// The JavaScript SDK's network logger can't be stopped; the requests
+  /// logged from Dart are stopped on the Dart side (see
+  /// Gleap.stopNetworkLogging). Only drops a start that is still pending.
+  Future<void> stopNetworkLogging() async {
+    _pendingStartNetworkLogger = false;
   }
 
   Future<void> showFeedbackButton({required bool visible}) async {
@@ -722,8 +768,11 @@ class GleapSdkWeb {
     GleapJsSdkHelper.clearTicketAttributes();
   }
 
-  Future<void> startBot({required String botId}) async {
-    GleapJsSdkHelper.startBot(botId.toJS);
+  Future<void> startBot({
+    required String botId,
+    required bool showBackButton,
+  }) async {
+    GleapJsSdkHelper.startBot(botId.toJS, showBackButton.toJS);
   }
 
   Future<void> openConversation({required String shareToken}) async {
@@ -734,7 +783,10 @@ class GleapSdkWeb {
     GleapJsSdkHelper.openConversations();
   }
 
-  Future<void> startClassicForm({required String formId}) async {
-    GleapJsSdkHelper.startClassicForm(formId.toJS);
+  Future<void> startClassicForm({
+    required String formId,
+    required bool showBackButton,
+  }) async {
+    GleapJsSdkHelper.startClassicForm(formId.toJS, showBackButton.toJS);
   }
 }
