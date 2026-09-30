@@ -1,6 +1,7 @@
-#import "GleapSdkPlugin.h"
+#import "./include/gleap_sdk/GleapSdkPlugin.h"
+@import Gleap;
 
-@interface GleapSdkPlugin ()
+@interface GleapSdkPlugin () <GleapDelegate>
 
 @property(retain, nonatomic) FlutterMethodChannel *methodChannel;
 
