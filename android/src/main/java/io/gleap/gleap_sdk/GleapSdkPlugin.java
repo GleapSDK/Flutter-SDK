@@ -690,6 +690,11 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 result.success(true);
                 break;
 
+            case "openProtectedFileFromUrl":
+                boolean willOpen = Gleap.getInstance().openProtectedFileFromUrl(call.argument("url"));
+                result.success(willOpen);
+                break;
+
             case "handlePushNotification":
                 try {
                     JSONObject fcmData = new JSONObject((Map) call.argument("data"));

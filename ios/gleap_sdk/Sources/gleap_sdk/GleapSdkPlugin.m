@@ -521,6 +521,14 @@ static BOOL gleapNetworkLoggingStoppedByApp = NO;
   } else if ([@"openConversations" isEqualToString:call.method]) {
     [Gleap openConversations];
     result(nil);
+  } else if ([@"openProtectedFileFromUrl" isEqualToString:call.method]) {
+    NSString *urlString = call.arguments[@"url"];
+    NSURL *url = nil;
+    if ([urlString isKindOfClass:[NSString class]]) {
+      url = [NSURL URLWithString:urlString];
+    }
+    BOOL willOpen = url != nil && [Gleap openProtectedFileFromURL:url];
+    result(@(willOpen));
   } else if ([@"handlePushNotification" isEqualToString:call.method]) {
     [Gleap handlePushNotification:call.arguments[@"data"]];
     result(nil);

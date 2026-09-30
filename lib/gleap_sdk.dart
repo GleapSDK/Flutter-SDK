@@ -1719,6 +1719,40 @@ class Gleap {
     await _channel.invokeMethod('openConversations');
   }
 
+  /// ### openProtectedFileFromUrl
+  ///
+  /// Opens the conversation of a protected file from an emailed file link.
+  /// With "Require authenticated file access", email replies link attachments
+  /// to your customer application URL with a `gleapFile` query parameter.
+  /// Pass the link that opened the app (e.g. from app_links or uni_links).
+  /// The conversation opens once the user is identified with a user hash
+  /// (`identifyContact` with `userHash`); the link alone grants nothing.
+  ///
+  /// Returns true if the url carries a Gleap file reference.
+  ///
+  /// **Params**
+  ///
+  /// [url] The link that opened the app.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Web, Android, iOS (on web the JavaScript SDK opens `?gleapFile=` links
+  /// on page load by itself, so this always returns false there)
+  static Future<bool> openProtectedFileFromUrl({required String url}) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'openProtectedFileFromUrl is not available for current operating system',
+      );
+      return false;
+    }
+
+    return await _channel.invokeMethod(
+          'openProtectedFileFromUrl',
+          {'url': url},
+        ) ??
+        false;
+  }
+
   /// ### handlePushNotification
   ///
   /// Handles a push notification
