@@ -33,6 +33,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.gleap.APPLICATIONTYPE;
 import io.gleap.Gleap;
 import io.gleap.GleapActivationMethod;
+import io.gleap.GleapLogFlushHandler;
 import io.gleap.GleapLogLevel;
 import io.gleap.GleapSessionProperties;
 import io.gleap.PrefillHelper;
@@ -58,11 +59,14 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
     private static Application application;
     private FlutterPluginBinding flutterPluginBinding;
     private Handler uiThreadHandler = new Handler(Looper.getMainLooper());
+    // False once the engine is gone: log flushes are answered right away instead of waiting for Dart.
+    private volatile boolean attachedToEngine = false;
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
         channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "gleap_sdk");
         channel.setMethodCallHandler(this);
+        attachedToEngine = true;
 
         application = (Application) flutterPluginBinding.getApplicationContext();
         this.flutterPluginBinding = flutterPluginBinding;
@@ -172,6 +176,59 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
         });
     }
 
+    /**
+     * Capture requests: before the native SDK collects the logs for a request, Dart hands over the
+     * network logs it still buffers (pushed at most every 500 ms otherwise). The SDK calls this on
+     * the main thread and waits at most 500 ms for done.
+     */
+    private void registerLogFlushHandler() {
+        try {
+            Gleap.getInstance().setLogFlushHandler(new GleapLogFlushHandler() {
+                @Override
+                public void onFlushRequested(final Runnable done) {
+                    requestLogFlush(done);
+                }
+            });
+        } catch (Throwable ex) {
+            System.out.println(ex);
+        }
+    }
+
+    private void requestLogFlush(final Runnable done) {
+        if (done == null) {
+            return;
+        }
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            uiThreadHandler.post(() -> requestLogFlush(done));
+            return;
+        }
+        final MethodChannel flushChannel = channel;
+        if (!attachedToEngine || flushChannel == null) {
+            done.run();
+            return;
+        }
+        try {
+            flushChannel.invokeMethod("flushLogs", null, new MethodChannel.Result() {
+                @Override
+                public void success(Object flushResult) {
+                    done.run();
+                }
+
+                @Override
+                public void error(String errorCode, String errorMessage, Object errorDetails) {
+                    done.run();
+                }
+
+                @Override
+                public void notImplemented() {
+                    done.run();
+                }
+            });
+        } catch (Throwable ex) {
+            done.run();
+        }
+    }
+
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         switch (call.method) {
@@ -189,6 +246,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
                 initialize();
                 initCustomAction();
+                registerLogFlushHandler();
 
                 result.success(null);
                 break;
@@ -855,6 +913,7 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+        attachedToEngine = false;
         channel.setMethodCallHandler(null);
     }
 

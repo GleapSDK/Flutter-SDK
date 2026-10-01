@@ -124,6 +124,18 @@ class GleapNetworkLogStore {
     } catch (_) {}
   }
 
+  /// Pushes right away when a push is scheduled, i.e. entries changed since
+  /// the last push (e.g. before the native SDK collects the logs for a
+  /// capture request). Does nothing when everything was handed over already.
+  /// Never throws.
+  Future<void> flushPending() async {
+    if (_pushTimer == null) {
+      return;
+    }
+
+    await flush();
+  }
+
   /// Drops all entries and cancels a scheduled push (local settings stay).
   void clear() {
     _pushTimer?.cancel();

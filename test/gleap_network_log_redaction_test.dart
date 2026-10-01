@@ -371,6 +371,31 @@ void main() {
       });
     });
 
+    test('flushPending pushes held-back entries right away, else nothing',
+        () async {
+      final List<List<Map<String, dynamic>>> pushed =
+          <List<Map<String, dynamic>>>[];
+      final GleapNetworkLogStore logs = GleapNetworkLogStore(
+        push: (List<Map<String, dynamic>> networkLogs) async {
+          pushed.add(networkLogs);
+        },
+        pushDelay: const Duration(hours: 1),
+      );
+
+      await logs.flushPending();
+      expect(pushed, isEmpty);
+
+      logs.add(entry(url: 'https://api.example.com/held-back'));
+      await logs.flushPending();
+
+      expect(pushed, hasLength(1));
+      expect(pushed.single.single['url'], 'https://api.example.com/held-back');
+
+      // Everything was handed over: nothing to push.
+      await logs.flushPending();
+      expect(pushed, hasLength(1));
+    });
+
     test('ignores new entries while disabled and keeps the logged ones',
         () async {
       final GleapNetworkLogStore logs = store();

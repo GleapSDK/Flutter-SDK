@@ -126,6 +126,15 @@ class Gleap {
         return await _executeAgentTool(call.arguments);
       }
 
+      // Capture requests (Android, iOS): before the native SDK collects the
+      // logs for a request, it asks for the network logs still buffered here
+      // (pushed at most every 500 ms otherwise) and goes on once this
+      // returns, after 500 ms at the latest.
+      if (call.method == 'flushLogs') {
+        await _networkLogStore.flushPending();
+        return null;
+      }
+
       if (call.method == 'feedbackWillBeSentCallback') {
         WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
         WidgetsBinding.instance.focusManager.rootScope.requestFocus(

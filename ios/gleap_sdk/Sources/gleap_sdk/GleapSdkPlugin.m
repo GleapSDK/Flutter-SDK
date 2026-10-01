@@ -38,6 +38,31 @@ static BOOL gleapNetworkLoggingStoppedByApp = NO;
   }
 }
 
+// Capture requests: before the native SDK collects the logs for a request, Dart hands over the
+// network logs it still buffers (pushed at most every 500 ms otherwise). The SDK waits at most
+// 500 ms for done, which may be called from any thread.
+- (void)registerLogFlushHandler {
+  __weak typeof(self) weakSelf = self;
+  [Gleap setLogFlushHandler:^(void (^done)(void)) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      FlutterMethodChannel *channel = weakSelf.methodChannel;
+      if (channel == nil) {
+        done();
+        return;
+      }
+      @try {
+        [channel invokeMethod:@"flushLogs"
+                    arguments:nil
+                       result:^(id _Nullable flushResult) {
+          done();
+        }];
+      } @catch (NSException *exception) {
+        done();
+      }
+    });
+  }];
+}
+
 - (void)feedbackFlowStarted:(NSDictionary *)feedbackAction {
   dispatch_async(dispatch_get_main_queue(), ^{
     if (self.methodChannel != nil) {
@@ -154,6 +179,7 @@ static BOOL gleapNetworkLoggingStoppedByApp = NO;
 
     [Gleap initializeWithToken:call.arguments[@"token"]];
     [Gleap trackEvent:@"pageView" withData:@{@"page" : @"MainPage"}];
+    [self registerLogFlushHandler];
 
     dispatch_async(dispatch_get_main_queue(), ^{
       [self initSDK];
