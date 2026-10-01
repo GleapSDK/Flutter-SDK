@@ -36,6 +36,30 @@ class GleapSdkWeb {
     }
   }
 
+  /// setCaptureEnabled / setRemoteLogCollectionEnabled called before the
+  /// JavaScript SDK had loaded (or on a JavaScript SDK without them); applied
+  /// once it reports `initialized`, so a switch set early is not lost.
+  static bool? _pendingCaptureEnabled;
+  static bool? _pendingRemoteLogCollectionEnabled;
+
+  static bool _applyCaptureEnabled(bool enabled) {
+    try {
+      GleapJsSdkHelper.setCaptureEnabled(enabled.toJS);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static bool _applyRemoteLogCollectionEnabled(bool enabled) {
+    try {
+      GleapJsSdkHelper.setRemoteLogCollectionEnabled(enabled.toJS);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   static void registerWith(Registrar registrar) {
     final MethodChannel channel = MethodChannel(
       'gleap_sdk',
@@ -85,6 +109,19 @@ class GleapSdkWeb {
 
       if (_pendingStartNetworkLogger && _startNetworkLogger()) {
         _pendingStartNetworkLogger = false;
+      }
+
+      final bool? pendingCaptureEnabled = _pendingCaptureEnabled;
+      if (pendingCaptureEnabled != null &&
+          _applyCaptureEnabled(pendingCaptureEnabled)) {
+        _pendingCaptureEnabled = null;
+      }
+
+      final bool? pendingRemoteLogCollectionEnabled =
+          _pendingRemoteLogCollectionEnabled;
+      if (pendingRemoteLogCollectionEnabled != null &&
+          _applyRemoteLogCollectionEnabled(pendingRemoteLogCollectionEnabled)) {
+        _pendingRemoteLogCollectionEnabled = null;
       }
 
       channel.invokeMethod('initialized');
@@ -363,6 +400,14 @@ class GleapSdkWeb {
           colorScheme: call.arguments['colorScheme'],
           lightBackgroundColor: call.arguments['lightBackgroundColor'],
           darkBackgroundColor: call.arguments['darkBackgroundColor'],
+        );
+
+      case 'setCaptureEnabled':
+        return setCaptureEnabled(enabled: call.arguments['enabled'] == true);
+
+      case 'setRemoteLogCollectionEnabled':
+        return setRemoteLogCollectionEnabled(
+          enabled: call.arguments['enabled'] == true,
         );
 
       case 'registerAgentTool':
@@ -723,6 +768,19 @@ class GleapSdkWeb {
       colorScheme.toJS,
       options.jsify() as JSObject,
     );
+  }
+
+  /// Never throws: before the JavaScript SDK has loaded, the switch is kept
+  /// and applied once it is initialized.
+  Future<void> setCaptureEnabled({required bool enabled}) async {
+    _pendingCaptureEnabled = _applyCaptureEnabled(enabled) ? null : enabled;
+  }
+
+  /// Never throws: before the JavaScript SDK has loaded, the switch is kept
+  /// and applied once it is initialized.
+  Future<void> setRemoteLogCollectionEnabled({required bool enabled}) async {
+    _pendingRemoteLogCollectionEnabled =
+        _applyRemoteLogCollectionEnabled(enabled) ? null : enabled;
   }
 
   Future<void> registerAgentTool({required String name}) async {
