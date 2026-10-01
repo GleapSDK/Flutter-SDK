@@ -1,3 +1,8 @@
+## 19.1.0
+Updated native iOS dependency to 19.1.0
+Updated native Android dependency to 19.1.0
+New `Gleap.setCaptureEnabled(enabled: ...)` and `Gleap.setRemoteLogCollectionEnabled(enabled: ...)` for capture requests: in-app screenshots and screen recordings that workflows, AI agents and teammates ask for in a conversation, and background log collection (on the web through the JavaScript SDK). Network logs from Dart are handed to the native SDK before it collects logs for a request.
+
 ## 19.0.1
 Added `Gleap.openProtectedFileFromUrl(url: ...)` to open the conversation of a protected file from an emailed file link.
 (With "Require authenticated file access", email replies link attachments to your customer application URL with a `gleapFile` query parameter. Pass the link that opened the app, e.g. from app_links or uni_links; it returns true if the link carries a Gleap file reference, and the conversation opens once the user is identified with a user hash (`identifyContact` with `userHash`). On web the JavaScript SDK opens `?gleapFile=` links on page load by itself, so it returns false there)
