@@ -1954,6 +1954,69 @@ class Gleap {
     });
   }
 
+  /// ### setCaptureEnabled
+  ///
+  /// Enables or disables screenshots and screen recordings for capture
+  /// requests: when a workflow, an AI agent or a teammate asks the user in
+  /// the widget to show the issue, the widget steps aside, a small bar lets
+  /// the user go to the right screen, and the SDK captures the app once they
+  /// tap Capture (or records it between Start and Stop). Nothing is captured
+  /// without that tap. While disabled, the widget only offers to upload a
+  /// file. Enabled by default; can be called before or after [initialize].
+  ///
+  /// **Params**
+  ///
+  /// [enabled] `false` to turn screenshots and recordings off
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static Future<void> setCaptureEnabled({required bool enabled}) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setCaptureEnabled is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod('setCaptureEnabled', {'enabled': enabled});
+  }
+
+  /// ### setRemoteLogCollectionEnabled
+  ///
+  /// Enables or disables sending the app's logs for capture requests: a
+  /// workflow or an AI agent can ask for the logs while the app runs (no
+  /// user action), and screenshots and recordings can bring the logs around
+  /// them. The logs are what a bug report carries (console and network logs,
+  /// custom data, env data, custom events; the replay only when it is asked
+  /// for and enabled in the dashboard), and the existing settings still apply
+  /// (e.g. [disableConsoleLog], [setDisableEnvData]). While disabled, log
+  /// requests are answered as not supported and captures are sent without
+  /// logs. Enabled by default; can be called before or after [initialize].
+  ///
+  /// **Params**
+  ///
+  /// [enabled] `false` to never send logs for capture requests
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static Future<void> setRemoteLogCollectionEnabled({
+    required bool enabled,
+  }) async {
+    if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
+      debugPrint(
+        'setRemoteLogCollectionEnabled is not available for current operating system',
+      );
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'setRemoteLogCollectionEnabled',
+      {'enabled': enabled},
+    );
+  }
+
   /// ### registerAgentTool
   ///
   /// Registers the handler for a Frontend tool defined on your AI agent in

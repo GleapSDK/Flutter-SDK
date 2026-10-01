@@ -172,6 +172,12 @@ external void setDisableEnvData(JSBoolean disable);
 @JS('window.Gleap.setColorScheme')
 external void setColorScheme(JSString colorScheme, JSObject options);
 
+@JS('window.Gleap.setCaptureEnabled')
+external void setCaptureEnabled(JSBoolean enabled);
+
+@JS('window.Gleap.setRemoteLogCollectionEnabled')
+external void setRemoteLogCollectionEnabled(JSBoolean enabled);
+
 @JS('window.Gleap.registerAgentTool')
 external void registerAgentTool(JSString name, JSFunction handler);
 

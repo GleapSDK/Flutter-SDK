@@ -568,6 +568,12 @@ static BOOL gleapNetworkLoggingStoppedByApp = NO;
                                  ? darkBackgroundColor
                                  : nil];
     result(nil);
+  } else if ([@"setCaptureEnabled" isEqualToString:call.method]) {
+    [Gleap setCaptureEnabled:[call.arguments[@"enabled"] boolValue]];
+    result(nil);
+  } else if ([@"setRemoteLogCollectionEnabled" isEqualToString:call.method]) {
+    [Gleap setRemoteLogCollectionEnabled:[call.arguments[@"enabled"] boolValue]];
+    result(nil);
   } else if ([@"registerAgentTool" isEqualToString:call.method]) {
     NSString *toolName = call.arguments[@"name"];
     __weak typeof(self) weakSelf = self;

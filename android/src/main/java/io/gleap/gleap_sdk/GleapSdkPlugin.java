@@ -770,6 +770,24 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 result.success(true);
                 break;
 
+            case "setCaptureEnabled":
+                try {
+                    Gleap.getInstance().setCaptureEnabled(Boolean.TRUE.equals(call.argument("enabled")));
+                } catch (Throwable ex) {
+                    System.out.println(ex);
+                }
+                result.success(null);
+                break;
+
+            case "setRemoteLogCollectionEnabled":
+                try {
+                    Gleap.getInstance().setRemoteLogCollectionEnabled(Boolean.TRUE.equals(call.argument("enabled")));
+                } catch (Throwable ex) {
+                    System.out.println(ex);
+                }
+                result.success(null);
+                break;
+
             case "registerAgentTool":
                 try {
                     final String toolName = call.argument("name");
