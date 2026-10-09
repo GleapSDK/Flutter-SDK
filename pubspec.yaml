@@ -1,6 +1,6 @@
 name: gleap_sdk
 description: "Gleap SDK for Flutter: customer support, live chat, in-app bug reporting and customer feedback."
-version: 19.2.1
+version: 19.2.2
 homepage: https://www.gleap.ai
 
 environment:
