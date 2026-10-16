@@ -48,6 +48,7 @@ import io.gleap.callbacks.FeedbackSendingFailedCallback;
 import io.gleap.callbacks.FeedbackSentCallback;
 import io.gleap.callbacks.OutboundSentCallback;
 import io.gleap.callbacks.GetBitmapCallback;
+import io.gleap.callbacks.BannerHeightChangedCallback;
 import io.gleap.callbacks.NotificationUnreadCountUpdatedCallback;
 import io.gleap.callbacks.RegisterPushMessageGroupCallback;
 import io.gleap.callbacks.UnRegisterPushMessageGroupCallback;
@@ -163,6 +164,13 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
             @Override
             public void invoke(int count) {
                 channel.invokeMethod("notificationCountUpdated", count);
+            }
+        });
+
+        Gleap.getInstance().setBannerHeightChangedCallback(new BannerHeightChangedCallback() {
+            @Override
+            public void invoke(int height) {
+                uiThreadHandler.post(() -> channel.invokeMethod("bannerHeightChanged", height));
             }
         });
     }
@@ -566,6 +574,9 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
             case "isOpened":
                 result.success(Gleap.getInstance().isOpened());
+                break;
+            case "getBannerHeight":
+                result.success(Gleap.getInstance().getBannerHeight());
                 break;
             case "log":
                 if(call.argument("logLevel") != null) {

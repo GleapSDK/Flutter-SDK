@@ -76,6 +76,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // Keeps the app below inline banners instead of under them.
+      builder: (context, child) => GleapBannerArea(child: child!),
       home: const MainScreen(),
       routes: {
         MainScreen.routeName: (context) => const MainScreen(),
