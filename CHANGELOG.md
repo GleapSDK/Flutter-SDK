@@ -1,5 +1,7 @@
-## Unreleased
-Inline banners on Android and iOS can push the app down instead of covering it, like on the web. Wrap the app in `GleapBannerArea` (for example `MaterialApp(builder: (context, child) => GleapBannerArea(child: child!))`): while an inline banner is shown, the app moves down by the banner's height (animated) and its top safe-area padding shrinks by the same amount, since the banner covers the status bar. Floating banners still float above the app. `Gleap.bannerHeight` is a `ValueListenable<double>` with the current height in logical pixels for custom layouts. Needs the native iOS and Android SDKs of this release.
+## 19.3.0
+Inline banners on Android and iOS can push the app down instead of covering it, like on the web. Wrap the app in `GleapBannerArea` (for example `MaterialApp(builder: (context, child) => GleapBannerArea(child: child!))`): while an inline banner is shown, the app moves down by the banner's height (animated) and its top safe-area padding shrinks by the same amount, since the banner covers the status bar. Floating banners still float above the app. `Gleap.bannerHeight` is a `ValueListenable<double>` with the current height in logical pixels for custom layouts.
+Updated native iOS dependency to 19.3.0
+Updated native Android dependency to 19.3.0
 
 ## 19.2.4
 Android: the realtime socket opens and closes far less often (no reconnect on a network change or an unchanged identify, closed with 1001 after 10 s in the background, backoff reset only after a healthy socket); see the Android SDK 19.2.4 notes.
