@@ -173,6 +173,15 @@ static BOOL gleapNetworkLoggingStoppedByApp = NO;
   });
 }
 
+- (void)bannerHeightChanged:(CGFloat)height {
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (self.methodChannel != nil) {
+      [self.methodChannel invokeMethod:@"bannerHeightChanged"
+                            arguments:@(height)];
+    }
+  });
+}
+
 - (void)handleMethodCall:(FlutterMethodCall *)call
                   result:(FlutterResult)result {
   if ([@"initialize" isEqualToString:call.method]) {
@@ -423,6 +432,8 @@ static BOOL gleapNetworkLoggingStoppedByApp = NO;
   } else if ([@"setModalUrl" isEqualToString:call.method]) {
     [Gleap setModalUrl:call.arguments[@"url"]];
     result(nil);
+  } else if ([@"getBannerHeight" isEqualToString:call.method]) {
+    result(@([Gleap bannerHeight]));
   } else if ([@"isOpened" isEqualToString:call.method]) {
     BOOL isOpened = [Gleap isOpened];
     result(@(isOpened));

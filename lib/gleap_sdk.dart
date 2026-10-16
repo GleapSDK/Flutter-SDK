@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io;
+import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +15,7 @@ import 'package:gleap_sdk/models/gleap_user_property_model/gleap_user_property_m
 export 'package:gleap_sdk/models/gleap_network_log_models/gleap_network_log_model/gleap_network_log_model.dart';
 export 'package:gleap_sdk/models/gleap_network_log_models/gleap_network_request_model/gleap_network_request_model.dart';
 export 'package:gleap_sdk/models/gleap_network_log_models/gleap_network_response_model/gleap_network_response_model.dart';
+export 'package:gleap_sdk/widgets/gleap_banner_area.dart';
 
 enum Severity { LOW, MEDIUM, HIGH }
 
@@ -75,6 +77,20 @@ class Gleap {
     canPush: _isSupportedPlatform,
   );
 
+  static final ValueNotifier<double> _bannerHeight = ValueNotifier<double>(0);
+
+  /// ### bannerHeight
+  ///
+  /// The space an inline banner takes at the top of the screen, in logical
+  /// pixels from the top edge (it covers the status bar). 0 while no inline
+  /// banner is shown; floating banners float above the app and stay at 0.
+  /// [GleapBannerArea] uses it to keep the app below the banner.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS
+  static ValueListenable<double> get bannerHeight => _bannerHeight;
+
   static bool _isSupportedPlatform() {
     return kIsWeb || io.Platform.isAndroid || io.Platform.isIOS;
   }
@@ -132,6 +148,11 @@ class Gleap {
       // returns, after 500 ms at the latest.
       if (call.method == 'flushLogs') {
         await _networkLogStore.flushPending();
+        return null;
+      }
+
+      if (call.method == 'bannerHeightChanged') {
+        _setBannerHeight(call.arguments);
         return null;
       }
 
@@ -199,6 +220,20 @@ class Gleap {
       'initialize',
       {'token': token},
     );
+
+    if (!kIsWeb) {
+      // A banner may already be shown, for example after a hot restart or
+      // when the app gets a new Flutter engine: the native SDK only reports
+      // changes.
+      try {
+        _setBannerHeight(await _channel.invokeMethod('getBannerHeight'));
+      } catch (_) {}
+    }
+  }
+
+  static void _setBannerHeight(dynamic height) {
+    _bannerHeight.value =
+        height is num ? math.max(0.0, height.toDouble()) : 0.0;
   }
 
   /// ### startFeedbackFlow

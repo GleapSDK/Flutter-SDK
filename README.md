@@ -15,6 +15,19 @@ dependencies:
   gleap_sdk: "^19.0.1"
 ```
 
+**Inline banners**
+
+Inline banners (the banner style set in the Gleap dashboard) cover the top of the app on Android and iOS. To push the app down below them instead, like inline banners on the web, wrap it in `GleapBannerArea`:
+
+```dart
+MaterialApp(
+  builder: (context, child) => GleapBannerArea(child: child!),
+  home: const HomeScreen(),
+)
+```
+
+Floating banners still float above the app; `Gleap.bannerHeight` gives the height for custom layouts.
+
 **Flutter v2 support**
 
 If you are using Flutter < v3, please import the gleap_sdk as shown below:
