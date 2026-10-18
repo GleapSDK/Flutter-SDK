@@ -425,6 +425,11 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                             internalActivationMethods.add(GleapActivationMethod.SCREENSHOT);
                         }
                     }
+                    // An empty list turns the activation methods off. The native SDK reads an empty
+                    // array as "use the dashboard settings", NONE alone as "none".
+                    if (internalActivationMethods.isEmpty()) {
+                        internalActivationMethods.add(GleapActivationMethod.NONE);
+                    }
                     Gleap.getInstance().setActivationMethods(internalActivationMethods.toArray(new GleapActivationMethod[internalActivationMethods.size()]));
                 } catch (Exception ex) {
                     System.out.println(ex);

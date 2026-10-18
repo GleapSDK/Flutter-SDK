@@ -541,11 +541,12 @@ class Gleap {
 
   /// ### setActivationMethods
   ///
-  /// Overwrite the activation methods on the fly.
+  /// Overwrite the activation methods on the fly. They replace the dashboard
+  /// settings; an empty list turns shake and screenshot off.
   ///
   /// **Params**
   ///
-  /// [activationMethods] An array of activation methods.
+  /// [activationMethods] An array of activation methods (empty for none).
   ///
   /// **Available Platforms**
   ///
