@@ -368,6 +368,11 @@ static BOOL gleapNetworkLoggingStoppedByApp = NO;
         [internalActivationMethods addObject:@(SCREENSHOT)];
       }
     }
+    // An empty list turns the activation methods off. The native SDK reads an empty array as
+    // "use the dashboard settings", NONE alone as "none".
+    if (internalActivationMethods.count == 0) {
+      [internalActivationMethods addObject:@(NONE)];
+    }
 
     [Gleap setActivationMethods:internalActivationMethods];
     result(nil);
