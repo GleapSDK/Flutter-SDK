@@ -1,3 +1,7 @@
+## 19.3.1
+Updated native iOS dependency to 19.3.1
+Updated native Android dependency to 19.3.1
+
 ## 19.3.0
 Inline banners on Android and iOS can push the app down instead of covering it, like on the web. Wrap the app in `GleapBannerArea` (for example `MaterialApp(builder: (context, child) => GleapBannerArea(child: child!))`): while an inline banner is shown, the app moves down by the banner's height (animated) and its top safe-area padding shrinks by the same amount, since the banner covers the status bar. Floating banners still float above the app. `Gleap.bannerHeight` is a `ValueListenable<double>` with the current height in logical pixels for custom layouts.
 Updated native iOS dependency to 19.3.0
