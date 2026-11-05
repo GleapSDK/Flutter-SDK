@@ -19,6 +19,15 @@ external void updateContact(JSAny? customerData);
 @JS('window.Gleap.clearIdentity')
 external void clearIdentity();
 
+@JS('window.Gleap.setUserJwt')
+external JSPromise<JSAny?> setUserJwt(JSString token);
+
+@JS('window.Gleap.setUserJwtProvider')
+external void setUserJwtProvider(JSFunction? provider);
+
+@JS('window.Gleap.setAuthTokens')
+external JSPromise<JSAny?> setAuthTokens(JSAny tokens);
+
 @JS('window.Gleap.attachCustomData')
 external void attachCustomData(JSString customData);
 

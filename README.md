@@ -145,6 +145,21 @@ await Gleap.setColorScheme(
 
 `setColorScheme` only takes effect when "Adapt to dark / light mode" is enabled in the Gleap dashboard; it then overrides the dashboard's color scheme. Before the first call the dashboard setting applies. In dark mode the widget uses the dark mode colors, logo, header image and composer glow set in the Gleap dashboard; without dark colors it keeps its normal colors. `lightBackgroundColor` / `darkBackgroundColor` override the background in light / dark mode. Can be called before or after `Gleap.initialize`.
 
+**Customer identity (JWT)**
+
+Sign the user in with one HS256 JWT your backend signs with an identity key (Settings → Security → Customer identity). The token's `userId` names the user; everything else on the contact comes from the token. The SDK keeps it in memory only. See [Customer identity](https://docs.gleap.ai/documentation/guides/customer-identity).
+
+```dart
+// After login and on every app start of a logged-in user
+await Gleap.setUserJwt(token: token);
+
+// Called when the token has expired or is about to; return a fresh one
+Gleap.setUserJwtProvider(provider: () async => await myBackend.fetchGleapToken());
+
+// Optional: tokens API tools may use to call your backend as this user (null removes one)
+await Gleap.setAuthTokens(tokens: {'backend': accessToken});
+```
+
 **Protected conversation files**
 
 With "Require authenticated file access" (Project settings → User identity), conversation files can only be opened by agents and by the verified customer the conversation belongs to. Identify the customer with a user hash on every app start (the hash is created on your server with the project's identity verification secret):
