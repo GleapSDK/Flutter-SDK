@@ -397,6 +397,13 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                 result.success(null);
                 break;
 
+            case "setSessionDuration": {
+                Number milliseconds = call.argument("milliseconds");
+                Gleap.getInstance().setSessionDuration(milliseconds == null ? 0L : milliseconds.longValue());
+                result.success(null);
+                break;
+            }
+
             case "setAuthTokens": {
                 // A null value removes the token.
                 Map<String, String> tokens = new HashMap<>();

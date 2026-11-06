@@ -6,6 +6,9 @@ import 'dart:js_interop';
 @JS('window.Gleap.initialize')
 external void initialize(JSString token);
 
+@JS('window.Gleap.initialize')
+external void initializeWithOptions(JSString token, JSAny options);
+
 @JS('window.Gleap.identify')
 external void identify(
   JSString userId,

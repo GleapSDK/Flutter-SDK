@@ -335,6 +335,10 @@ static BOOL gleapNetworkLoggingStoppedByApp = NO;
     id token = call.arguments[@"token"];
     [Gleap setUserJwt:[token isKindOfClass:[NSString class]] ? token : @""];
     result(nil);
+  } else if ([@"setSessionDuration" isEqualToString:call.method]) {
+    id milliseconds = call.arguments[@"milliseconds"];
+    [Gleap setSessionDuration:[milliseconds isKindOfClass:[NSNumber class]] ? [milliseconds integerValue] : 0];
+    result(nil);
   } else if ([@"setAuthTokens" isEqualToString:call.method]) {
     // A null value arrives as NSNull and removes the token.
     id tokens = call.arguments[@"tokens"];

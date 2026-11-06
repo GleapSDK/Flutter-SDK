@@ -202,6 +202,11 @@ class GleapSdkWeb {
       case 'setUserJwt':
         return setUserJwt(token: call.arguments['token']);
 
+      case 'setSessionDuration':
+        return setSessionDuration(
+          milliseconds: call.arguments['milliseconds'],
+        );
+
       case 'setUserJwtProviderEnabled':
         return setUserJwtProviderEnabled(
           enabled: call.arguments['enabled'] == true,
@@ -467,7 +472,14 @@ class GleapSdkWeb {
   }
 
   Future<void> initialize({required String token}) async {
-    GleapJsSdkHelper.initialize(token.toJS);
+    if (_sessionDuration > 0) {
+      GleapJsSdkHelper.initializeWithOptions(
+        token.toJS,
+        {'sessionDuration': _sessionDuration}.jsify()!,
+      );
+    } else {
+      GleapJsSdkHelper.initialize(token.toJS);
+    }
   }
 
   Future<void> identify({
@@ -502,6 +514,14 @@ class GleapSdkWeb {
     } catch (error) {
       debugPrint('Gleap: setUserJwt needs a JavaScript SDK that includes it ($error).');
     }
+  }
+
+  // The JavaScript SDK takes the session duration as an initialize option, so
+  // it is stored here and passed on with initialize (call it before initialize).
+  int _sessionDuration = 0;
+
+  Future<void> setSessionDuration({required int milliseconds}) async {
+    _sessionDuration = milliseconds;
   }
 
   Future<void> setUserJwtProviderEnabled({required bool enabled}) async {
