@@ -167,6 +167,8 @@ await Gleap.setAuthTokens(tokens: {'backend': accessToken});
 
 `setSessionDuration(ms)` shortens the signed session; the project's maximum applies.
 
+The identity handling runs in the native iOS and Android SDKs on mobile, so their behaviour applies here as is: `setUserJwt` may be called before `initialize` (the token is sent once the SDK starts), a returning user on a project that switched to Signed gets the identify of this app start sent once to obtain a signed session, and a short session duration is renewed at half its lifetime.
+
 **Legacy user hash**
 
 Instead of a token you can still identify with a user hash: the HMAC-SHA256 of the user id, created on your server with the project's identity verification secret. It is accepted while "Accept legacy user hash" stays on in the project's security settings.
