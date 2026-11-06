@@ -516,12 +516,20 @@ class GleapSdkWeb {
     }
   }
 
-  // The JavaScript SDK takes the session duration as an initialize option, so
-  // it is stored here and passed on with initialize (call it before initialize).
+  // Stored for initialize (the JavaScript SDK takes it as an initialize
+  // option) and handed to Gleap.setSessionDuration, which applies it to a
+  // running session. An older JavaScript SDK without the setter only gets it
+  // with initialize.
   int _sessionDuration = 0;
 
   Future<void> setSessionDuration({required int milliseconds}) async {
     _sessionDuration = milliseconds;
+    try {
+      GleapJsSdkHelper.setSessionDuration(milliseconds.toJS);
+    } catch (error) {
+      debugPrint(
+          'Gleap: setSessionDuration after initialize needs a JavaScript SDK that includes it ($error).');
+    }
   }
 
   Future<void> setUserJwtProviderEnabled({required bool enabled}) async {

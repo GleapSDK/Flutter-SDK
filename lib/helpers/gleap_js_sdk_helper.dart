@@ -28,6 +28,9 @@ external JSPromise<JSAny?> setUserJwt(JSString token);
 @JS('window.Gleap.setUserJwtProvider')
 external void setUserJwtProvider(JSFunction? provider);
 
+@JS('window.Gleap.setSessionDuration')
+external void setSessionDuration(JSNumber milliseconds);
+
 @JS('window.Gleap.setAuthTokens')
 external JSPromise<JSAny?> setAuthTokens(JSAny tokens);
 

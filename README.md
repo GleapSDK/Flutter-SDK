@@ -158,7 +158,7 @@ await Gleap.setUserJwt(token: token);
 // Called when the token has expired or is about to; return a fresh one
 Gleap.setUserJwtProvider(provider: () async => await myBackend.fetchGleapToken());
 
-// Optional: shorten the signed session (milliseconds; on web call it before initialize)
+// Optional: shorten the signed session (milliseconds)
 await Gleap.setSessionDuration(milliseconds: 24 * 60 * 60 * 1000);
 
 // Optional: tokens API tools may use to call your backend as this user (null removes one)
