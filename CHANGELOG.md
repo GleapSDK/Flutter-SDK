@@ -1,3 +1,6 @@
+## 19.5.1
+Documentation only: README, package description and doc comments name the Project ID (Settings → Project → General) and sign users in with `setUserJwt`. No code changes.
+
 ## 19.5.0
 The key `Gleap.initialize` takes is now called **Project ID** (formerly "SDK key" / "API key"). The value is the same and every existing key keeps working; nothing needs to change in your app.
 New: `Gleap.initialize(projectId: 'YOUR_PROJECT_ID')`. `token:` keeps working and is marked `@Deprecated`. The Project ID is in the Gleap dashboard under Settings → Project → General. The plugin passes it to the native `initializeWithProjectId:` (iOS, falling back to `initializeWithToken:` on older native SDKs) and `Gleap.initialize(String, Application)` (Android), and to `Gleap.initialize(projectId)` of the JavaScript SDK on web.

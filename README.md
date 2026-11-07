@@ -12,7 +12,7 @@ Checkout our [documentation](https://docs.gleap.ai/en/articles/531-flutter-sdk-s
 
 ```dart
 dependencies:
-  gleap_sdk: "^19.5.0"
+  gleap_sdk: "^19.5.1"
 ```
 
 **Inline banners**
