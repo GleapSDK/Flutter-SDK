@@ -6,6 +6,9 @@ import 'dart:js_interop';
 @JS('window.Gleap.initialize')
 external void initialize(JSString token);
 
+@JS('window.Gleap.initialize')
+external void initializeWithOptions(JSString token, JSAny options);
+
 @JS('window.Gleap.identify')
 external void identify(
   JSString userId,
@@ -18,6 +21,18 @@ external void updateContact(JSAny? customerData);
 
 @JS('window.Gleap.clearIdentity')
 external void clearIdentity();
+
+@JS('window.Gleap.setUserJwt')
+external JSPromise<JSAny?> setUserJwt(JSString token);
+
+@JS('window.Gleap.setUserJwtProvider')
+external void setUserJwtProvider(JSFunction? provider);
+
+@JS('window.Gleap.setSessionDuration')
+external void setSessionDuration(JSNumber milliseconds);
+
+@JS('window.Gleap.setAuthTokens')
+external JSPromise<JSAny?> setAuthTokens(JSAny tokens);
 
 @JS('window.Gleap.attachCustomData')
 external void attachCustomData(JSString customData);

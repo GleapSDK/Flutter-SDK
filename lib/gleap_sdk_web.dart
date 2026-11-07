@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:js_interop';
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 // ignore: library_prefixes
@@ -197,6 +198,22 @@ class GleapSdkWeb {
 
       case 'clearIdentity':
         return clearIdentity();
+
+      case 'setUserJwt':
+        return setUserJwt(token: call.arguments['token']);
+
+      case 'setSessionDuration':
+        return setSessionDuration(
+          milliseconds: call.arguments['milliseconds'],
+        );
+
+      case 'setUserJwtProviderEnabled':
+        return setUserJwtProviderEnabled(
+          enabled: call.arguments['enabled'] == true,
+        );
+
+      case 'setAuthTokens':
+        return setAuthTokens(tokens: call.arguments['tokens']);
 
       case 'attachCustomData':
         return attachCustomData(
@@ -455,7 +472,14 @@ class GleapSdkWeb {
   }
 
   Future<void> initialize({required String token}) async {
-    GleapJsSdkHelper.initialize(token.toJS);
+    if (_sessionDuration > 0) {
+      GleapJsSdkHelper.initializeWithOptions(
+        token.toJS,
+        {'sessionDuration': _sessionDuration}.jsify()!,
+      );
+    } else {
+      GleapJsSdkHelper.initialize(token.toJS);
+    }
   }
 
   Future<void> identify({
@@ -480,6 +504,67 @@ class GleapSdkWeb {
 
   Future<void> clearIdentity() async {
     GleapJsSdkHelper.clearIdentity();
+  }
+
+  // Customer identity: the JavaScript SDK does the work (and keeps the
+  // provider's rules). A JavaScript SDK without these methods logs a warning.
+  Future<void> setUserJwt({required String token}) async {
+    try {
+      await GleapJsSdkHelper.setUserJwt(token.toJS).toDart;
+    } catch (error) {
+      debugPrint('Gleap: setUserJwt needs a JavaScript SDK that includes it ($error).');
+    }
+  }
+
+  // Stored for initialize (the JavaScript SDK takes it as an initialize
+  // option) and handed to Gleap.setSessionDuration, which applies it to a
+  // running session. An older JavaScript SDK without the setter only gets it
+  // with initialize.
+  int _sessionDuration = 0;
+
+  Future<void> setSessionDuration({required int milliseconds}) async {
+    _sessionDuration = milliseconds;
+    try {
+      GleapJsSdkHelper.setSessionDuration(milliseconds.toJS);
+    } catch (error) {
+      debugPrint(
+          'Gleap: setSessionDuration after initialize needs a JavaScript SDK that includes it ($error).');
+    }
+  }
+
+  Future<void> setUserJwtProviderEnabled({required bool enabled}) async {
+    try {
+      if (!enabled) {
+        GleapJsSdkHelper.setUserJwtProvider(null);
+        return;
+      }
+      // The provider runs on the app side of the method channel
+      // (Gleap.setUserJwtProvider), like agent tools.
+      JSPromise<JSString?> provider() {
+        final Future<JSString?> request = () async {
+          final dynamic token = await _channel?.invokeMethod('requestUserJwt');
+          return token is String && token.isNotEmpty ? token.toJS : null;
+        }();
+        return request.toJS;
+      }
+
+      GleapJsSdkHelper.setUserJwtProvider(provider.toJS);
+    } catch (error) {
+      debugPrint(
+          'Gleap: setUserJwtProvider needs a JavaScript SDK that includes it ($error).');
+    }
+  }
+
+  Future<void> setAuthTokens({required dynamic tokens}) async {
+    try {
+      final JSAny? jsTokens = (tokens as Object?)?.jsify();
+      if (jsTokens == null) {
+        return;
+      }
+      await GleapJsSdkHelper.setAuthTokens(jsTokens).toDart;
+    } catch (error) {
+      debugPrint('Gleap: setAuthTokens needs a JavaScript SDK that includes it ($error).');
+    }
   }
 
   Future<void> preFillForm({required dynamic formData}) async {

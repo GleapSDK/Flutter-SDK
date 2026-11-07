@@ -7,6 +7,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gleap_sdk/helpers/gleap_identity_helper.dart';
 import 'package:gleap_sdk/helpers/gleap_network_log_store.dart';
 import 'package:gleap_sdk/models/callback_item_model/callback_item_model.dart';
 import 'package:gleap_sdk/models/gleap_network_log_models/gleap_network_log_model/gleap_network_log_model.dart';
@@ -16,6 +17,7 @@ export 'package:gleap_sdk/models/gleap_network_log_models/gleap_network_log_mode
 export 'package:gleap_sdk/models/gleap_network_log_models/gleap_network_request_model/gleap_network_request_model.dart';
 export 'package:gleap_sdk/models/gleap_network_log_models/gleap_network_response_model/gleap_network_response_model.dart';
 export 'package:gleap_sdk/widgets/gleap_banner_area.dart';
+export 'package:gleap_sdk/helpers/gleap_identity_helper.dart' show GleapUserJwtProvider;
 
 enum Severity { LOW, MEDIUM, HIGH }
 
@@ -78,6 +80,7 @@ class Gleap {
   );
 
   static final ValueNotifier<double> _bannerHeight = ValueNotifier<double>(0);
+  static GleapUserJwtProvider? _userJwtProvider;
 
   /// ### bannerHeight
   ///
@@ -140,6 +143,11 @@ class Gleap {
     _channel.setMethodCallHandler((MethodCall call) async {
       if (call.method == 'agentToolExecution') {
         return await _executeAgentTool(call.arguments);
+      }
+
+      // Customer identity: the native SDK asks for a fresh identity token.
+      if (call.method == 'requestUserJwt') {
+        return await gleapAnswerUserJwtRequest(_userJwtProvider);
       }
 
       // Capture requests (Android, iOS): before the native SDK collects the
@@ -406,26 +414,15 @@ class Gleap {
       return;
     }
 
-    if (userProperties != null && userHash != null) {
-      await _channel.invokeMethod(
-        'identify',
-        {
-          'userId': userId,
-          'userProperties': userProperties.toJson(),
-          'userHash': userHash,
-        },
-      );
-    } else if (userProperties != null) {
-      await _channel.invokeMethod(
-        'identify',
-        {
-          'userId': userId,
-          'userProperties': userProperties.toJson(),
-        },
-      );
-    } else {
-      await _channel.invokeMethod('identify', {'userId': userId});
-    }
+    // The user hash goes along with or without user properties.
+    await _channel.invokeMethod(
+      'identify',
+      gleapIdentifyArguments(
+        userId: userId,
+        userProperties: userProperties,
+        userHash: userHash,
+      ),
+    );
   }
 
   /// ### identifyContact
@@ -451,26 +448,15 @@ class Gleap {
       return;
     }
 
-    if (userProperties != null && userHash != null) {
-      await _channel.invokeMethod(
-        'identifyContact',
-        {
-          'userId': userId,
-          'userProperties': userProperties.toJson(),
-          'userHash': userHash,
-        },
-      );
-    } else if (userProperties != null) {
-      await _channel.invokeMethod(
-        'identifyContact',
-        {
-          'userId': userId,
-          'userProperties': userProperties.toJson(),
-        },
-      );
-    } else {
-      await _channel.invokeMethod('identify', {'userId': userId});
-    }
+    // The user hash goes along with or without user properties.
+    await _channel.invokeMethod(
+      'identifyContact',
+      gleapIdentifyArguments(
+        userId: userId,
+        userProperties: userProperties,
+        userHash: userHash,
+      ),
+    );
   }
 
   /// ### updateContact
@@ -502,9 +488,126 @@ class Gleap {
     );
   }
 
+  /// ### setUserJwt
+  ///
+  /// Identifies the user with an identity token: an HS256 JWT your backend
+  /// signs with an identity key. The token is the whole identify: its
+  /// `userId` (or `user_id`) claim names the user and every other claim lands
+  /// on the contact as signed data; no other contact field is sent. Call it
+  /// after login and on every app start. The token is kept in memory only and
+  /// sent again whenever it changes. A token that is not a JWT, has no user id
+  /// or is longer than 4096 characters is refused with a log line and nothing
+  /// is sent. Completes once the native SDK has the token.
+  ///
+  /// **Params**
+  ///
+  /// [token] The identity token (JWT) from your backend.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static Future<void> setUserJwt({required String token}) async {
+    if (!_isSupportedPlatform()) {
+      debugPrint('setUserJwt is not available for current operating system');
+      return;
+    }
+
+    await _channel.invokeMethod('setUserJwt', {'token': token});
+  }
+
+  /// ### setSessionDuration
+  ///
+  /// Shortens how long a signed session stays signed. Sent with every
+  /// identify; the project's maximum (Settings > Security) applies when yours
+  /// is longer. Call it before [setUserJwt] (on web, before [initialize]).
+  /// `0` or less goes back to the project's maximum.
+  ///
+  /// **Params**
+  ///
+  /// [milliseconds] The session duration in milliseconds.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static Future<void> setSessionDuration({required int milliseconds}) async {
+    if (!_isSupportedPlatform()) {
+      debugPrint(
+          'setSessionDuration is not available for current operating system');
+      return;
+    }
+
+    await _channel.invokeMethod(
+      'setSessionDuration',
+      {'milliseconds': milliseconds < 0 ? 0 : milliseconds},
+    );
+  }
+
+  /// ### setUserJwtProvider
+  ///
+  /// Sets the function that fetches a fresh identity token from your backend.
+  /// Gleap calls it when the server answers that the token expired (and
+  /// retries once with the new token), and before it renews the file access or
+  /// sends the identify again when the token expires within 5 minutes. One
+  /// call at a time; a call without an answer within 10 seconds counts as
+  /// failed, and after a failure Gleap waits 30 seconds before it asks again.
+  /// Return `null` (or throw) when fetching failed. `clearIdentity` keeps the
+  /// provider; pass `null` to remove it.
+  ///
+  /// **Params**
+  ///
+  /// [provider] Returns the new token.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static Future<void> setUserJwtProvider({
+    required GleapUserJwtProvider? provider,
+  }) async {
+    if (!_isSupportedPlatform()) {
+      debugPrint(
+          'setUserJwtProvider is not available for current operating system');
+      return;
+    }
+
+    _userJwtProvider = provider;
+    await _channel.invokeMethod(
+      'setUserJwtProviderEnabled',
+      {'enabled': provider != null},
+    );
+  }
+
+  /// ### setAuthTokens
+  ///
+  /// Stores per-user tokens on the signed contact that your API tools may send
+  /// to your backend on this user's behalf (`{{session.authTokens.<name>}}`).
+  /// Each call replaces the named tokens; a `null` value removes one. Names
+  /// start with a letter and use letters, digits, `_` and `-` (at most 40
+  /// characters). Needs a signed identity ([setUserJwt]). Kept in memory only
+  /// and sent again after the next signed identify on a new session;
+  /// `clearIdentity` drops them.
+  ///
+  /// **Params**
+  ///
+  /// [tokens] The tokens by name.
+  ///
+  /// **Available Platforms**
+  ///
+  /// Android, iOS, Web
+  static Future<void> setAuthTokens({
+    required Map<String, String?> tokens,
+  }) async {
+    if (!_isSupportedPlatform()) {
+      debugPrint('setAuthTokens is not available for current operating system');
+      return;
+    }
+
+    await _channel.invokeMethod('setAuthTokens', {'tokens': tokens});
+  }
+
   /// ### clearIdentity
   ///
-  /// Clears a user session.
+  /// Clears a user session, its identity token and auth tokens. The JWT
+  /// provider stays set.
   ///
   /// **Available Platforms**
   ///

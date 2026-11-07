@@ -36,6 +36,7 @@ import io.gleap.GleapActivationMethod;
 import io.gleap.GleapLogFlushHandler;
 import io.gleap.GleapLogLevel;
 import io.gleap.GleapSessionProperties;
+import io.gleap.GleapUserJwtProvider;
 import io.gleap.PrefillHelper;
 import io.gleap.SurveyType;
 import io.gleap.callbacks.AiToolExecutedCallback;
@@ -331,6 +332,11 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                } else if (call.argument("userHash") != null) {
+                    // The user hash (or identity token) also goes along without user properties.
+                    GleapSessionProperties gleapUserProperties = new GleapSessionProperties();
+                    gleapUserProperties.setHash(call.argument("userHash"));
+                    Gleap.getInstance().identifyContact(call.argument("userId"), gleapUserProperties);
                 } else {
                     Gleap.getInstance().identifyContact(call.argument("userId"));
                 }
@@ -383,6 +389,75 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
 
             case "clearIdentity":
                 Gleap.getInstance().clearIdentity();
+                result.success(null);
+                break;
+
+            case "setUserJwt":
+                Gleap.getInstance().setUserJwt((String) call.argument("token"));
+                result.success(null);
+                break;
+
+            case "setSessionDuration": {
+                Number milliseconds = call.argument("milliseconds");
+                Gleap.getInstance().setSessionDuration(milliseconds == null ? 0L : milliseconds.longValue());
+                result.success(null);
+                break;
+            }
+
+            case "setAuthTokens": {
+                // A null value removes the token.
+                Map<String, String> tokens = new HashMap<>();
+                Object rawTokens = call.argument("tokens");
+                if (rawTokens instanceof Map) {
+                    for (Map.Entry<?, ?> entry : ((Map<?, ?>) rawTokens).entrySet()) {
+                        Object value = entry.getValue();
+                        if (entry.getKey() instanceof String && (value == null || value instanceof String)) {
+                            tokens.put((String) entry.getKey(), (String) value);
+                        }
+                    }
+                }
+                Gleap.getInstance().setAuthTokens(tokens);
+                result.success(null);
+                break;
+            }
+
+            case "setUserJwtProviderEnabled":
+                if (!Boolean.TRUE.equals(call.argument("enabled"))) {
+                    Gleap.getInstance().setUserJwtProvider(null);
+                } else {
+                    // The provider runs in Dart (requestUserJwt); the native SDK keeps the
+                    // rules (one call at a time, 10 s timeout, 30 s pause after a failure).
+                    Gleap.getInstance().setUserJwtProvider(new GleapUserJwtProvider() {
+                        @Override
+                        public void fetchToken(final Callback callback) {
+                            uiThreadHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (channel == null) {
+                                        callback.onToken(null);
+                                        return;
+                                    }
+                                    channel.invokeMethod("requestUserJwt", null, new MethodChannel.Result() {
+                                        @Override
+                                        public void success(Object token) {
+                                            callback.onToken(token instanceof String && !((String) token).isEmpty() ? (String) token : null);
+                                        }
+
+                                        @Override
+                                        public void error(String errorCode, String errorMessage, Object errorDetails) {
+                                            callback.onToken(null);
+                                        }
+
+                                        @Override
+                                        public void notImplemented() {
+                                            callback.onToken(null);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
                 result.success(null);
                 break;
 

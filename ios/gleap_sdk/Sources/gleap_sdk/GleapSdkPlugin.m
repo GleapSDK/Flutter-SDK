@@ -331,6 +331,45 @@ static BOOL gleapNetworkLoggingStoppedByApp = NO;
   } else if ([@"clearIdentity" isEqualToString:call.method]) {
     [Gleap clearIdentity];
     result(nil);
+  } else if ([@"setUserJwt" isEqualToString:call.method]) {
+    id token = call.arguments[@"token"];
+    [Gleap setUserJwt:[token isKindOfClass:[NSString class]] ? token : @""];
+    result(nil);
+  } else if ([@"setSessionDuration" isEqualToString:call.method]) {
+    id milliseconds = call.arguments[@"milliseconds"];
+    [Gleap setSessionDuration:[milliseconds isKindOfClass:[NSNumber class]] ? [milliseconds integerValue] : 0];
+    result(nil);
+  } else if ([@"setAuthTokens" isEqualToString:call.method]) {
+    // A null value arrives as NSNull and removes the token.
+    id tokens = call.arguments[@"tokens"];
+    [Gleap setAuthTokens:[tokens isKindOfClass:[NSDictionary class]] ? tokens : @{}];
+    result(nil);
+  } else if ([@"setUserJwtProviderEnabled" isEqualToString:call.method]) {
+    if (![call.arguments[@"enabled"] boolValue]) {
+      [Gleap setUserJwtProvider:nil];
+      result(nil);
+      return;
+    }
+    // The provider runs in Dart (requestUserJwt); the native SDK keeps the
+    // rules (one call at a time, 10 s timeout, 30 s pause after a failure).
+    __weak typeof(self) weakSelf = self;
+    [Gleap setUserJwtProvider:^(void (^completion)(NSString *_Nullable token)) {
+      dispatch_async(dispatch_get_main_queue(), ^{
+        if (weakSelf.methodChannel == nil) {
+          completion(nil);
+          return;
+        }
+        [weakSelf.methodChannel invokeMethod:@"requestUserJwt"
+                                   arguments:nil
+                                      result:^(id _Nullable channelResult) {
+          completion([channelResult isKindOfClass:[NSString class]] &&
+                             [channelResult length] > 0
+                         ? channelResult
+                         : nil);
+        }];
+      });
+    }];
+    result(nil);
   } else if ([@"setLanguage" isEqualToString:call.method]) {
     [Gleap setLanguage:call.arguments[@"language"]];
     result(nil);
