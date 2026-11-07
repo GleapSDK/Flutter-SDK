@@ -4,15 +4,15 @@
 
 Add AI-native customer support, live chat, in-app bug reporting, a help center and surveys to your Flutter apps with [Gleap](https://www.gleap.ai). Gleap is an Intercom alternative for software teams that connects customer conversations and feedback with product development.
 
-[SDK documentation](https://docs.gleap.ai/documentation/flutter/README) · [Website](https://www.gleap.ai) · [Plans and pricing](https://www.gleap.ai/pricing)
+[SDK documentation](https://docs.gleap.ai/en/articles/531-flutter-sdk-setup) · [Website](https://www.gleap.ai) · [Plans and pricing](https://www.gleap.ai/pricing)
 
 ## Docs & examples
 
-Checkout our [documentation](https://docs.gleap.ai/documentation/flutter/README) for full reference. Include the following dependency in your pubspec.yaml:
+Checkout our [documentation](https://docs.gleap.ai/en/articles/531-flutter-sdk-setup) for full reference. Include the following dependency in your pubspec.yaml:
 
 ```dart
 dependencies:
-  gleap_sdk: "^19.0.1"
+  gleap_sdk: "^19.5.0"
 ```
 
 **Inline banners**
@@ -100,7 +100,7 @@ Navigate to your web project folder and insert the following snippet as first el
 
 ```
 <script>
-!function(Gleap,t,i){if(!(Gleap=window.Gleap=window.Gleap||[]).invoked){for(window.GleapActions=[],Gleap.invoked=!0,Gleap.methods=["identify","updateContact","setEnvironment","setEnvDataPropsToIgnore","setDisableEnvData","setColorScheme","setTags","attachCustomData","setCustomData","removeCustomData","clearCustomData","setTicketAttribute","unsetTicketAttribute","clearTicketAttributes","registerCustomAction","registerAgentTool","trackEvent","log","preFillForm","showSurvey","sendSilentCrashReport","startFeedbackFlow","startClassicForm","startConversation","startBot","setAppBuildNumber","setAppVersionCode","setApiUrl","setFrameUrl","setRegion","setWSApiUrl","setRealtimeHost","setBannerUrl","setModalUrl","startNetworkLogger","setNetworkLogsBlacklist","setNetworkLogPropsToIgnore","setDisableInAppNotifications","isOpened","open","close","on","setLanguage","setOfflineMode","initialize","disableConsoleLogOverwrite","logEvent","hide","enableShortcuts","showFeedbackButton","destroy","getIdentity","isUserIdentified","clearIdentity","openConversations","openConversation","openChecklists","openChecklist","startChecklist","openHelpCenterCollection","openHelpCenterArticle", "askAI","openHelpCenter","searchHelpCenter","openNewsArticle","openNews","openFeatureRequests","isLiveMode"],Gleap.f=function(e){return function(){var t=Array.prototype.slice.call(arguments);window.GleapActions.push({e:e,a:t})}},t=0;t<Gleap.methods.length;t++)Gleap[i=Gleap.methods[t]]=Gleap.f(i);Gleap.load=function(){var t=document.getElementsByTagName("head")[0],i=document.createElement("script");i.type="text/javascript",i.async=!0,i.src="https://sdk.gleap.io/latest/index.js",t.appendChild(i)},Gleap.load()}}();
+!function(){if(!(window.Gleap=window.Gleap||[]).invoked){window.GleapActions=[];var e=new Proxy({invoked:!0},{get:function(e,n){return"invoked"===n?e.invoked:function(){var e=Array.prototype.slice.call(arguments);window.GleapActions.push({e:n,a:e})}},set:function(e,n,t){return e[n]=t,!0}});window.Gleap=e;var n=document.getElementsByTagName("head")[0],t=document.createElement("script");t.type="text/javascript",t.async=!0,t.src="https://sdk.gleap.io/latest/index.js",n.appendChild(t)}}();
 </script>
 ```
 
@@ -116,7 +116,7 @@ import 'package:gleap_sdk/gleap_sdk.dart';
 Gleap.initialize(projectId: 'YOUR_PROJECT_ID')
 ```
 
-Your Project ID can be found in the Gleap dashboard under Settings > Project. It was called "SDK key" or "API key" before: `Gleap.initialize(token: ...)` still works (deprecated) and takes the same value.
+Your Project ID can be found in the [Gleap dashboard](https://app.gleap.ai) under **Settings → Project → General**. It was called "SDK key" or "API key" before: existing values keep working, and `Gleap.initialize(token: ...)` still works (deprecated) and takes the same value.
 
 **Data regions**
 
@@ -129,7 +129,7 @@ await Gleap.initialize(projectId: 'YOUR_PROJECT_ID');
 
 `setRegion` sets the API, websocket and realtime hosts for the region at once; the static widget hosts are global and stay unchanged. For custom domains, the manual setters `setApiUrl`, `setWSApiUrl`, `setRealtimeHost`, `setFrameUrl`, `setBannerUrl` and `setModalUrl` are available. A manual setter called after `setRegion` overrides that single host.
 
-On web, data regions require the loader snippet above (it queues the new methods until the JavaScript SDK has loaded).
+On web, data regions require the loader snippet above (it queues every call, including `setRegion` and `setUserJwt`, until the JavaScript SDK has loaded).
 
 **Dark mode**
 
@@ -145,18 +145,19 @@ await Gleap.setColorScheme(
 
 `setColorScheme` only takes effect when "Adapt to dark / light mode" is enabled in the Gleap dashboard; it then overrides the dashboard's color scheme. Before the first call the dashboard setting applies. In dark mode the widget uses the dark mode colors, logo, header image and composer glow set in the Gleap dashboard; without dark colors it keeps its normal colors. `lightBackgroundColor` / `darkBackgroundColor` override the background in light / dark mode. Can be called before or after `Gleap.initialize`.
 
-**Customer identity (JWT)**
+**Sign in users (identity tokens)**
 
-**Signed identity (recommended)**
-
-Your backend signs an HS256 JWT with an identity key from Settings → Security → Identity keys (put the key id in the `kid` header; the secret never leaves your server). The `userId` claim is required. Optional claims: `email`, `name`, `company` (`{ id, name }`), `plan`, and provider ids such as `stripeCustomerId`. Set `exp` to at most one hour. Everything in the token lands on the contact as signed data the app cannot change. Pass the token to the SDK after login and on every app start of a logged-in user; `setUserJwt` keeps it in memory only. `setUserJwtProvider` fetches a fresh token when it expires, and `setAuthTokens` hands Kai your own API tokens for this user. See [Customer identity](https://docs.gleap.ai/documentation/guides/customer-identity).
+Your backend signs a short HS256 JWT with an identity key from Settings → Security → Customer identity → Identity keys (put the key id in the `kid` header; the secret never leaves your server). The `userId` claim is required. Optional claims: `email`, `name`, `company` (`{ id, name }`), `plan`, and provider ids such as `stripeCustomerId`. Set `exp` to at most one hour. Everything in the token lands on the contact as signed data the app cannot change, so no separate identify call is needed. Pass the token to the SDK after login and on every app start of a logged-in user; `setUserJwt` keeps it in memory only. `setUserJwtProvider` fetches a fresh token when it expires and, since 19.5.0 (on web with the JavaScript SDK 19.6.0 or newer), also restores the signed session after an app restart or page reload. Call `clearIdentity` on logout. `setAuthTokens` hands Kai your own API tokens for this user. See [Customer identity](https://docs.gleap.ai/en/articles/709-customer-identity) and [Flutter SDK user identity](https://docs.gleap.ai/en/articles/532-flutter-sdk-user-identity).
 
 ```dart
-// After login and on every app start of a logged-in user
+// After login and on every app start of a logged-in user (token from your backend)
 await Gleap.setUserJwt(token: token);
 
-// Called when the token has expired or is about to; return a fresh one
+// Optional: returns a fresh token when the current one has expired or is about to
 Gleap.setUserJwtProvider(provider: () async => await myBackend.fetchGleapToken());
+
+// On logout
+await Gleap.clearIdentity();
 
 // Optional: shorten the signed session (milliseconds)
 await Gleap.setSessionDuration(milliseconds: 24 * 60 * 60 * 1000);
@@ -169,21 +170,11 @@ await Gleap.setAuthTokens(tokens: {'backend': accessToken});
 
 The identity handling runs in the native iOS and Android SDKs on mobile, so their behaviour applies here as is: `setUserJwt` and `setUserJwtProvider` may be called before or after `initialize` (a token is sent once the SDK starts), a returning user on a project that switched to Signed gets the identify of this app start sent once to obtain a signed session, and a short session duration is renewed at half its lifetime.
 
-**Legacy user hash**
-
-Instead of a token you can still identify with a user hash: the HMAC-SHA256 of the user id, created on your server with the project's identity verification secret. It is accepted while "Accept legacy user hash" stays on in the project's security settings.
-
-```dart
-await Gleap.identifyContact(
-  userId: 'user-1',
-  userProperties: GleapUserProperty(email: 'user@example.com'),
-  userHash: userHash,
-);
-```
+`Gleap.identifyContact(userId: ..., userProperties: ...)` without a token creates an unsigned contact. Older integrations that pass a user hash to `identifyContact` keep working while "Accept legacy user hash" stays on in the project's security settings; see [Upgrade to identity tokens](https://docs.gleap.ai/en/articles/16752008-upgrade-to-identity-tokens).
 
 **Protected conversation files**
 
-With "Require authenticated file access" (Project settings → User identity), conversation files can only be opened by agents and by the verified customer the conversation belongs to. Identify the customer with a signed identity on every app start (`Gleap.setUserJwt`, or the legacy user hash); guests and contacts identified without a signature cannot open the file.
+With "Protect new files" (Settings → Security → Conversation files, see [Authenticated conversation files](https://docs.gleap.ai/en/articles/710-authenticated-conversation-files)), conversation files can only be opened by agents and by the verified customer the conversation belongs to. Sign the customer in with `Gleap.setUserJwt` on every app start; guests and contacts identified without a signature cannot open the file.
 
 Email replies link attachments to your customer application URL with a `gleapFile` query parameter. If that URL opens your app (universal link / App Link, e.g. handled with [app_links](https://pub.dev/packages/app_links)), pass it to Gleap; the conversation opens once the customer is identified with a signed identity:
 

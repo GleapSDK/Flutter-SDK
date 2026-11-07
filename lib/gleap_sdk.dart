@@ -214,7 +214,7 @@ class Gleap {
   /// **Params**
   ///
   /// [projectId] Your Project ID, found in the Gleap dashboard under
-  /// Settings > Project.
+  /// Settings → Project → General (formerly "SDK key" / "API key").
   ///
   /// [token] Deprecated: the former name of [projectId] ("SDK key"). The value
   /// is the same and keeps working.
@@ -409,11 +409,17 @@ class Gleap {
 
   /// ### identify
   ///
-  /// Updates a session's user data.
+  /// Deprecated: use [identifyContact] (same parameters). To sign in a user,
+  /// use [setUserJwt].
   ///
   /// **Params**
   ///
-  /// [gleapUserSession] The updated user data.
+  /// [userId] The user id.
+  ///
+  /// [userProperties] The user data.
+  ///
+  /// [userHash] Only for older integrations that pass a user hash (legacy);
+  /// see https://docs.gleap.ai/en/articles/16752008-upgrade-to-identity-tokens
   ///
   /// **Available Platforms**
   ///
@@ -444,11 +450,19 @@ class Gleap {
 
   /// ### identifyContact
   ///
-  /// Updates a session's user data.
+  /// Identifies the user as an unsigned contact with [userId] and
+  /// [userProperties]. To sign in a user, pass an identity token to
+  /// [setUserJwt]; no separate identify call is needed then.
   ///
   /// **Params**
   ///
-  /// [gleapUserSession] The updated user data.
+  /// [userId] The user id.
+  ///
+  /// [userProperties] The user data.
+  ///
+  /// [userHash] Only for older integrations that pass a user hash (legacy);
+  /// they keep working. See
+  /// https://docs.gleap.ai/en/articles/16752008-upgrade-to-identity-tokens
   ///
   /// **Available Platforms**
   ///
@@ -508,13 +522,16 @@ class Gleap {
   /// ### setUserJwt
   ///
   /// Identifies the user with an identity token: an HS256 JWT your backend
-  /// signs with an identity key. The token is the whole identify: its
+  /// signs with an identity key (Settings → Security → Customer identity →
+  /// Identity keys). No separate identify call is needed: its
   /// `userId` (or `user_id`) claim names the user and every other claim lands
   /// on the contact as signed data; no other contact field is sent. Call it
   /// after login and on every app start. The token is kept in memory only and
   /// sent again whenever it changes. A token that is not a JWT, has no user id
   /// or is longer than 4096 characters is refused with a log line and nothing
-  /// is sent. Completes once the native SDK has the token.
+  /// is sent. Completes once the native SDK has the token. Call
+  /// [clearIdentity] on logout. See
+  /// https://docs.gleap.ai/en/articles/709-customer-identity
   ///
   /// **Params**
   ///
@@ -564,7 +581,9 @@ class Gleap {
   /// Sets the function that fetches a fresh identity token from your backend.
   /// Gleap calls it when the server answers that the token expired (and
   /// retries once with the new token), and before it renews the file access or
-  /// sends the identify again when the token expires within 5 minutes. One
+  /// sends the identify again when the token expires within 5 minutes, and
+  /// (native SDKs 19.5.0, JavaScript SDK 19.6.0) to restore the signed session
+  /// after an app restart or page reload. One
   /// call at a time; a call without an answer within 10 seconds counts as
   /// failed, and after a failure Gleap waits 30 seconds before it asks again.
   /// Return `null` (or throw) when fetching failed. `clearIdentity` keeps the
@@ -626,8 +645,8 @@ class Gleap {
 
   /// ### clearIdentity
   ///
-  /// Clears a user session, its identity token and auth tokens. The JWT
-  /// provider stays set.
+  /// Clears a user session, its identity token and auth tokens. Call it on
+  /// logout. The JWT provider stays set.
   ///
   /// **Available Platforms**
   ///
@@ -1889,11 +1908,12 @@ class Gleap {
   /// ### openProtectedFileFromUrl
   ///
   /// Opens the conversation of a protected file from an emailed file link.
-  /// With "Require authenticated file access", email replies link attachments
-  /// to your customer application URL with a `gleapFile` query parameter.
+  /// With "Protect new files" on (Settings → Security → Conversation files),
+  /// email replies link attachments to your customer application URL with a
+  /// `gleapFile` query parameter.
   /// Pass the link that opened the app (e.g. from app_links or uni_links).
-  /// The conversation opens once the user is identified with a user hash
-  /// (`identifyContact` with `userHash`); the link alone grants nothing.
+  /// The conversation opens once the user is signed in with an identity
+  /// token ([setUserJwt]); the link alone grants nothing.
   ///
   /// Returns true if the url carries a Gleap file reference.
   ///
