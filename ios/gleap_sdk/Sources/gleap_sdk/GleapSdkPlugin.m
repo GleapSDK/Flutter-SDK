@@ -17,6 +17,23 @@
 // config has loaded. Process-wide like the native SDK's recorder.
 static BOOL gleapNetworkLoggingStoppedByApp = NO;
 
+// The Project ID (formerly the SDK key). Native iOS SDK 19.5.0+ has initializeWithProjectId:
+// (initializeWithToken: is deprecated there); 19.4.0 only has initializeWithToken:, which takes the
+// same value. Looked up at runtime so this builds and runs against both.
+static void GleapInitializeWithProjectId(NSString *projectId) {
+    SEL projectIdSelector = NSSelectorFromString(@"initializeWithProjectId:");
+    if ([Gleap respondsToSelector:projectIdSelector]) {
+        void (*initializeWithProjectId)(id, SEL, NSString *) =
+            (void (*)(id, SEL, NSString *))[Gleap methodForSelector:projectIdSelector];
+        initializeWithProjectId([Gleap class], projectIdSelector, projectId);
+        return;
+    }
+    SEL tokenSelector = NSSelectorFromString(@"initializeWithToken:");
+    void (*initializeWithToken)(id, SEL, NSString *) =
+        (void (*)(id, SEL, NSString *))[Gleap methodForSelector:tokenSelector];
+    initializeWithToken([Gleap class], tokenSelector, projectId);
+}
+
 @implementation GleapSdkPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FlutterMethodChannel *channel =
@@ -187,12 +204,11 @@ static BOOL gleapNetworkLoggingStoppedByApp = NO;
   if ([@"initialize" isEqualToString:call.method]) {
 
     // The Project ID (formerly the SDK key): projectId, or the former token argument.
-    // initializeWithToken: takes it in every supported native iOS SDK version.
     id projectId = call.arguments[@"projectId"];
     if (![projectId isKindOfClass:[NSString class]] || [projectId length] == 0) {
       projectId = call.arguments[@"token"];
     }
-    [Gleap initializeWithToken:projectId];
+    GleapInitializeWithProjectId(projectId);
     [Gleap trackEvent:@"pageView" withData:@{@"page" : @"MainPage"}];
     [self registerLogFlushHandler];
 
