@@ -109,6 +109,9 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             GestureDetector(
               onTap: () async {
+                // Demo only: identifies an unsigned contact. To sign in a user,
+                // pass the identity token from your backend instead:
+                // await Gleap.setUserJwt(token: tokenFromYourBackend);
                 await Gleap.identifyContact(
                     userId: "10293",
                     userProperties: GleapUserProperty(

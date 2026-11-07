@@ -1,8 +1,10 @@
 ## 19.5.0
 The key `Gleap.initialize` takes is now called **Project ID** (formerly "SDK key" / "API key"). The value is the same and every existing key keeps working; nothing needs to change in your app.
-New: `Gleap.initialize(projectId: 'YOUR_PROJECT_ID')`. `token:` keeps working and is marked `@Deprecated`. The plugin passes the Project ID to the native `initializeWithToken:` (iOS) and `Gleap.initialize(String, Application)` (Android) of the current native SDKs (19.4.0), and to `Gleap.initialize(projectId)` of the JavaScript SDK on web.
+New: `Gleap.initialize(projectId: 'YOUR_PROJECT_ID')`. `token:` keeps working and is marked `@Deprecated`. The Project ID is in the Gleap dashboard under Settings → Project → General. The plugin passes it to the native `initializeWithProjectId:` (iOS, falling back to `initializeWithToken:` on older native SDKs) and `Gleap.initialize(String, Application)` (Android), and to `Gleap.initialize(projectId)` of the JavaScript SDK on web.
 Fix: `setUserJwtProvider` now installs the method channel handler itself, so the provider answers the native SDK's token requests even when the Dart `initialize` has not run in this engine (the SDK was initialized natively, or after a hot restart). Setting the provider before or after `initialize` both work.
-Native iOS and Android dependencies stay at 19.4.0.
+With the native SDKs 19.5.0, the `setUserJwtProvider` provider also restores the signed session after an app restart.
+Updated native iOS dependency to 19.5.0
+Updated native Android dependency to 19.5.0
 
 ## 19.4.0
 Customer identity: `Gleap.setUserJwt(token:)`, `Gleap.setUserJwtProvider(provider:)` and `Gleap.setAuthTokens(tokens:)` wrap the native SDK methods on Android and iOS and the JavaScript SDK on web. `setUserJwt` identifies the user with one HS256 JWT signed by your backend (the token is the whole identify, kept in memory only); `setAuthTokens` stores per-user tokens for API tools on the signed contact (a `null` value removes one). The provider runs in Dart: the native (or JavaScript) SDK asks for a token when the current one expired or expires within 5 minutes and keeps the rules (one call at a time, 10 second timeout, 30 second pause after a failure); a thrown error or `null` counts as a failure. Needs native SDKs with these methods (the next synchronized native release) and, on web, a JavaScript SDK with them.
