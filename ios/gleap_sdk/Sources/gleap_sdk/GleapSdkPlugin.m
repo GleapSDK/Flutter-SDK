@@ -186,7 +186,13 @@ static BOOL gleapNetworkLoggingStoppedByApp = NO;
                   result:(FlutterResult)result {
   if ([@"initialize" isEqualToString:call.method]) {
 
-    [Gleap initializeWithToken:call.arguments[@"token"]];
+    // The Project ID (formerly the SDK key): projectId, or the former token argument.
+    // initializeWithToken: takes it in every supported native iOS SDK version.
+    id projectId = call.arguments[@"projectId"];
+    if (![projectId isKindOfClass:[NSString class]] || [projectId length] == 0) {
+      projectId = call.arguments[@"token"];
+    }
+    [Gleap initializeWithToken:projectId];
     [Gleap trackEvent:@"pageView" withData:@{@"page" : @"MainPage"}];
     [self registerLogFlushHandler];
 

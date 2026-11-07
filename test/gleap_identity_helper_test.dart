@@ -49,4 +49,19 @@ void main() {
       expect(await gleapAnswerUserJwtRequest(() async => ''), isNull);
     });
   });
+  group('initialize', () {
+    test('resolves projectId first, then the former token', () {
+      expect(gleapResolveProjectId(projectId: 'P1'), 'P1');
+      expect(gleapResolveProjectId(token: 'K1'), 'K1');
+      expect(gleapResolveProjectId(projectId: 'P1', token: 'K1'), 'P1');
+      expect(gleapResolveProjectId(projectId: '', token: 'K1'), 'K1');
+      expect(gleapResolveProjectId(), isNull);
+      expect(gleapResolveProjectId(projectId: '', token: ''), isNull);
+    });
+
+    test('sends the Project ID under both channel argument names', () {
+      expect(gleapInitializeArguments('P1'),
+          <String, dynamic>{'projectId': 'P1', 'token': 'P1'});
+    });
+  });
 }

@@ -244,7 +244,12 @@ public class GleapSdkPlugin implements FlutterPlugin, MethodCallHandler {
             case "initialize":
                 Gleap.getInstance().setApplicationType(APPLICATIONTYPE.FLUTTER);
 
-                Gleap.initialize((String) call.argument("token"), application);
+                // The Project ID (formerly the SDK key): projectId, or the former token argument.
+                String projectId = call.argument("projectId");
+                if (projectId == null || projectId.isEmpty()) {
+                    projectId = call.argument("token");
+                }
+                Gleap.initialize(projectId, application);
 
                 try {
                     JSONObject body = new JSONObject();
