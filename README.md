@@ -100,7 +100,7 @@ Navigate to your web project folder and insert the following snippet as first el
 
 ```
 <script>
-!function(Gleap,t,i){if(!(Gleap=window.Gleap=window.Gleap||[]).invoked){for(window.GleapActions=[],Gleap.invoked=!0,Gleap.methods=["identify","updateContact","setEnvironment","setEnvDataPropsToIgnore","setDisableEnvData","setColorScheme","setTags","attachCustomData","setCustomData","removeCustomData","clearCustomData","setTicketAttribute","unsetTicketAttribute","clearTicketAttributes","registerCustomAction","registerAgentTool","trackEvent","log","preFillForm","showSurvey","sendSilentCrashReport","startFeedbackFlow","startClassicForm","startConversation","startBot","setAppBuildNumber","setAppVersionCode","setApiUrl","setFrameUrl","setRegion","setWSApiUrl","setRealtimeHost","setBannerUrl","setModalUrl","startNetworkLogger","setNetworkLogsBlacklist","setNetworkLogPropsToIgnore","setDisableInAppNotifications","isOpened","open","close","on","setLanguage","setOfflineMode","initialize","disableConsoleLogOverwrite","logEvent","hide","enableShortcuts","showFeedbackButton","destroy","getIdentity","isUserIdentified","clearIdentity","openConversations","openConversation","openChecklists","openChecklist","startChecklist","openHelpCenterCollection","openHelpCenterArticle", "askAI","openHelpCenter","searchHelpCenter","openNewsArticle","openNews","openFeatureRequests","isLiveMode"],Gleap.f=function(e){return function(){var t=Array.prototype.slice.call(arguments);window.GleapActions.push({e:e,a:t})}},t=0;t<Gleap.methods.length;t++)Gleap[i=Gleap.methods[t]]=Gleap.f(i);Gleap.load=function(){var t=document.getElementsByTagName("head")[0],i=document.createElement("script");i.type="text/javascript",i.async=!0,i.src="https://sdk.gleap.io/latest/index.js",t.appendChild(i)},Gleap.load()}}();
+!function(){if(!(window.Gleap=window.Gleap||[]).invoked){window.GleapActions=[];var e=new Proxy({invoked:!0},{get:function(e,n){return"invoked"===n?e.invoked:function(){var e=Array.prototype.slice.call(arguments);window.GleapActions.push({e:n,a:e})}},set:function(e,n,t){return e[n]=t,!0}});window.Gleap=e;var n=document.getElementsByTagName("head")[0],t=document.createElement("script");t.type="text/javascript",t.async=!0,t.src="https://sdk.gleap.io/latest/index.js",n.appendChild(t)}}();
 </script>
 ```
 
@@ -129,7 +129,7 @@ await Gleap.initialize(projectId: 'YOUR_PROJECT_ID');
 
 `setRegion` sets the API, websocket and realtime hosts for the region at once; the static widget hosts are global and stay unchanged. For custom domains, the manual setters `setApiUrl`, `setWSApiUrl`, `setRealtimeHost`, `setFrameUrl`, `setBannerUrl` and `setModalUrl` are available. A manual setter called after `setRegion` overrides that single host.
 
-On web, data regions require the loader snippet above (it queues the new methods until the JavaScript SDK has loaded).
+On web, data regions require the loader snippet above (it queues every call, including `setRegion` and `setUserJwt`, until the JavaScript SDK has loaded).
 
 **Dark mode**
 
