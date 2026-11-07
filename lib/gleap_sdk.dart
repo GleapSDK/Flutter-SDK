@@ -1908,8 +1908,9 @@ class Gleap {
   /// ### openProtectedFileFromUrl
   ///
   /// Opens the conversation of a protected file from an emailed file link.
-  /// With "Require authenticated file access", email replies link attachments
-  /// to your customer application URL with a `gleapFile` query parameter.
+  /// With "Protect new files" on (Settings → Security → Conversation files),
+  /// email replies link attachments to your customer application URL with a
+  /// `gleapFile` query parameter.
   /// Pass the link that opened the app (e.g. from app_links or uni_links).
   /// The conversation opens once the user is signed in with an identity
   /// token ([setUserJwt]); the link alone grants nothing.

@@ -116,7 +116,7 @@ import 'package:gleap_sdk/gleap_sdk.dart';
 Gleap.initialize(projectId: 'YOUR_PROJECT_ID')
 ```
 
-Your Project ID can be found in the [Gleap dashboard](https://app.gleap.io) under **Settings → Project → General**. It was called "SDK key" or "API key" before: existing values keep working, and `Gleap.initialize(token: ...)` still works (deprecated) and takes the same value.
+Your Project ID can be found in the [Gleap dashboard](https://app.gleap.ai) under **Settings → Project → General**. It was called "SDK key" or "API key" before: existing values keep working, and `Gleap.initialize(token: ...)` still works (deprecated) and takes the same value.
 
 **Data regions**
 
@@ -174,7 +174,7 @@ The identity handling runs in the native iOS and Android SDKs on mobile, so thei
 
 **Protected conversation files**
 
-With "Require authenticated file access" (Project settings → User identity), conversation files can only be opened by agents and by the verified customer the conversation belongs to. Sign the customer in with `Gleap.setUserJwt` on every app start; guests and contacts identified without a signature cannot open the file.
+With "Protect new files" (Settings → Security → Conversation files, see [Authenticated conversation files](https://docs.gleap.ai/en/articles/710-authenticated-conversation-files)), conversation files can only be opened by agents and by the verified customer the conversation belongs to. Sign the customer in with `Gleap.setUserJwt` on every app start; guests and contacts identified without a signature cannot open the file.
 
 Email replies link attachments to your customer application URL with a `gleapFile` query parameter. If that URL opens your app (universal link / App Link, e.g. handled with [app_links](https://pub.dev/packages/app_links)), pass it to Gleap; the conversation opens once the customer is identified with a signed identity:
 
