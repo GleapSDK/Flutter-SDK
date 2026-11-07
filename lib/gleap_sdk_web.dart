@@ -183,7 +183,9 @@ class GleapSdkWeb {
   Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'initialize':
-        return initialize(token: call.arguments['token']);
+        return initialize(
+          projectId: call.arguments['projectId'] ?? call.arguments['token'],
+        );
 
       case 'identify':
       case 'identifyContact':
@@ -471,14 +473,16 @@ class GleapSdkWeb {
     }
   }
 
-  Future<void> initialize({required String token}) async {
+  // projectId: the Project ID (formerly the SDK key) for the JavaScript SDK's
+  // Gleap.initialize.
+  Future<void> initialize({required String projectId}) async {
     if (_sessionDuration > 0) {
       GleapJsSdkHelper.initializeWithOptions(
-        token.toJS,
+        projectId.toJS,
         {'sessionDuration': _sessionDuration}.jsify()!,
       );
     } else {
-      GleapJsSdkHelper.initialize(token.toJS);
+      GleapJsSdkHelper.initialize(projectId.toJS);
     }
   }
 

@@ -207,26 +207,43 @@ class Gleap {
   ///
   /// Auto-configures the Gleap SDK from the remote config.
   ///
+  /// ```dart
+  /// await Gleap.initialize(projectId: 'YOUR_PROJECT_ID');
+  /// ```
+  ///
   /// **Params**
   ///
-  /// [token] The SDK key, which can be found on dashboard.bugbattle.io
+  /// [projectId] Your Project ID, found in the Gleap dashboard under
+  /// Settings > Project.
+  ///
+  /// [token] Deprecated: the former name of [projectId] ("SDK key"). The value
+  /// is the same and keeps working.
   ///
   /// **Available Platforms**
   ///
   /// Android, iOS, Web
   static Future<void> initialize({
-    required String token,
+    String? projectId,
+    @Deprecated('Use projectId. The value is the same.') String? token,
   }) async {
     if (!kIsWeb && !io.Platform.isAndroid && !io.Platform.isIOS) {
       debugPrint('initialize is not available for current operating system');
       return;
     }
 
+    final String? resolvedProjectId = gleapResolveProjectId(
+      projectId: projectId,
+      token: token,
+    );
+    if (resolvedProjectId == null) {
+      throw ArgumentError('Gleap.initialize needs a projectId.');
+    }
+
     _initCallbackHandler();
 
     await _channel.invokeMethod(
       'initialize',
-      {'token': token},
+      gleapInitializeArguments(resolvedProjectId),
     );
 
     if (!kIsWeb) {
@@ -570,6 +587,9 @@ class Gleap {
     }
 
     _userJwtProvider = provider;
+    // Answers the native token requests even before initialize, for example
+    // when the native SDK was initialized natively, or after a hot restart.
+    _initCallbackHandler();
     await _channel.invokeMethod(
       'setUserJwtProviderEnabled',
       {'enabled': provider != null},

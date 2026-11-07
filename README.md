@@ -113,10 +113,10 @@ import 'package:gleap_sdk/gleap_sdk.dart';
 ```
 
 ```dart
-Gleap.initialize(token: 'YOUR_API_KEY')
+Gleap.initialize(projectId: 'YOUR_PROJECT_ID')
 ```
 
-Your API key can be found in the project settings within Gleap.
+Your Project ID can be found in the Gleap dashboard under Settings > Project. It was called "SDK key" or "API key" before: `Gleap.initialize(token: ...)` still works (deprecated) and takes the same value.
 
 **Data regions**
 
@@ -124,7 +124,7 @@ Projects hosted in the US data region select it before initializing. The default
 
 ```dart
 await Gleap.setRegion(region: 'us');
-await Gleap.initialize(token: 'YOUR_API_KEY');
+await Gleap.initialize(projectId: 'YOUR_PROJECT_ID');
 ```
 
 `setRegion` sets the API, websocket and realtime hosts for the region at once; the static widget hosts are global and stay unchanged. For custom domains, the manual setters `setApiUrl`, `setWSApiUrl`, `setRealtimeHost`, `setFrameUrl`, `setBannerUrl` and `setModalUrl` are available. A manual setter called after `setRegion` overrides that single host.
@@ -167,7 +167,7 @@ await Gleap.setAuthTokens(tokens: {'backend': accessToken});
 
 `setSessionDuration(ms)` shortens the signed session; the project's maximum applies.
 
-The identity handling runs in the native iOS and Android SDKs on mobile, so their behaviour applies here as is: `setUserJwt` may be called before `initialize` (the token is sent once the SDK starts), a returning user on a project that switched to Signed gets the identify of this app start sent once to obtain a signed session, and a short session duration is renewed at half its lifetime.
+The identity handling runs in the native iOS and Android SDKs on mobile, so their behaviour applies here as is: `setUserJwt` and `setUserJwtProvider` may be called before or after `initialize` (a token is sent once the SDK starts), a returning user on a project that switched to Signed gets the identify of this app start sent once to obtain a signed session, and a short session duration is renewed at half its lifetime.
 
 **Legacy user hash**
 
