@@ -1,0 +1,96 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(**/.env*)",
+      "Bash(cat .env*)",
+      "Bash(head .env*)",
+      "Bash(tail .env*)",
+      "Bash(flutter pub publish)",
+      "Bash(flutter pub publish *-f*)",
+      "Bash(flutter pub publish *--skip-validation*)",
+      "Bash(dart pub publish)",
+      "Bash(dart pub publish *-f*)",
+      "Bash(dart pub publish *--skip-validation*)",
+      "Bash(flutter pub token*)",
+      "Bash(dart pub token*)",
+      "Bash(flutter pub uploader*)",
+      "Bash(dart pub uploader*)",
+      "Bash(git tag*)",
+      "Bash(git push --tags*)",
+      "Bash(git push --follow-tags*)",
+      "Bash(git push * --tags*)",
+      "Bash(gh release*)",
+      "Bash(pod trunk*)",
+      "Bash(flutter upgrade*)",
+      "Bash(flutter downgrade*)",
+      "Bash(flutter channel*)",
+      "Bash(flutter config*)"
+    ],
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "WebFetch",
+      "WebSearch",
+      "TodoWrite",
+      "Agent",
+      "mcp__context7__*",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(git branch*)",
+      "Bash(git show*)",
+      "Bash(git rev-parse*)",
+      "Bash(git fetch*)",
+      "Bash(git remote -v*)",
+      "Bash(git blame*)",
+      "Bash(git merge-base*)",
+      "Bash(ls*)",
+      "Bash(pwd)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(find *)",
+      "Bash(which *)",
+      "Bash(command -v *)",
+      "Bash(flutter --version*)",
+      "Bash(flutter doctor*)",
+      "Bash(flutter pub get*)",
+      "Bash(flutter pub deps*)",
+      "Bash(flutter pub outdated*)",
+      "Bash(flutter pub publish --dry-run*)",
+      "Bash(flutter analyze*)",
+      "Bash(flutter test*)",
+      "Bash(sh tool/check_new.sh*)",
+      "Bash(sh .githooks/install.sh)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-edited-file.sh",
+            "timeout": 60,
+            "statusMessage": "dart format and the analyzer on the edited file..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-before-stop.sh",
+            "timeout": 600,
+            "statusMessage": "tool/check_new.sh and flutter test..."
+          }
+        ]
+      }
+    ]
+  }
+}

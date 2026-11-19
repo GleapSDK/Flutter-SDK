@@ -1,0 +1,51 @@
+name: Quality
+
+# dart analyze and dart format on what a PR adds compared with where it left the base (tool/check_new.sh). Old code
+# may stay as it is but must not get worse; new code keeps .claude/rules/code-conventions.md.
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  # Keep in sync with release.yml.
+  FLUTTER_VERSION: '3.41.4'
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The PR's own commit, not the merge commit, and the history to find the fork point.
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - run: flutter pub get
+      # The base branch's gate and analyzer config judge the PR, so a PR cannot switch a rule off with its own edits.
+      # The first PR that adds the gate has no such copy and runs its own.
+      - name: Check what the PR adds
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          tool=tool/check_new.sh
+          if git cat-file -e "origin/$BASE_REF:$tool" 2>/dev/null; then
+            git show "origin/$BASE_REF:$tool" >"$RUNNER_TEMP/check_new.sh"
+            git show "origin/$BASE_REF:analysis_options.yaml" >analysis_options.yaml
+            tool="$RUNNER_TEMP/check_new.sh"
+          fi
+          changed="$(git diff --name-only "$(git merge-base "origin/$BASE_REF" HEAD)" HEAD -- analysis_options.yaml tool .claude/hooks .claude/settings.json .githooks .github/workflows)"
+          if [ -n "$changed" ]; then
+            echo "::warning title=This PR changes the checks::Review these on purpose, they apply only after the merge: $(echo $changed)"
+          fi
+          BASE="origin/$BASE_REF" sh "$tool"

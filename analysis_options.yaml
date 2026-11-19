@@ -1,4 +1,37 @@
 include: package:flutter_lints/flutter.yaml
 
+# The rules below are infos: `flutter analyze --no-fatal-infos` (CI, release.yml) keeps passing on old code, and
+# tool/check_new.sh fails on any issue in the lines a branch adds. Never raise a severity or turn on a strict mode
+# here: old code would then fail the release's analyze step, and a raised severity also costs pub.dev points.
+#
+# A list, not a map: pub.dev's analysis (pana) adds only map-style rules to its own, so these stay off the
+# package's score page.
+linter:
+  rules:
+    # Channel results and JS values are dynamic: cast them to a type, never call into them.
+    - avoid_dynamic_calls
+    # A dropped future hides its error from the app.
+    - unawaited_futures
+    - discarded_futures
+    # What the SDK opens, it closes.
+    - cancel_subscriptions
+    - close_sinks
+    # The public API is documented (pub.dev's dartdoc score, IDE tooltips in customers' apps).
+    - public_member_api_docs
+    - comment_references
+    - type_annotate_public_apis
+    - always_declare_return_types
+    - only_throw_errors
+    - throw_in_finally
+    - test_types_in_equals
+    - unnecessary_statements
+    - literal_only_boolean_expressions
+    - no_adjacent_strings_in_list
+    - avoid_slow_async_io
+    - avoid_type_to_string
+    - prefer_final_locals
+    - prefer_final_in_for_each
+    - always_use_package_imports
+
 # Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+# https://dart.dev/tools/analysis
