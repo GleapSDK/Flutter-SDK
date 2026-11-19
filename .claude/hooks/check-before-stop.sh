@@ -33,7 +33,7 @@ $(printf '%s\n' "$output" | tail -n 80)
   fi
 }
 step "sh tool/check_new.sh" sh tool/check_new.sh
-step "flutter test --no-pub" flutter test --no-pub --suppress-analytics
+step "flutter test --no-pub" flutter test --no-pub --suppress-analytics --reporter failures-only
 
 if [ -z "$failures" ]; then
   rm -f "$state"
