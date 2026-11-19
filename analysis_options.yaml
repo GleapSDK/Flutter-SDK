@@ -2,10 +2,10 @@ include: package:flutter_lints/flutter.yaml
 
 # The rules below are infos: `flutter analyze --no-fatal-infos` (CI, release.yml) keeps passing on old code, and
 # tool/check_new.sh fails on any issue in the lines a branch adds. Never raise a severity or turn on a strict mode
-# here: old code would then fail the release's analyze step and lose pub.dev points.
+# here: old code would then fail the release's analyze step, and a raised severity also costs pub.dev points.
 #
-# A list, not a map: pub.dev's analysis (pana) adds only map-style rules to its own, so the package's score page
-# stays as it is.
+# A list, not a map: pub.dev's analysis (pana) adds only map-style rules to its own, so these stay off the
+# package's score page.
 linter:
   rules:
     # Channel results and JS values are dynamic: cast them to a type, never call into them.

@@ -73,7 +73,7 @@ Everything an app can call or rely on is public: every public name in every libr
 - **`*.g.dart` are generated:** change the model and run build_runner, never edit them by hand.
 - **The example is behind:** `example/test/widget_test.dart` is the old template and fails. The Android example does not build with Flutter 3.44 or later (its Android Gradle Plugin 8.3.2 is below Flutter's minimum 8.6.0), and a newer Flutter writes `android.newDsl=false` and `android.builtInKotlin=false` into `example/android/gradle.properties`: leave that out of commits. Fixing the example is a change of its own; it ships in the package.
 - **Seven Dart files are not `dart format`-clean** (`lib/gleap_sdk.dart`, `lib/gleap_sdk_web.dart`, three helpers, two tests). `tool/check_new.sh` leaves them alone; do not reformat them in a feature PR.
-- **`analysis_options.yaml` and `pubspec.yaml` ship in the package.** Never raise a lint severity or turn on a strict mode: old code would fail release.yml's analyze step and lose pub.dev points.
+- **`analysis_options.yaml` and `pubspec.yaml` ship in the package.** Never raise a lint severity or turn on a strict mode: old code would fail release.yml's analyze step, and a raised severity also costs pub.dev points (pub.dev's analysis takes over the `errors:` section).
 - `pubspec.yaml`'s `config: enable-swift-package-manager: true` only affects this repo, not apps. `.idea/` and `gleap_sdk.iml` are committed IDE files, and `gleap_sdk.iml` is published.
 
 ## Tests
