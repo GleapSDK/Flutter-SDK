@@ -1,4 +1,4 @@
-# The pre-publish checks of release.yml, without publishing.
+# The pre-publish checks of release.yml without publishing, plus the unit tests.
 name: CI
 
 on:
@@ -16,15 +16,19 @@ concurrency:
 env:
   # Keep in sync with release.yml.
   FLUTTER_VERSION: '3.41.4'
+  # Line coverage of lib/ by the unit tests. Raise it when coverage rises; lower it only with the reason in the PR.
+  COVERAGE_FLOOR: '29'
 
 jobs:
   check:
-    name: Analyze and dry-run publish
+    name: Analyze, test and dry-run publish
     runs-on: ubuntu-latest
+    # The default is 360 minutes; a test that never exits must not burn them.
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -33,9 +37,25 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # Infos (avoid_print in example/) are pre-existing; warnings and errors still fail.
+      # Infos (missing docs and dynamic calls in old code, avoid_print in example/) are pre-existing; warnings and
+      # errors still fail. Quality (tool/check_new.sh) fails on any issue in what a PR adds.
       - name: Analyze
         run: flutter analyze --no-fatal-infos
+
+      - name: Test
+        run: flutter test --coverage
+
+      # An explicit `shell: bash` runs with pipefail, so awk's exit fails the step through tee.
+      - name: Coverage floor
+        shell: bash
+        run: |
+          awk -F: -v floor="$COVERAGE_FLOOR" '/^LF:/ { found += $2 } /^LH:/ { hit += $2 }
+            END {
+              if (found == 0) { print "no coverage data"; exit 1 }
+              pct = 100 * hit / found
+              printf "Line coverage of lib/: %.1f%% (%d of %d lines, floor %s%%)\n", pct, hit, found, floor
+              if (pct < floor) { print "below the floor"; exit 1 }
+            }' coverage/lcov.info | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Publish (dry run)
         run: flutter pub publish --dry-run

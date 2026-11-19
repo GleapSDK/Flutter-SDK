@@ -1,0 +1,14 @@
+# What `dart pub publish` leaves out of the package. A .pubignore replaces the .gitignore of its folder for pub, so
+# the first block repeats .gitignore: keep the two in step. Hidden files and folders (.claude, .github, .githooks)
+# are never published.
+.DS_Store
+.dart_tool/
+.packages
+.pub/
+build/
+coverage/
+
+# Tooling for working on this repo, not part of the package.
+/AGENTS.md
+/CLAUDE.md
+/tool/

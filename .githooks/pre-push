@@ -1,0 +1,38 @@
+#!/bin/sh
+# Stops a push only when tool/check_new.sh finds problems in what the branch adds to origin/main. Anything else is
+# noted and the push goes on.
+
+blocked=0
+fetched=
+
+while read -r _ sha remote_ref _; do
+  case "$remote_ref" in refs/heads/*) ;; *) continue ;; esac
+  case "$sha" in *[!0]*) ;; *) continue ;; esac
+  # The analyzer reads the files on disk, so it can only judge the commit that is checked out.
+  if [ "$sha" != "$(git rev-parse HEAD)" ]; then
+    echo "pre-push: $remote_ref is not the checked-out commit, check skipped."
+    continue
+  fi
+  # This clone's origin/main may be behind, and then main's newer code would look like part of the branch.
+  if [ -z "$fetched" ]; then
+    fetched=1
+    GIT_TERMINAL_PROMPT=0 git fetch -q --no-write-fetch-head origin main 2>/dev/null
+  fi
+  output=$(sh tool/check_new.sh 2>&1 </dev/null)
+  code=$?
+  # tool/check_new.sh exits 1 for findings and 2 when it cannot run.
+  case "$code" in
+    0) ;;
+    1)
+      printf '%s\n' "$output"
+      blocked=1
+      ;;
+    *) printf '%s\npre-push: tool/check_new.sh could not run (exit %s), pushing anyway.\n' "$output" "$code" ;;
+  esac
+done
+
+if [ -n "$(git status --porcelain --untracked-files=normal -- '*.dart' 2>/dev/null)" ] && [ "$blocked" = 1 ]; then
+  echo "Uncommitted Dart changes were checked too."
+fi
+[ "$blocked" = 0 ] || echo "Push stopped. Fix the problems above, commit and push again."
+exit "$blocked"
